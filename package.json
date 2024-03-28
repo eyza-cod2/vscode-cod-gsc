@@ -18,7 +18,7 @@
     }],
     "grammars": [{
       "language": "gsc",
-      "scopeName": "cod.gsc",
+      "scopeName": "source.gsc",
       "path": "./syntaxes/gsc.tmLanguage.json"
     }]
   }

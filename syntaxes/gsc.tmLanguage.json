@@ -2,19 +2,37 @@
 	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
 	"name": "GSC",
 	"patterns": [
-		{
-			"include": "#keywords"
-		},
-		{
-			"include": "#strings"
-		}
+		{ "include": "#comments" },
+		{ "include": "#strings" },
+		{ "include": "#keywords" },
+		{ "include": "#constants" },
+		{ "include": "#functions" },
+		{ "include": "#variables" },
+        {
+			"//": "Find lines that should contains semicolon",
+			"name": "invalid.terminator.semicolon.gsc",
+			"match": "(^(?!.*//.*$)(?!.*\\belse\\s*$).*[\\w\"\\]][\\s]*$\\n(?![\\s]*[&|+\\-*\\/.()\\\\%#!]))",
+			"captures": {
+				"0": {
+					"name": "invalid.terminator.semicolon.gsc"
+				}
+			}
+        }
 	],
 	"repository": {
-		"keywords": {
-			"patterns": [{
-				"name": "keyword.control.gsc",
-				"match": "\\b(if|while|for|return)\\b"
-			}]
+		"comments": {
+			"patterns": [
+				{
+					"begin": "/\\*",
+					"end": "\\*/",
+					"name":"comment.block"
+				},
+				{
+					"begin": "//",
+					"end": "\\n",
+					"name":"comment.line.double-slash"
+				}
+			]
 		},
 		"strings": {
 			"name": "string.quoted.double.gsc",
@@ -24,9 +42,61 @@
 				{
 					"name": "constant.character.escape.gsc",
 					"match": "\\\\."
+				},
+				{
+					"name": "constant.character.escape.gsc",
+					"match": "&&[1-9]"
+				}
+			]
+		},
+		"keywords": {
+			"patterns": [
+				{
+					"name": "keyword.control.gsc",
+					"match": "\\b(break(point)?|case|continue|default|else|for|if|return|switch|thread|waittillframeend|while|wait|endon|waittill|notify)\\b"
+				},
+				{
+					"name": "variable.language",
+					"match": "\\b(game|level|self)\\b"
+				}
+			]
+		},
+		"constants":{
+			"patterns": [
+				{
+					"match": "\\b(true|false|undefined)\\b",
+					"name": "constant.language"
+				},
+				{
+					"match": "(?:\\b|\\s)(?:(?:[1-9][0-9]*|0)?\\.[0-9]+|[1-9][0-9]*|0)\\b",
+					"name": "constant.numeric"
+				}
+			]
+		},
+		"functions": {
+			"patterns": [
+				{
+					"name": "meta.function",
+					"match": "(?:(\\b[\\w\\\\/]+)::)?(\\w+)\\s*\\(",
+					"captures": {
+						"1": {
+							"name": "entity.name.class"
+						},
+						"2": {
+							"name": "entity.name.function"
+						}
+					}
+				}
+			]
+		},
+		"variables": {
+			"patterns": [
+				{
+					"name": "variable.other.gsc",
+					"match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b"
 				}
 			]
 		}
 	},
-	"scopeName": "cod.gsc"
+	"scopeName": "source.gsc"
 }
