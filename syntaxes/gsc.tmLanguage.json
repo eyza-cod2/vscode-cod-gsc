@@ -3,52 +3,182 @@
 	"name": "GSC",
 	"patterns": [
 		{ "include": "#comments" },
-		{ "include": "#strings" },
-		{ "include": "#keywords" },
-		{ "include": "#constants" },
-		{ "include": "#functions" },
-		{ "include": "#variables" },
-        {
-			"//": "Find lines that should contains semicolon",
-			"name": "invalid.terminator.semicolon.gsc",
-			"match": "(^(?!.*//.*$)(?!.*\\belse\\s*$).*[\\w\"\\]][\\s]*$\\n(?![\\s]*[&|+\\-*\\/.()\\\\%#!]))",
-			"captures": {
-				"0": {
-					"name": "invalid.terminator.semicolon.gsc"
-				}
-			}
-        }
+		{ "include": "#include" },
+		{ "include": "#using_animtree" },
+		{ "include": "#developer_outer" },
+		{ "include": "#functions" }
 	],
 	"repository": {
+
 		"comments": {
 			"patterns": [
 				{
 					"begin": "/\\*",
 					"end": "\\*/",
-					"name":"comment.block"
+					"name":"comment.block.gsc"
 				},
 				{
 					"begin": "//",
 					"end": "\\n",
-					"name":"comment.line.double-slash"
+					"name":"comment.line.double-slash.gsc"
 				}
 			]
 		},
-		"strings": {
-			"name": "string.quoted.double.gsc",
-			"begin": "\"",
-			"end": "\"",
+
+		"include": {
+			"comment": "Example: #include maps\\mp\\gametypes",
+			"name": "meta.preprocessor.include.gsc",
+			"begin": "(#include)",
+			"beginCaptures": {
+				"1": {
+					"name": "keyword.control.directive.include.gsc"
+				}
+			},
+			"end": ";",
 			"patterns": [
 				{
-					"name": "constant.character.escape.gsc",
-					"match": "\\\\."
-				},
-				{
-					"name": "constant.character.escape.gsc",
-					"match": "&&[1-9]"
+					"name": "entity.name.class.gsc",
+					"match": "[A-Za-z_][A-Za-z_0-9]*(\\\\[A-Za-z_][A-Za-z_0-9]*)*"
 				}
 			]
 		},
+
+		"using_animtree": {
+			"comment": "Example: #using_animtree(\"drones\");",
+			"name": "meta.preprocessor.include.gsc",
+			"begin": "(#using_animtree)",
+			"beginCaptures": {
+				"1": {
+					"name": "keyword.control.directive.include.gsc"
+				}
+			},
+			"end": ";",
+			"patterns": [
+				{
+					"include": "#strings"
+				}
+			]
+		},
+
+		"developer_outer":{
+			"comment": "Developer blocks /#...#/ outside functions",
+			"name": "developer.block.gsc",
+			"begin": "/#",
+			"beginCaptures": {
+				"0": {
+					"name": "keyword.control"
+				}
+			},
+			"end": "#/",
+			"endCaptures": {
+				"0": {
+					"name": "keyword.control"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#functions"
+				}
+			]
+		},
+
+		"functions": {
+			"comment": "Example: functionName(param1, param2) { }",
+			"begin": "(?=\\b[A-Za-z_][A-Za-z_0-9]*\\s*\\()",
+			"end": "\\}",
+			"patterns": [
+				{
+				"include": "#comment"
+				},
+				{
+					"name": "meta.function.identifier.gsc",
+					"begin": "\\b([A-Za-z_][A-Za-z_0-9]*)\\s*\\(",
+					"beginCaptures": {
+						"1": {
+							"name": "entity.name.function.gsc"
+						}
+					},
+					"end": "\\)",
+					"patterns": [
+						{
+							"include": "#comments"
+						},
+						{
+							"begin": "\\b[A-Za-z_][A-Za-z_0-9]*\\b",
+							"beginCaptures": {
+							  "0": {
+									"name": "variable.parameter.function.gsc"
+								}
+							},
+							"end": "(?:,|(?=[\\)]))",
+							"patterns": [
+								{
+									"include": "#comments"
+								},
+								{
+									"include": "#invalid"
+								}
+							]
+						}
+					]
+				},
+				{
+					"begin": "{",
+					"end": "(?=})",
+					"name": "meta.function.body.gsc",
+					"patterns": [
+						{
+							"include": "#scope"
+						}
+					]
+				}
+			]
+		},
+
+
+		"scope": {
+			"comment": "Scope { ... } block",
+			"patterns": [
+				{
+					"name": "meta.scope.gsc",
+					"begin": "\\{",
+					"end": "\\}",
+					"patterns": [				
+						{ "include": "#scope" }
+					]
+				},
+				{ "include": "#developer"},
+				{ "include": "#comments"},
+				{ "include": "#constants"},
+				{ "include": "#keywords"},
+				{ "include": "#function_calls"},
+				{ "include": "#variables"}
+			]
+
+		},
+
+		"developer": {
+			"comment": "Developer blocks /#...#/ inside functions",
+			"name": "developer.block.gsc",
+			"begin": "/#",
+			"beginCaptures": {
+				"0": {
+					"name": "keyword.control"
+				}
+			},
+			"end": "#/",
+			"endCaptures": {
+				"0": {
+					"name": "keyword.control"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#scope"
+				}
+			]
+		},
+
 		"keywords": {
 			"patterns": [
 				{
@@ -61,29 +191,83 @@
 				}
 			]
 		},
+		
 		"constants":{
 			"patterns": [
 				{
-					"match": "\\b(true|false|undefined)\\b",
-					"name": "constant.language"
+					"name": "constant.language.gsc",
+					"match": "\\b(true|false|undefined)\\b"
 				},
 				{
-					"match": "(?:\\b|\\s)(?:(?:[1-9][0-9]*|0)?\\.[0-9]+|[1-9][0-9]*|0)\\b",
-					"name": "constant.numeric"
+					"name": "constant.numeric.gsc",
+					"match": "(?:\\b|\\s)(?:(?:[1-9][0-9]*|0)?\\.[0-9]+|[1-9][0-9]*|0)\\b"
+				},
+				{
+					"name": "keyword.other",
+					"match": "%[A-Za-z_][A-Za-z_0-9]*"
+				},
+				{
+					"comment": "Localized string: &\"STRING_EXAMPLE\" ",
+					"match": "(&)(?=\"[^\"]*\")",
+					"captures": {
+					  	"1": {
+							"name": "keyword.control.directive.include.gsc"
+					  	}
+					}
+				},
+				{
+					"include": "#strings"
 				}
 			]
 		},
-		"functions": {
+
+		"strings": {
+			"name": "string.quoted.double.gsc",
+			"begin": "\"",
+			"end": "\"",
 			"patterns": [
 				{
-					"name": "meta.function",
-					"match": "(?:(\\b[\\w\\\\/]+)::)?(\\w+)\\s*\\(",
+					"comment": "Highlight escaped chars",
+					"name": "constant.character.escape.gsc",
+					"match": "\\\\."
+				},
+				{
+					"comment": "Highlight &&1 &&2 &&3 keywords in string",
+					"name": "constant.character.escape.gsc",
+					"match": "&&[1-9]"
+				}
+			]
+		},
+
+		"function_calls": {
+			"patterns": [
+				{
+					"comment": "Function with file path: maps\\mp\\gametypes\\_script::functionCall or pointer ::function",
+					"match": "(\\b[A-Za-z_][A-Za-z_0-9]*(?:\\\\[A-Za-z_][A-Za-z_0-9]*)*)?\\s*::\\s*([A-Za-z_][A-Za-z_0-9]*)",
 					"captures": {
 						"1": {
-							"name": "entity.name.class"
+							"name": "entity.name.class.gsc"
 						},
 						"2": {
-							"name": "entity.name.function"
+							"name": "entity.name.function.gsc"
+						}
+					}
+				},
+				{
+					"comment": "Function call: functionCall(",
+					"match": "\\b([A-Za-z_][A-Za-z_0-9]*)\\b(?=\\s*\\()",
+					"captures": {
+						"1": {
+							"name": "entity.name.function.gsc"
+						}
+					}
+				},
+				{
+					"comment": "Function pointer [[functionName]]",
+					"match": "\\[\\[(\\b[A-Za-z_][A-Za-z_0-9]*)\\]\\]",
+					"captures": {
+						"1": {
+							"name": "entity.name.function.gsc"
 						}
 					}
 				}
