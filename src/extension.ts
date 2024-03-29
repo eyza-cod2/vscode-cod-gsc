@@ -1,6 +1,8 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import { FunctionDefinitionProvider } from './FunctionDefinitionProvider'; // Adjust the path as necessary
+import { HoverProvider } from './HoverProvider'; // Adjust the path as necessary
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -20,6 +22,10 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 
 	context.subscriptions.push(disposable);
+
+    context.subscriptions.push(vscode.languages.registerHoverProvider('gsc', new HoverProvider()));
+
+	context.subscriptions.push(vscode.languages.registerDefinitionProvider('gsc', new FunctionDefinitionProvider()));
 }
 
 // This method is called when your extension is deactivated
