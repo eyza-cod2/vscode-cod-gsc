@@ -2,13 +2,17 @@
   "name": "gsc",
   "displayName": "CoD GSC",
   "description": "Call of Duty GSC scripts",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "engines": {
     "vscode": "^1.87.0"
   },
   "categories": [
     "Other"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eyza-cod2/vscode-cod-gsc.git"
+  },
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
