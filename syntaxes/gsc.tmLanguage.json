@@ -3,10 +3,12 @@
 	"name": "GSC",
 	"patterns": [
 		{ "include": "#comments" },
-		{ "include": "#include" },
-		{ "include": "#using_animtree" },
-		{ "include": "#developer_outer" },
-		{ "include": "#functions" }
+		{ "include2": "#include" },
+		{ "include2": "#using_animtree" },
+		{ "include": "#comments"},
+		{ "include": "#constants"},
+		{ "include": "#keywords"},
+		{ "include": "#variables"}
 	],
 	"repository": {
 
@@ -60,130 +62,11 @@
 			]
 		},
 
-		"developer_outer":{
-			"comment": "Developer blocks /#...#/ outside functions",
-			"name": "developer.block.gsc",
-			"begin": "/#",
-			"beginCaptures": {
-				"0": {
-					"name": "keyword.control"
-				}
-			},
-			"end": "#/",
-			"endCaptures": {
-				"0": {
-					"name": "keyword.control"
-				}
-			},
-			"patterns": [
-				{
-					"include": "#functions"
-				}
-			]
-		},
-
-		"functions": {
-			"comment": "Example: functionName(param1, param2) { }",
-			"begin": "(?=\\b[A-Za-z_][A-Za-z_0-9]*\\s*\\()",
-			"end": "\\}",
-			"patterns": [
-				{
-				"include": "#comment"
-				},
-				{
-					"name": "meta.function.identifier.gsc",
-					"begin": "\\b([A-Za-z_][A-Za-z_0-9]*)\\s*\\(",
-					"beginCaptures": {
-						"1": {
-							"name": "entity.name.function.gsc"
-						}
-					},
-					"end": "\\)",
-					"patterns": [
-						{
-							"include": "#comments"
-						},
-						{
-							"begin": "\\b[A-Za-z_][A-Za-z_0-9]*\\b",
-							"beginCaptures": {
-							  "0": {
-									"name": "variable.parameter.function.gsc"
-								}
-							},
-							"end": "(?:,|(?=[\\)]))",
-							"patterns": [
-								{
-									"include": "#comments"
-								},
-								{
-									"include": "#invalid"
-								}
-							]
-						}
-					]
-				},
-				{
-					"begin": "{",
-					"end": "(?=})",
-					"name": "meta.function.body.gsc",
-					"patterns": [
-						{
-							"include": "#scope"
-						}
-					]
-				}
-			]
-		},
-
-
-		"scope": {
-			"comment": "Scope { ... } block",
-			"patterns": [
-				{
-					"name": "meta.scope.gsc",
-					"begin": "\\{",
-					"end": "\\}",
-					"patterns": [				
-						{ "include": "#scope" }
-					]
-				},
-				{ "include": "#developer"},
-				{ "include": "#comments"},
-				{ "include": "#constants"},
-				{ "include": "#keywords"},
-				{ "include": "#function_calls"},
-				{ "include": "#variables"}
-			]
-
-		},
-
-		"developer": {
-			"comment": "Developer blocks /#...#/ inside functions",
-			"name": "developer.block.gsc",
-			"begin": "/#",
-			"beginCaptures": {
-				"0": {
-					"name": "keyword.control"
-				}
-			},
-			"end": "#/",
-			"endCaptures": {
-				"0": {
-					"name": "keyword.control"
-				}
-			},
-			"patterns": [
-				{
-					"include": "#scope"
-				}
-			]
-		},
-
 		"keywords": {
 			"patterns": [
 				{
 					"name": "keyword.control.gsc",
-					"match": "\\b(break(point)?|case|continue|default|else|for|if|return|switch|thread|waittillframeend|while|wait|endon|waittill|notify)\\b"
+					"match": "\\b(break(point)?|case|continue|default|else|for|if|return|switch|thread|waittill|waittillmatch|waittillframeend|while|wait|endon|notify)\\b"
 				},
 				{
 					"name": "variable.language",
@@ -239,40 +122,6 @@
 			]
 		},
 
-		"function_calls": {
-			"patterns": [
-				{
-					"comment": "Function with file path: maps\\mp\\gametypes\\_script::functionCall or pointer ::function",
-					"match": "(\\b[A-Za-z_][A-Za-z_0-9]*(?:\\\\[A-Za-z_][A-Za-z_0-9]*)*)?\\s*::\\s*([A-Za-z_][A-Za-z_0-9]*)",
-					"captures": {
-						"1": {
-							"name": "entity.name.class.gsc"
-						},
-						"2": {
-							"name": "entity.name.function.gsc"
-						}
-					}
-				},
-				{
-					"comment": "Function call: functionCall(",
-					"match": "\\b([A-Za-z_][A-Za-z_0-9]*)\\b(?=\\s*\\()",
-					"captures": {
-						"1": {
-							"name": "entity.name.function.gsc"
-						}
-					}
-				},
-				{
-					"comment": "Function pointer [[functionName]]",
-					"match": "\\[\\[(\\b[A-Za-z_][A-Za-z_0-9]*)\\]\\]",
-					"captures": {
-						"1": {
-							"name": "entity.name.function.gsc"
-						}
-					}
-				}
-			]
-		},
 		"variables": {
 			"patterns": [
 				{

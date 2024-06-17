@@ -2,7 +2,7 @@
   "name": "gsc",
   "displayName": "CoD GSC",
   "description": "Call of Duty GSC scripts",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "engines": {
     "vscode": "^1.87.0"
   },
@@ -29,8 +29,12 @@
     }],
     "commands": [
       {
-        "command": "gsc.helloWorld",
-        "title": "Hello World"
+        "command": "gsc.debugParsedGscFile",
+        "title": "GSC: Print parsed GSC file data into console"
+      },
+      {
+        "command": "gsc.debugParsedGscFileStructure",
+        "title": "GSC: Print parsed GSC file structure into console"
       }
     ]
   },
