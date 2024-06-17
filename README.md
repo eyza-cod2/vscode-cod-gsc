@@ -1,6 +1,26 @@
-# CoD GSC scripts
+# CoD GSC extension for VS Code
 
-This extension adds language support for the GSC scripts used in Call of Duty.
+This extension adds language support for the GSC scripts used in Call of Duty (CoD1, CoD2, CoD4, CoD5:WaW, CoD6:MW2, COD7:BO1).
+
+This extension is still under development and is not fully finished. Check the list of the available features in [List of features](#list-of-features).
+
+
+## Supported games
+
+| Game     | Status  | Tested with    |
+|----------|---------|----------------|
+| CoD1     | ❌ Not tested     | -     |
+| CoD2     | ✅ Tested         | raw files<br>zPAM 3.33 mod - https://github.com/eyza-cod2/zpam3    |
+| CoD3     | ❌ Not tested     | -    |
+| CoD4     | ✅ Tested         | raw files<br>Promod 2.20 mod - https://github.com/promod/promod4<br>OpenWarfare mod - https://github.com/cod4mw/openwarfare    |
+| CoD5     | ❌ Not tested     | -    |
+| CoD6:MW2 | ❌ Not tested     | -    |
+| CoD7:BO1 | ✅ Tested         |  Redemption mod - https://github.com/roachnacs/redemption-bo1-gsc<br>Reimagined zombies mod - https://github.com/Jbleezy/BO1-Reimagined   |
+| Other    | 🚫 Not supported     |     |
+
+Games released later will not be supported because the GSC syntax changed significantly since then.
+
+
 
 
 
@@ -68,7 +88,6 @@ Function hover info
 
 
 ## TODO
-- Add this extension into Visual Studio Marketplace
 - Parser for .menu files
 - Integrate list of built-in functions
 - Make selector to choose between games - each game has different set of functions
@@ -84,25 +103,9 @@ Function hover info
 
 
 
-## Tested with
-- CoD2 raw files
-- CoD2 zPAM 3.33 mod - https://github.com/eyza-cod2/zpam3
-- CoD4 Promod 2.20 mod - https://github.com/promod/promod4
-- CoD4 OpenWarfare mod - https://github.com/cod4mw/openwarfare
-- CoD:BO1 Redemption mod - https://github.com/roachnacs/redemption-bo1-gsc
-- CoD:BO1 Reimagined zombies mod - https://github.com/Jbleezy/BO1-Reimagined
-
-
 
 ## Install
-To install this extension into Visual Studio Code copy this repository folder into the `.vscode/extensions` folder. Depending on your operating system, this folder has a different location:
-- Windows: `%USERPROFILE%\.vscode\extensions`
-- macOS: `~/.vscode/extensions`
-- Linux: `~/.vscode/extensions`
-
-After that restart the Visual Studio Code. 
-
-This extension is not available on Visual Studio Marketplace yet.
+This extension is available through Visual Studio Marketplace.
 
 
 
