@@ -25,86 +25,89 @@ export class GscDiagnosticsCollection {
     static async updateDiagnostics(uri: vscode.Uri) {
         //console.log("[DiagnosticsProvider]", "Document changed, creating diagnostics...");
 
-        var diagnostics: vscode.Diagnostic[] = [];
+        const diagnostics: vscode.Diagnostic[] = [];
 
-        var gsc2 = await GscFile.getFile(uri);
+        const gscData = await GscFile.getFile(uri);
 
-        function walkGroupItems(parentGroup: GscGroup, items: GscGroup[], action: (parentGroup: GscGroup, group: GscGroup) => boolean) {
+        walkGroupItems(gscData.root, gscData.root.items);
+
+        this.diagnosticCollection.set(uri, diagnostics);
+
+
+
+        function walkGroupItems(parentGroup: GscGroup, items: GscGroup[]) {
             // This object have child items, process them first
             for (var i = 0; i < items.length; i++) {
-                var innerGroup = items[i];
-                const fullRangeErrorSet = action(parentGroup, innerGroup);
-                if (fullRangeErrorSet === false) {
-                    walkGroupItems(innerGroup, innerGroup.items, action);
+                const innerGroup = items[i];
+                const nextGroup = items.at(i + 1);
+
+                const diagnostic = action(parentGroup, innerGroup);
+                if (diagnostic === undefined) {
+                    walkGroupItems(innerGroup, innerGroup.items);
+                } else {
+                    diagnostics.push(diagnostic);
+                }
+
+
+                function action(parentGroup: GscGroup, group: GscGroup): vscode.Diagnostic | undefined
+                {
+                    if (group.type === GroupType.Unknown) {
+                        return new vscode.Diagnostic(group.getRange(), "Unexpected token", vscode.DiagnosticSeverity.Error);
+                    }
+                    else if (group.solved === false) {
+        
+                        if (group.type === GroupType.Statement && parentGroup.type !== GroupType.TerminatedStatement) {
+                            if (nextGroup === undefined || nextGroup.solved) {
+                                return new vscode.Diagnostic(group.getRange(), "Missing ;", vscode.DiagnosticSeverity.Error);
+                            } else {
+                                return undefined; // ignore this error if next group is also not solved
+                            }
+                        }
+                        else if (group.typeEqualsToOneOf(GroupType.Expression, GroupType.ForExpression) && group.items.length === 0) {
+                            return new vscode.Diagnostic(group.getRange(), "Empty expression", vscode.DiagnosticSeverity.Error);
+                        }
+                        else
+                        {
+                            const firstToken = group.getFirstToken();
+            
+                            var token = group.getSingleToken();
+                            if (token !== undefined) {
+                                return new vscode.Diagnostic(group.getRange(), "Unexpected token " + firstToken.name, vscode.DiagnosticSeverity.Error);
+                            } else {
+                                const range = group.getRange();
+                                return new vscode.Diagnostic(range, "Unexpected tokens - " + group.toString(), vscode.DiagnosticSeverity.Error);
+                            }
+                        }
+        
+                    } else {
+                        switch (group.type as GroupType) {
+         
+                            case GroupType.ExtraTerminator:
+                                return new vscode.Diagnostic(group.getRange(), "Terminator ; is not needed", vscode.DiagnosticSeverity.Information);
+        
+                            /*
+                            case GroupType.TerminatedStatement:
+                                if (group.items.length <= 1) {
+                                    new vscode.Diagnostic(group.getRange(), "Unreachable code", vscode.DiagnosticSeverity.Warning));
+                                    return true;
+                                }
+                                break;*/
+                        }
+                    }
+        
+        
+                    /*
+                    if (group.deadCode && parentGroup.deadCode === false) {
+                        new vscode.Diagnostic(group.getRange(), "Unreachable code", vscode.DiagnosticSeverity.Warning));
+                        return true;
+                    }*/
+        
+                    return undefined;
                 }
             }
         }
 
 
-        walkGroupItems(gsc2.root, gsc2.root.items, (parentGroup, group) => {
-
-            const terminationNeededFor = [GroupType.Statement,
-                GroupType.FunctionCall, GroupType.FunctionCallWithThread, GroupType.FunctionCallWithObject, GroupType.FunctionCallWithObjectAndThread,
-                GroupType.KeywordCall, GroupType.KeywordCallWithObject];
-
-            if (group.type === GroupType.Unknown) {
-                diagnostics.push(new vscode.Diagnostic(group.getRange(), "Unexpected token", vscode.DiagnosticSeverity.Error));
-                return true;
-            }
-            else if (group.solved === false) {
-
-                if (group.type === GroupType.Statement && parentGroup.type !== GroupType.TerminatedStatement) {
-                    diagnostics.push(new vscode.Diagnostic(group.getRange(), "Missing ;", vscode.DiagnosticSeverity.Error));
-                    return true;
-                }
-                else if (group.typeEqualsToOneOf(GroupType.Expression, GroupType.ForExpression) && group.items.length === 0) {
-                    diagnostics.push(new vscode.Diagnostic(group.getRange(), "Empty expression", vscode.DiagnosticSeverity.Error));
-                    return true;
-                }
-                else
-                {
-                    const firstToken = group.getFirstToken();
-    
-                    var token = group.getSingleToken();
-                    if (token !== undefined) {
-                        diagnostics.push(new vscode.Diagnostic(group.getRange(), "Unexpected token " + firstToken.name, vscode.DiagnosticSeverity.Error));
-                        return true;
-                    } else {
-                        const range = group.getRange();
-                        diagnostics.push(new vscode.Diagnostic(range, "Unexpected tokens - " + group.toString(), vscode.DiagnosticSeverity.Error));
-                        return true;
-                        //diagnostics.push(new vscode.Diagnostic(new vscode.Range(range.start.line, range.start.character, range.start.line, range.start.character+1), "Unsolved tokens - start", vscode.DiagnosticSeverity.Error));
-                    }
-                }
-
-            } else {
-                switch (group.type as GroupType) {
- 
-                    case GroupType.ExtraTerminator:
-                        diagnostics.push(new vscode.Diagnostic(group.getRange(), "Terminator ; is not needed", vscode.DiagnosticSeverity.Information));
-                        return true;
-/*
-                    case GroupType.TerminatedStatement:
-                        if (group.items.length <= 1) {
-                            diagnostics.push(new vscode.Diagnostic(group.getRange(), "Unreachable code", vscode.DiagnosticSeverity.Warning));
-                            return true;
-                        }
-                        break;*/
-                }
-            }
-
-
-/*
-            if (group.deadCode && parentGroup.deadCode === false) {
-                diagnostics.push(new vscode.Diagnostic(group.getRange(), "Unreachable code", vscode.DiagnosticSeverity.Warning));
-                return true;
-            }*/
-
-            return false;
-        });
-
-
-        this.diagnosticCollection.set(uri, diagnostics);
 
         //console.log("[DiagnosticsProvider]", "Diagnostics done");
     }

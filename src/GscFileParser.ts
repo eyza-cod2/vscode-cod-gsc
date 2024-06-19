@@ -1503,15 +1503,18 @@ export class GscFileParser {
         function solve_unsolved(
             group: GscGroup,
             parentGroup: GscGroup | undefined = undefined,
+            previousItem: GscGroup | undefined = undefined,
             lastFunctionScope: GscGroup | undefined = undefined, 
             lastDeveloperScope: GscGroup | undefined = undefined
         )
         {
             for (var i = 0; i < group.items.length; i++) {
                 const innerGroup = group.items[i];
+                const previousGroup = i === 0 ? undefined : group.items[i - 1];
                 solve_unsolved(
                     innerGroup, 
                     group, 
+                    previousGroup,
                     group.type === GroupType.FunctionScope ? group : lastFunctionScope, 
                     group.typeEqualsToOneOf(GroupType.DeveloperBlock, GroupType.DeveloperBlockInner) ? group : lastDeveloperScope
                 );        
@@ -1549,10 +1552,16 @@ export class GscFileParser {
                         (parentGroup.typeEqualsToOneOf(...GscFileParser.scopeTypes) && parentGroup.type !== GroupType.SwitchScope) ||
                         (parentGroup.type === GroupType.DeveloperBlockInner))) 
                     {
-                        if (group.type === GroupType.Terminator && group.solved === false) {
-                            group.type = GroupType.ExtraTerminator;
+                        if (group.type === GroupType.Terminator) {
+                            if (group.solved === false && (previousItem === undefined || previousItem.solved)) {
+                                group.type = GroupType.ExtraTerminator;
+                                group.solved = true; 
+                            }
+                        } else {
+
+                            group.solved = true; 
                         }
-                        group.solved = true; 
+
                     }
                     break;
 
@@ -2497,7 +2506,7 @@ export class GscGroup {
             if (!variableTokens.includes(token.type) || i === scopeOfCursorGroup.tokenIndexStart) {
                 const startIndex = i + 1;
                 
-                // Now go to right untill cursor pos is reached
+                // Now go to right until cursor pos is reached
                 for (i = startIndex; i <= groupAtCursor.tokenIndexEnd; i++) {
                     const token = tokens[i];
                     var tokenName = "";
