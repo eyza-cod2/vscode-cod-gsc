@@ -324,72 +324,75 @@ var GroupType;
     GroupType[GroupType["Vector"] = 13] = "Vector";
     /** The result of an operation, like && */
     GroupType[GroupType["Value"] = 14] = "Value";
+    /** Casting expression like (int) - used in CoD1 */
+    GroupType[GroupType["CastExpression"] = 15] = "CastExpression";
+    GroupType[GroupType["DataTypeKeyword"] = 16] = "DataTypeKeyword";
     /** Variable reference like level.aaa or game["aaa"] or level.aaa["bbb"].ccc */
-    GroupType[GroupType["Reference"] = 15] = "Reference";
+    GroupType[GroupType["Reference"] = 17] = "Reference";
     /** Name of the variable like level or game or var1 */
-    GroupType[GroupType["VariableName"] = 16] = "VariableName";
+    GroupType[GroupType["VariableName"] = 18] = "VariableName";
     /** Field of structure variable like level.aaa  */
-    GroupType[GroupType["StructureField"] = 17] = "StructureField";
+    GroupType[GroupType["StructureField"] = 19] = "StructureField";
     /** Statement like a=1 or a+=1 or a++ */
-    GroupType[GroupType["Statement"] = 18] = "Statement";
+    GroupType[GroupType["Statement"] = 20] = "Statement";
     /** Statement like a=1 or a+=1 or a++ terminated with ; */
-    GroupType[GroupType["TerminatedStatement"] = 19] = "TerminatedStatement";
+    GroupType[GroupType["TerminatedStatement"] = 21] = "TerminatedStatement";
     /** Statement like #include path\name */
-    GroupType[GroupType["PreprocessorStatement"] = 20] = "PreprocessorStatement";
+    GroupType[GroupType["PreprocessorStatement"] = 22] = "PreprocessorStatement";
     /** Statement like #include path\name terminated with ; */
-    GroupType[GroupType["TerminatedPreprocessorStatement"] = 21] = "TerminatedPreprocessorStatement";
+    GroupType[GroupType["TerminatedPreprocessorStatement"] = 23] = "TerminatedPreprocessorStatement";
     /** Parameters expression of preprocessor #using_animtree */
-    GroupType[GroupType["PreprocessorAnimtreeParametersExpression"] = 22] = "PreprocessorAnimtreeParametersExpression";
+    GroupType[GroupType["PreprocessorAnimtreeParametersExpression"] = 24] = "PreprocessorAnimtreeParametersExpression";
     /** Single ; */
-    GroupType[GroupType["Terminator"] = 23] = "Terminator";
+    GroupType[GroupType["Terminator"] = 25] = "Terminator";
     /** Unneeded ; after terminated statement */
-    GroupType[GroupType["ExtraTerminator"] = 24] = "ExtraTerminator";
+    GroupType[GroupType["ExtraTerminator"] = 26] = "ExtraTerminator";
     /** Function definition funcName(p1, p2) { ... } */
-    GroupType[GroupType["FunctionDefinition"] = 25] = "FunctionDefinition";
+    GroupType[GroupType["FunctionDefinition"] = 27] = "FunctionDefinition";
     /** Function declaration like funcName(p1, p2) */
-    GroupType[GroupType["FunctionDeclaration"] = 26] = "FunctionDeclaration";
+    GroupType[GroupType["FunctionDeclaration"] = 28] = "FunctionDeclaration";
     /** Like funcName() or maps\script::funcName() */
-    GroupType[GroupType["FunctionCall"] = 27] = "FunctionCall";
+    GroupType[GroupType["FunctionCall"] = 29] = "FunctionCall";
     /** Like var1 funcName() or var1 maps\script::funcName() */
-    GroupType[GroupType["FunctionCallWithObject"] = 28] = "FunctionCallWithObject";
+    GroupType[GroupType["FunctionCallWithObject"] = 30] = "FunctionCallWithObject";
     /** Like thread funcName() or thread maps\script::funcName() */
-    GroupType[GroupType["FunctionCallWithThread"] = 29] = "FunctionCallWithThread";
+    GroupType[GroupType["FunctionCallWithThread"] = 31] = "FunctionCallWithThread";
     /** Like var1 thread funcName() or var1 thread maps\script::funcName() */
-    GroupType[GroupType["FunctionCallWithObjectAndThread"] = 30] = "FunctionCallWithObjectAndThread";
+    GroupType[GroupType["FunctionCallWithObjectAndThread"] = 32] = "FunctionCallWithObjectAndThread";
     /** Like ::funcName */
-    GroupType[GroupType["FunctionPointer"] = 31] = "FunctionPointer";
+    GroupType[GroupType["FunctionPointer"] = 33] = "FunctionPointer";
     /** Like maps\script::funcName */
-    GroupType[GroupType["FunctionPointerExternal"] = 32] = "FunctionPointerExternal";
+    GroupType[GroupType["FunctionPointerExternal"] = 34] = "FunctionPointerExternal";
     /** [[var]] */
-    GroupType[GroupType["FunctionDereference"] = 33] = "FunctionDereference";
+    GroupType[GroupType["FunctionDereference"] = 35] = "FunctionDereference";
     /** Like funcName */
-    GroupType[GroupType["FunctionName"] = 34] = "FunctionName";
+    GroupType[GroupType["FunctionName"] = 36] = "FunctionName";
     /** Like (..., ...) */
-    GroupType[GroupType["FunctionParametersExpression"] = 35] = "FunctionParametersExpression";
+    GroupType[GroupType["FunctionParametersExpression"] = 37] = "FunctionParametersExpression";
     /** Like var1 */
-    GroupType[GroupType["FunctionParameterName"] = 36] = "FunctionParameterName";
+    GroupType[GroupType["FunctionParameterName"] = 38] = "FunctionParameterName";
     /** func() {...} */
-    GroupType[GroupType["FunctionScope"] = 37] = "FunctionScope";
+    GroupType[GroupType["FunctionScope"] = 39] = "FunctionScope";
     /** Keyword "if" and function parameter expression ()  */
-    GroupType[GroupType["IfDeclaration"] = 38] = "IfDeclaration";
+    GroupType[GroupType["IfDeclaration"] = 40] = "IfDeclaration";
     /** If scope */
-    GroupType[GroupType["IfScope"] = 39] = "IfScope";
+    GroupType[GroupType["IfScope"] = 41] = "IfScope";
     /** waittill (..., ...) */
-    GroupType[GroupType["KeywordCall"] = 40] = "KeywordCall";
+    GroupType[GroupType["KeywordCall"] = 42] = "KeywordCall";
     /** level waittill (..., ...) */
-    GroupType[GroupType["KeywordCallWithObject"] = 41] = "KeywordCallWithObject";
+    GroupType[GroupType["KeywordCallWithObject"] = 43] = "KeywordCallWithObject";
     /** level waittill (..., ...) */
-    GroupType[GroupType["KeywordParametersExpression"] = 42] = "KeywordParametersExpression";
-    GroupType[GroupType["ForDeclaration"] = 43] = "ForDeclaration";
-    GroupType[GroupType["ForExpression"] = 44] = "ForExpression";
-    GroupType[GroupType["ForScope"] = 45] = "ForScope";
-    GroupType[GroupType["ForStatement"] = 46] = "ForStatement";
-    GroupType[GroupType["WhileDeclaration"] = 47] = "WhileDeclaration";
-    GroupType[GroupType["WhileScope"] = 48] = "WhileScope";
-    GroupType[GroupType["SwitchDeclaration"] = 49] = "SwitchDeclaration";
-    GroupType[GroupType["SwitchScope"] = 50] = "SwitchScope";
-    GroupType[GroupType["CaseLabel"] = 51] = "CaseLabel";
-    GroupType[GroupType["CaseScope"] = 52] = "CaseScope";
+    GroupType[GroupType["KeywordParametersExpression"] = 44] = "KeywordParametersExpression";
+    GroupType[GroupType["ForDeclaration"] = 45] = "ForDeclaration";
+    GroupType[GroupType["ForExpression"] = 46] = "ForExpression";
+    GroupType[GroupType["ForScope"] = 47] = "ForScope";
+    GroupType[GroupType["ForStatement"] = 48] = "ForStatement";
+    GroupType[GroupType["WhileDeclaration"] = 49] = "WhileDeclaration";
+    GroupType[GroupType["WhileScope"] = 50] = "WhileScope";
+    GroupType[GroupType["SwitchDeclaration"] = 51] = "SwitchDeclaration";
+    GroupType[GroupType["SwitchScope"] = 52] = "SwitchScope";
+    GroupType[GroupType["CaseLabel"] = 53] = "CaseLabel";
+    GroupType[GroupType["CaseScope"] = 54] = "CaseScope";
 })(GroupType || (exports.GroupType = GroupType = {}));
 /**
  * First step is to parse file content into array of @see TokenType which represents words, brackets, operators, comments, strings,...
@@ -1109,7 +1112,7 @@ class GscFileParser {
                 // This type is already considered as value, don't wrap into another value group
                 else if (typeEqualsToOneOf(group.type, ...GscFileParser.valueTypes) && group.type !== GroupType.Expression && newType === GroupType.Value) { }
                 // Check type directly without making new group
-                else if (group.type === GroupType.Unknown || group.type === newType || (group.type === GroupType.Identifier && typeEqualsToOneOf(newType, GroupType.VariableName, GroupType.FunctionName, GroupType.StructureField, GroupType.XAnim)) || (group.type === GroupType.Expression && (typeEqualsToOneOf(newType, GroupType.FunctionParametersExpression, GroupType.KeywordParametersExpression, GroupType.ForExpression))) || (group.type === GroupType.FunctionCall && (newType === GroupType.FunctionDeclaration)) || (group.type === GroupType.Scope && (typeEqualsToOneOf(newType, GroupType.FunctionScope, GroupType.IfScope, GroupType.ForScope, GroupType.WhileScope, GroupType.SwitchScope))) || (newType === GroupType.ForStatement && (typeEqualsToOneOf(group.type, GroupType.TerminatedStatement, GroupType.Terminator)))) {
+                else if (group.type === GroupType.Unknown || group.type === newType || (group.type === GroupType.Identifier && typeEqualsToOneOf(newType, GroupType.VariableName, GroupType.FunctionName, GroupType.StructureField, GroupType.XAnim)) || (group.type === GroupType.Expression && (typeEqualsToOneOf(newType, GroupType.FunctionParametersExpression, GroupType.KeywordParametersExpression, GroupType.ForExpression, GroupType.CastExpression))) || (group.type === GroupType.FunctionCall && (newType === GroupType.FunctionDeclaration)) || (group.type === GroupType.Scope && (typeEqualsToOneOf(newType, GroupType.FunctionScope, GroupType.IfScope, GroupType.ForScope, GroupType.WhileScope, GroupType.SwitchScope))) || (newType === GroupType.ForStatement && (typeEqualsToOneOf(group.type, GroupType.TerminatedStatement, GroupType.Terminator)))) {
                     group.type = newType;
                 }
                 else {
@@ -1348,6 +1351,37 @@ class GscFileParser {
                 }
             });
         }
+        function group_casting(rootGroup) {
+            walkGroup(rootGroup, (parentGroup) => {
+                if (parentGroup.items.length === 0) {
+                    return;
+                }
+                for (var i = parentGroup.items.length - 2; i >= 0; i--) {
+                    // variable or keyword or object reference (func call)
+                    const childGroup1 = parentGroup.items[i];
+                    if (childGroup1.solved) {
+                        continue;
+                    }
+                    const childGroup2 = parentGroup.items.at(i + 1);
+                    if (childGroup2?.solved) {
+                        continue;
+                    }
+                    const child1Inner1 = childGroup1.items.at(0);
+                    const types = ["int", "bool", "float", "string"];
+                    if (childGroup1.type === GroupType.Expression && childGroup1.items.length === 1 &&
+                        child1Inner1?.type === GroupType.Identifier && types.includes(child1Inner1.getTokensAsString()) &&
+                        childGroup2?.typeEqualsToOneOf(...GscFileParser.valueTypesWithIdentifier)) {
+                        const newGroup = groupItems(parentGroup, i, GroupType.Value, 0, 0, childGroup1, childGroup2);
+                        changeGroupToSolvedAndChangeType(newGroup, childGroup1, GroupType.CastExpression);
+                        changeGroupToSolvedAndChangeType(newGroup, childGroup2, GroupType.Value);
+                        child1Inner1.type = GroupType.DataTypeKeyword;
+                        child1Inner1.solved = true;
+                        i++;
+                        continue; // go again to the same index
+                    }
+                }
+            });
+        }
         function group_value_operations(rootGroup) {
             walkGroup(rootGroup, (parentGroup) => {
                 if (parentGroup.items.length === 0) {
@@ -1410,7 +1444,7 @@ class GscFileParser {
                         }
                     }
                     // %anim_file_name
-                    if (childGroup1.getSingleToken()?.name === "%" &&
+                    else if (childGroup1.getSingleToken()?.name === "%" &&
                         childGroup2?.typeEqualsToOneOf(GroupType.Identifier)) {
                         const newGroup = groupItems(parentGroup, i, GroupType.Constant, 0, 0, childGroup1, childGroup2);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup1, GroupType.Token);
@@ -1873,6 +1907,9 @@ class GscFileParser {
         // var1 {FunctionCall}              ->   var1 CountPlayers()
         // var1 {FunctionCallWithThread}    ->   var1 thread CountPlayers()
         group_variables_and_function_call(rootGroup);
+        //console.log(this.debugAsString(tokens, rootGroup, true));
+        // Join (int)1   (int)level.name
+        group_casting(rootGroup);
         // Join operations
         // !var1   !level.aaa   !(...)   ~var1   aaa && !var1   aaa && !level.aaa   aaa && !(...)  aaa && bbb  %anim_file_name
         group_value_operations(rootGroup);

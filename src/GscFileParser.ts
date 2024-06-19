@@ -36,6 +36,10 @@ export enum GroupType {
     /** The result of an operation, like && */
     Value,
 
+    /** Casting expression like (int) - used in CoD1 */
+    CastExpression,
+    DataTypeKeyword,
+
     /** Variable reference like level.aaa or game["aaa"] or level.aaa["bbb"].ccc */
     Reference,
     /** Name of the variable like level or game or var1 */
@@ -856,7 +860,7 @@ export class GscFileParser {
                 else if (group.type === GroupType.Unknown || group.type === newType || (
                     group.type === GroupType.Identifier && typeEqualsToOneOf(newType, GroupType.VariableName, GroupType.FunctionName, GroupType.StructureField, GroupType.XAnim)
                 ) || (
-                    group.type === GroupType.Expression && (typeEqualsToOneOf(newType, GroupType.FunctionParametersExpression, GroupType.KeywordParametersExpression, GroupType.ForExpression)) 
+                    group.type === GroupType.Expression && (typeEqualsToOneOf(newType, GroupType.FunctionParametersExpression, GroupType.KeywordParametersExpression, GroupType.ForExpression, GroupType.CastExpression)) 
                 ) || (
                     group.type === GroupType.FunctionCall && (newType === GroupType.FunctionDeclaration)
                 ) || (
@@ -1091,6 +1095,37 @@ export class GscFileParser {
                 }
             });
         }
+
+
+        function group_casting(rootGroup: GscGroup) {
+            walkGroup(rootGroup, (parentGroup) => { 
+                if (parentGroup.items.length === 0) { return; }
+                for (var i = parentGroup.items.length - 2; i >= 0; i--) {
+                    
+                    // variable or keyword or object reference (func call)
+                    const childGroup1 = parentGroup.items[i];
+                    if (childGroup1.solved) { continue; }
+                    const childGroup2 = parentGroup.items.at(i + 1);
+                    if (childGroup2?.solved) { continue; }
+
+                    const child1Inner1 = childGroup1.items.at(0);
+
+                    const types = ["int", "bool", "float", "string"];
+
+                    if (childGroup1.type === GroupType.Expression && childGroup1.items.length === 1 && 
+                        child1Inner1?.type === GroupType.Identifier && types.includes(child1Inner1.getTokensAsString()) &&
+                        childGroup2?.typeEqualsToOneOf(...GscFileParser.valueTypesWithIdentifier))
+                    {
+                        const newGroup = groupItems(parentGroup, i, GroupType.Value, 0, 0, childGroup1, childGroup2);
+                        changeGroupToSolvedAndChangeType(newGroup, childGroup1, GroupType.CastExpression);
+                        changeGroupToSolvedAndChangeType(newGroup, childGroup2, GroupType.Value);
+                        child1Inner1.type = GroupType.DataTypeKeyword;
+                        child1Inner1.solved = true;
+                        i++; continue; // go again to the same index
+                    }
+                }
+            });
+        }
  
 
 
@@ -1158,7 +1193,7 @@ export class GscFileParser {
                     }
 
                     // %anim_file_name
-                    if (childGroup1.getSingleToken()?.name === "%" && 
+                    else if (childGroup1.getSingleToken()?.name === "%" && 
                         childGroup2?.typeEqualsToOneOf(GroupType.Identifier)) 
                     {
                         const newGroup = groupItems(parentGroup, i, GroupType.Constant, 0, 0, childGroup1, childGroup2);
@@ -1714,6 +1749,11 @@ export class GscFileParser {
         // var1 {FunctionCall}              ->   var1 CountPlayers()
         // var1 {FunctionCallWithThread}    ->   var1 thread CountPlayers()
         group_variables_and_function_call(rootGroup);
+
+        //console.log(this.debugAsString(tokens, rootGroup, true));
+
+        // Join (int)1   (int)level.name
+        group_casting(rootGroup);
  
         // Join operations
         // !var1   !level.aaa   !(...)   ~var1   aaa && !var1   aaa && !level.aaa   aaa && !(...)  aaa && bbb  %anim_file_name

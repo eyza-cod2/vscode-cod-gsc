@@ -44,72 +44,72 @@ class GscDiagnosticsCollection {
      */
     static async updateDiagnostics(uri) {
         //console.log("[DiagnosticsProvider]", "Document changed, creating diagnostics...");
-        var diagnostics = [];
-        var gsc2 = await GscFile_1.GscFile.getFile(uri);
-        function walkGroupItems(parentGroup, items, action) {
+        const diagnostics = [];
+        const gscData = await GscFile_1.GscFile.getFile(uri);
+        walkGroupItems(gscData.root, gscData.root.items);
+        this.diagnosticCollection.set(uri, diagnostics);
+        function walkGroupItems(parentGroup, items) {
             // This object have child items, process them first
             for (var i = 0; i < items.length; i++) {
-                var innerGroup = items[i];
-                const fullRangeErrorSet = action(parentGroup, innerGroup);
-                if (fullRangeErrorSet === false) {
-                    walkGroupItems(innerGroup, innerGroup.items, action);
+                const innerGroup = items[i];
+                const nextGroup = items.at(i + 1);
+                const diagnostic = action(parentGroup, innerGroup);
+                if (diagnostic === undefined) {
+                    walkGroupItems(innerGroup, innerGroup.items);
+                }
+                else {
+                    diagnostics.push(diagnostic);
+                }
+                function action(parentGroup, group) {
+                    if (group.type === GscFileParser_1.GroupType.Unknown) {
+                        return new vscode.Diagnostic(group.getRange(), "Unexpected token", vscode.DiagnosticSeverity.Error);
+                    }
+                    else if (group.solved === false) {
+                        if (group.type === GscFileParser_1.GroupType.Statement && parentGroup.type !== GscFileParser_1.GroupType.TerminatedStatement) {
+                            if (nextGroup === undefined || nextGroup.solved) {
+                                return new vscode.Diagnostic(group.getRange(), "Missing ;", vscode.DiagnosticSeverity.Error);
+                            }
+                            else {
+                                return undefined; // ignore this error if next group is also not solved
+                            }
+                        }
+                        else if (group.typeEqualsToOneOf(GscFileParser_1.GroupType.Expression, GscFileParser_1.GroupType.ForExpression) && group.items.length === 0) {
+                            return new vscode.Diagnostic(group.getRange(), "Empty expression", vscode.DiagnosticSeverity.Error);
+                        }
+                        else {
+                            const firstToken = group.getFirstToken();
+                            var token = group.getSingleToken();
+                            if (token !== undefined) {
+                                return new vscode.Diagnostic(group.getRange(), "Unexpected token " + firstToken.name, vscode.DiagnosticSeverity.Error);
+                            }
+                            else {
+                                const range = group.getRange();
+                                return new vscode.Diagnostic(range, "Unexpected tokens - " + group.toString(), vscode.DiagnosticSeverity.Error);
+                            }
+                        }
+                    }
+                    else {
+                        switch (group.type) {
+                            case GscFileParser_1.GroupType.ExtraTerminator:
+                                return new vscode.Diagnostic(group.getRange(), "Terminator ; is not needed", vscode.DiagnosticSeverity.Information);
+                            /*
+                            case GroupType.TerminatedStatement:
+                                if (group.items.length <= 1) {
+                                    new vscode.Diagnostic(group.getRange(), "Unreachable code", vscode.DiagnosticSeverity.Warning));
+                                    return true;
+                                }
+                                break;*/
+                        }
+                    }
+                    /*
+                    if (group.deadCode && parentGroup.deadCode === false) {
+                        new vscode.Diagnostic(group.getRange(), "Unreachable code", vscode.DiagnosticSeverity.Warning));
+                        return true;
+                    }*/
+                    return undefined;
                 }
             }
         }
-        walkGroupItems(gsc2.root, gsc2.root.items, (parentGroup, group) => {
-            const terminationNeededFor = [GscFileParser_1.GroupType.Statement,
-                GscFileParser_1.GroupType.FunctionCall, GscFileParser_1.GroupType.FunctionCallWithThread, GscFileParser_1.GroupType.FunctionCallWithObject, GscFileParser_1.GroupType.FunctionCallWithObjectAndThread,
-                GscFileParser_1.GroupType.KeywordCall, GscFileParser_1.GroupType.KeywordCallWithObject];
-            if (group.type === GscFileParser_1.GroupType.Unknown) {
-                diagnostics.push(new vscode.Diagnostic(group.getRange(), "Unexpected token", vscode.DiagnosticSeverity.Error));
-                return true;
-            }
-            else if (group.solved === false) {
-                if (group.type === GscFileParser_1.GroupType.Statement && parentGroup.type !== GscFileParser_1.GroupType.TerminatedStatement) {
-                    diagnostics.push(new vscode.Diagnostic(group.getRange(), "Missing ;", vscode.DiagnosticSeverity.Error));
-                    return true;
-                }
-                else if (group.typeEqualsToOneOf(GscFileParser_1.GroupType.Expression, GscFileParser_1.GroupType.ForExpression) && group.items.length === 0) {
-                    diagnostics.push(new vscode.Diagnostic(group.getRange(), "Empty expression", vscode.DiagnosticSeverity.Error));
-                    return true;
-                }
-                else {
-                    const firstToken = group.getFirstToken();
-                    var token = group.getSingleToken();
-                    if (token !== undefined) {
-                        diagnostics.push(new vscode.Diagnostic(group.getRange(), "Unexpected token " + firstToken.name, vscode.DiagnosticSeverity.Error));
-                        return true;
-                    }
-                    else {
-                        const range = group.getRange();
-                        diagnostics.push(new vscode.Diagnostic(range, "Unexpected tokens - " + group.toString(), vscode.DiagnosticSeverity.Error));
-                        return true;
-                        //diagnostics.push(new vscode.Diagnostic(new vscode.Range(range.start.line, range.start.character, range.start.line, range.start.character+1), "Unsolved tokens - start", vscode.DiagnosticSeverity.Error));
-                    }
-                }
-            }
-            else {
-                switch (group.type) {
-                    case GscFileParser_1.GroupType.ExtraTerminator:
-                        diagnostics.push(new vscode.Diagnostic(group.getRange(), "Terminator ; is not needed", vscode.DiagnosticSeverity.Information));
-                        return true;
-                    /*
-                                        case GroupType.TerminatedStatement:
-                                            if (group.items.length <= 1) {
-                                                diagnostics.push(new vscode.Diagnostic(group.getRange(), "Unreachable code", vscode.DiagnosticSeverity.Warning));
-                                                return true;
-                                            }
-                                            break;*/
-                }
-            }
-            /*
-                        if (group.deadCode && parentGroup.deadCode === false) {
-                            diagnostics.push(new vscode.Diagnostic(group.getRange(), "Unreachable code", vscode.DiagnosticSeverity.Warning));
-                            return true;
-                        }*/
-            return false;
-        });
-        this.diagnosticCollection.set(uri, diagnostics);
         //console.log("[DiagnosticsProvider]", "Diagnostics done");
     }
     static deleteDiagnostics(uri) {
