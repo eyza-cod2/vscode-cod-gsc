@@ -4,6 +4,14 @@ All notable changes to the "gsc" extension will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
+## [0.0.5] - 2024-06-20
+
+- Improved error reporting of unexpected tokens / missing semicolon
+- Added syntax support for casting (used in COD1)
+- Fixed stack overflow error while parsing large files (caused by ...spread operator + recursive functions)
+- Fixed developer block /##/ which can be used as regular scope
+
+
 ## [0.0.4] - 2024-06-17
 
 - New GSC parser
