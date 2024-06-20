@@ -416,7 +416,7 @@ var GroupType;
 class GscFileParser {
     static scopeTypes = [
         GroupType.FunctionScope, GroupType.IfScope, GroupType.ForScope, GroupType.WhileScope,
-        GroupType.SwitchScope, GroupType.CaseScope, GroupType.Scope
+        GroupType.SwitchScope, GroupType.CaseScope, GroupType.Scope, GroupType.DeveloperBlock, GroupType.DeveloperBlockInner
     ];
     static functionCallTypes = [
         GroupType.FunctionCall, GroupType.FunctionCallWithThread, GroupType.FunctionCallWithObjectAndThread, GroupType.FunctionCallWithObject
@@ -971,6 +971,9 @@ class GscFileParser {
                         else {
                             childGroup.type = GroupType.Identifier;
                         }
+                        break;
+                    case TokenType.Semicolon:
+                        childGroup.type = GroupType.Terminator;
                         break;
                 }
             }
@@ -1604,7 +1607,14 @@ class GscFileParser {
                         continue;
                     }
                     const childGroup2 = parentGroup.items[i + 1];
-                    if (!childGroup2.isUnsolvedGroupOfOneOfType(GroupType.Scope, GroupType.TerminatedStatement)) {
+                    // Statement may be also in developer block (found in CoD1 raw code)
+                    // According test in CoD2 engine, developer block /##/ act the same as {}
+                    //   if (1) /# a = 1; b = 1;#/  (both a and b get assigned)
+                    if (!childGroup2.isUnsolvedGroupOfOneOfType(GroupType.Scope, GroupType.TerminatedStatement, GroupType.DeveloperBlock)) {
+                        continue;
+                    }
+                    // Developer block /##/ is not valid for switch
+                    if (childGroup1.type === GroupType.SwitchDeclaration && childGroup2.type === GroupType.DeveloperBlock) {
                         continue;
                     }
                     const childGroup3 = parentGroup.items.at(i + 2);
@@ -1636,12 +1646,6 @@ class GscFileParser {
                 group_the_rest(innerGroup, group, lastFunctionScope);
             }
             switch (group.type) {
-                case GroupType.Unknown:
-                    if (group.isUnknownUnsolvedSingleTokenOfOneOfType(TokenType.Semicolon)) {
-                        group.type = GroupType.Terminator;
-                        group.solved = false;
-                    }
-                    break;
                 case GroupType.DeveloperBlock:
                     // Developer block inside function change to DeveloperBlockInner
                     if (lastFunctionScope !== undefined) {
@@ -1836,8 +1840,7 @@ class GscFileParser {
                 case GroupType.Scope:
                 case GroupType.TerminatedStatement:
                 case GroupType.Terminator:
-                    if (parentGroup !== undefined && ((parentGroup.typeEqualsToOneOf(...GscFileParser.scopeTypes) && parentGroup.type !== GroupType.SwitchScope) ||
-                        (parentGroup.type === GroupType.DeveloperBlockInner))) {
+                    if (parentGroup !== undefined && ((parentGroup.typeEqualsToOneOf(...GscFileParser.scopeTypes) && parentGroup.type !== GroupType.SwitchScope))) {
                         if (group.type === GroupType.Terminator) {
                             if (group.solved === false && (previousItem === undefined || previousItem.solved)) {
                                 group.type = GroupType.ExtraTerminator;
@@ -1973,9 +1976,9 @@ class GscFileParser {
         // statement;
         const terminationNeededFor = [GroupType.Statement, ...GscFileParser.functionCallTypes,
             GroupType.KeywordCall, GroupType.KeywordCallWithObject];
-        group_byGroupAndToken(terminationNeededFor, TokenType.Semicolon, GroupType.TerminatedStatement, GroupType.Statement, GroupType.Terminator);
+        group_byGroupAndGroup(terminationNeededFor, [GroupType.Terminator], GroupType.TerminatedStatement, GroupType.Statement, GroupType.Terminator);
         // preprocessor;
-        group_byGroupAndToken([GroupType.PreprocessorStatement], TokenType.Semicolon, GroupType.TerminatedPreprocessorStatement, GroupType.PreprocessorStatement, GroupType.Terminator);
+        group_byGroupAndGroup([GroupType.PreprocessorStatement], [GroupType.Terminator], GroupType.TerminatedPreprocessorStatement, GroupType.PreprocessorStatement, GroupType.Terminator);
         // Declaration join
         // if() {} else
         // for (...) {}       

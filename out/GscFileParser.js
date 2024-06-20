@@ -138,7 +138,7 @@ var GroupType;
 class GscFileParser {
     static scopeTypes = [
         GroupType.FunctionScope, GroupType.IfScope, GroupType.ForScope, GroupType.WhileScope,
-        GroupType.SwitchScope, GroupType.CaseScope, GroupType.Scope
+        GroupType.SwitchScope, GroupType.CaseScope, GroupType.Scope, GroupType.DeveloperBlock, GroupType.DeveloperBlockInner
     ];
     static functionCallTypes = [
         GroupType.FunctionCall, GroupType.FunctionCallWithThread, GroupType.FunctionCallWithObjectAndThread, GroupType.FunctionCallWithObject
@@ -560,31 +560,26 @@ class GscFileParser {
             }
         }*/
         function walkGroup(currentGroup, action, callForEmptyGroups = false) {
-            try {
-                const stack = [{ group: currentGroup, processed: false }];
-                while (stack.length > 0) {
-                    const { group, processed } = stack.pop();
-                    if (processed) {
-                        // Process the current group after its children
-                        if (callForEmptyGroups || group.items.length > 0) {
-                            action(group);
-                        }
+            const stack = [{ group: currentGroup, processed: false }];
+            while (stack.length > 0) {
+                const { group, processed } = stack.pop();
+                if (processed) {
+                    // Process the current group after its children
+                    if (callForEmptyGroups || group.items.length > 0) {
+                        action(group);
                     }
-                    else {
-                        // Push the current group back onto the stack to be processed after its children
-                        stack.push({ group, processed: true });
-                        // Add child items to the stack
-                        for (let i = group.items.length - 1; i >= 0; i--) {
-                            stack.push({ group: group.items[i], processed: false });
-                        }
+                }
+                else {
+                    // Push the current group back onto the stack to be processed after its children
+                    stack.push({ group, processed: true });
+                    // Add child items to the stack
+                    for (let i = group.items.length - 1; i >= 0; i--) {
+                        stack.push({ group: group.items[i], processed: false });
                     }
                 }
             }
-            catch (error) {
-                console.error(error);
-            }
         }
-        function groupItems(parentGroup, startIndex, wrapType, trimGroupStartBy, trimGroupEndBy, ...groups) {
+        function groupItems(parentGroup, startIndex, wrapType, trimGroupStartBy, trimGroupEndBy, groups) {
             if (groups.length === 0) {
                 throw new Error("No groups");
             }
@@ -603,9 +598,13 @@ class GscFileParser {
             groups.forEach(g => {
                 g.parent = newGroup;
             });
-            var trimIndexStart = (trimGroupStartBy > 0) ? trimGroupStartBy : undefined;
-            var trimIndexEnd = (trimGroupEndBy > 0) ? (trimGroupEndBy * -1) : undefined;
-            newGroup.items.push(...groups.slice(trimIndexStart, trimIndexEnd));
+            const trimIndexStart = (trimGroupStartBy > 0) ? trimGroupStartBy : 0;
+            const trimIndexEnd = (trimGroupEndBy > 0) ? (groups.length - trimGroupEndBy - 1) : (groups.length - 1);
+            // Stack overflow error for large arrays
+            //newGroup.items.push(...groups.slice(trimIndexStart, trimIndexEnd));
+            for (var i = trimIndexStart; i <= trimIndexEnd; i++) {
+                newGroup.items.push(groups[i]);
+            }
             // Value inside Value consider as solved
             if (startIndex === 0 && parentGroup.items.length === groups.length && parentGroup.solved &&
                 typeEqualsToOneOf(wrapType, ...GscFileParser.valueTypes) &&
@@ -644,7 +643,7 @@ class GscFileParser {
                     var indexStart = startIndexes.pop();
                     // Update at which token the scope ends (group is the scope) and then go to parent scope
                     if (indexStart !== undefined) {
-                        groupItems(group, indexStart, groupType, 1, 1, ...group.items.slice(indexStart, i + 1));
+                        groupItems(group, indexStart, groupType, 1, 1, group.items.slice(indexStart, i + 1));
                         i = indexStart - 1;
                         continue; // go again to the same index
                     }
@@ -659,7 +658,7 @@ class GscFileParser {
                         if (indexStart === group.items.length - 1) {
                             continue;
                         } // ignore last open bracket
-                        groupItems(group, indexStart, groupType, 1, 0, ...group.items.slice(indexStart, group.items.length));
+                        groupItems(group, indexStart, groupType, 1, 0, group.items.slice(indexStart, group.items.length));
                     }
                 }
             }
@@ -694,6 +693,9 @@ class GscFileParser {
                         else {
                             childGroup.type = GroupType.Identifier;
                         }
+                        break;
+                    case TokenType.Semicolon:
+                        childGroup.type = GroupType.Terminator;
                         break;
                 }
             }
@@ -764,7 +766,7 @@ class GscFileParser {
                 if (!childGroup3.isUnsolvedSingleTokenOfOneOfType(TokenType.Number)) {
                     continue;
                 }
-                groupItems(parentGroup, i + 1, GroupType.Value, 0, 0, childGroup2, childGroup3);
+                groupItems(parentGroup, i + 1, GroupType.Value, 0, 0, [childGroup2, childGroup3]);
                 childGroup2.type = GroupType.Token;
                 childGroup2.solved = true;
                 childGroup3.solved = true;
@@ -796,7 +798,7 @@ class GscFileParser {
                         changeGroupToSolvedAndChangeType(innerGroup1, innerGroup1.items[0], GroupType.Value);
                     }
                     else {
-                        const newGroup2 = groupItems(innerGroup1, 0, GroupType.Value, 0, 0, ...innerGroup1.items);
+                        const newGroup2 = groupItems(innerGroup1, 0, GroupType.Value, 0, 0, innerGroup1.items);
                         newGroup2.solved = true;
                     }
                     const openBrackets = new GscGroup({
@@ -815,7 +817,7 @@ class GscFileParser {
                     closeBrackets.solved = true;
                     childGroup1.type = GroupType.FunctionDereference;
                     childGroup1.items.splice(0, 1, openBrackets, ...innerGroup1.items, closeBrackets); // delete the additional array
-                    const newGroup = groupItems(parentGroup, i, GroupType.FunctionCall, 0, 0, childGroup1, childGroup2);
+                    const newGroup = groupItems(parentGroup, i, GroupType.FunctionCall, 0, 0, [childGroup1, childGroup2]);
                     changeGroupToSolvedAndChangeType(newGroup, childGroup1, GroupType.FunctionDereference);
                     changeGroupToSolvedAndChangeType(newGroup, childGroup2, GroupType.FunctionParametersExpression);
                 }
@@ -863,7 +865,7 @@ class GscFileParser {
                 }
                 // This identifier must be resolved to variable
                 if (group.type === GroupType.Identifier && (newType === GroupType.Value || newType === GroupType.Reference)) {
-                    const newGroup = groupItems(parentGroup, i, GroupType.Reference, 0, 0, group);
+                    const newGroup = groupItems(parentGroup, i, GroupType.Reference, 0, 0, [group]);
                     newGroup.solved = true;
                     group.type = GroupType.VariableName;
                 }
@@ -874,7 +876,7 @@ class GscFileParser {
                     group.type = newType;
                 }
                 else {
-                    const newGroup = groupItems(parentGroup, i, newType, 0, 0, group);
+                    const newGroup = groupItems(parentGroup, i, newType, 0, 0, [group]);
                     newGroup.solved = true;
                     /*if (group.type === GroupType.Identifier && newType === GroupType.VariableReference) {
                         group.type = GroupType.VariableName; // Identifiers inside VariableReference change to VariableName
@@ -900,7 +902,7 @@ class GscFileParser {
                     var typeOfUnknownToken1 = childGroup1.getTypeOfUnknownToken();
                     if (typeOfUnknownToken1 === tokenType &&
                         typeEqualsToOneOf(childGroup2.type, ...groupTypesRight)) {
-                        const newGroup = groupItems(parentGroup, i, finalType, 0, 0, childGroup1, childGroup2);
+                        const newGroup = groupItems(parentGroup, i, finalType, 0, 0, [childGroup1, childGroup2]);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup1, finalGroup1Type);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup2, finalGroup2Type);
                         i--;
@@ -926,7 +928,7 @@ class GscFileParser {
                     var typeOfUnknownToken2 = childGroup2.getTypeOfUnknownToken();
                     if (typeEqualsToOneOf(childGroup1.type, ...groupTypesLeft) &&
                         typeOfUnknownToken2 === tokenType) {
-                        const newGroup = groupItems(parentGroup, i, finalType, 0, 0, childGroup1, childGroup2);
+                        const newGroup = groupItems(parentGroup, i, finalType, 0, 0, [childGroup1, childGroup2]);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup1, finalGroup1Type);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup2, finalGroup2Type);
                         i--;
@@ -954,7 +956,7 @@ class GscFileParser {
                     if (typeEqualsToOneOf(childGroup1.type, ...groupTypesLeft) &&
                         typeOfUnknownToken2 === tokenType &&
                         typeEqualsToOneOf(childGroup3.type, ...groupTypesRight)) {
-                        const newGroup = groupItems(parentGroup, i, finalType, 0, 0, childGroup1, childGroup2, childGroup3);
+                        const newGroup = groupItems(parentGroup, i, finalType, 0, 0, [childGroup1, childGroup2, childGroup3]);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup1, finalGroup1Type);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup2, finalGroup2Type);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup3, finalGroup3Type);
@@ -992,7 +994,7 @@ class GscFileParser {
                     }
                     if (typeEqualsToOneOf(childGroup1.type, ...groupTypesLeft) &&
                         typeEqualsToOneOf(childGroup2.type, ...groupTypesRight)) {
-                        const newGroup = groupItems(parentGroup, index, finalType, 0, 0, childGroup1, childGroup2);
+                        const newGroup = groupItems(parentGroup, index, finalType, 0, 0, [childGroup1, childGroup2]);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup1, finalGroup1Type);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup2, finalGroup2Type);
                         i--;
@@ -1044,7 +1046,7 @@ class GscFileParser {
                     const group3_isFuncCall = childGroup3?.isUnsolvedGroupOfOneOfType(GroupType.FunctionCall) ?? false;
                     // var thread func()
                     if (group1_isVarReference && group2_isThread && group3_isFuncCall) {
-                        const newGroup = groupItems(parentGroup, i, GroupType.FunctionCallWithObjectAndThread, 0, 0, childGroup1, childGroup2, childGroup3);
+                        const newGroup = groupItems(parentGroup, i, GroupType.FunctionCallWithObjectAndThread, 0, 0, [childGroup1, childGroup2, childGroup3]);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup1, GroupType.Reference);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup2, GroupType.ReservedKeyword);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup3, GroupType.FunctionCall);
@@ -1057,7 +1059,7 @@ class GscFileParser {
                         const finalType = childGroup2.type === GroupType.FunctionCall
                             ? GroupType.FunctionCallWithObject
                             : GroupType.KeywordCallWithObject;
-                        const newGroup = groupItems(parentGroup, i, finalType, 0, 0, childGroup1, childGroup2);
+                        const newGroup = groupItems(parentGroup, i, finalType, 0, 0, [childGroup1, childGroup2]);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup1, GroupType.Reference);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup2, undefined); // keep what it was
                         i--;
@@ -1066,7 +1068,7 @@ class GscFileParser {
                     const group1_isThread = childGroup1.isReservedKeywordOfName("thread");
                     // thread func();
                     if (group1_isThread && group2_isCall) {
-                        const newGroup = groupItems(parentGroup, i, GroupType.FunctionCallWithThread, 0, 0, childGroup1, childGroup2);
+                        const newGroup = groupItems(parentGroup, i, GroupType.FunctionCallWithThread, 0, 0, [childGroup1, childGroup2]);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup1, GroupType.ReservedKeyword);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup2, GroupType.FunctionCall);
                         i--;
@@ -1079,7 +1081,7 @@ class GscFileParser {
                         group1_isObject &&
                         typeOfUnknownToken2 === TokenType.Structure &&
                         childGroup3.type === GroupType.Identifier) {
-                        const newGroup = groupItems(parentGroup, i, GroupType.Reference, 0, 0, childGroup1, childGroup2, childGroup3);
+                        const newGroup = groupItems(parentGroup, i, GroupType.Reference, 0, 0, [childGroup1, childGroup2, childGroup3]);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup1, GroupType.Reference);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup2, GroupType.Token);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup3, GroupType.StructureField);
@@ -1092,7 +1094,7 @@ class GscFileParser {
                         childGroup2.type === GroupType.Array &&
                         (childGroup2.items.length !== 1 || childGroup2.items[0].type !== GroupType.Array)) // ignore func dereference [[]]
                      {
-                        const newGroup = groupItems(parentGroup, i, GroupType.Reference, 0, 0, childGroup1, childGroup2);
+                        const newGroup = groupItems(parentGroup, i, GroupType.Reference, 0, 0, [childGroup1, childGroup2]);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup1, GroupType.Reference);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup2, GroupType.Array);
                         // Everything inside [] consider as value, will be solved later
@@ -1100,7 +1102,7 @@ class GscFileParser {
                             changeGroupToSolvedAndChangeType(childGroup2, childGroup2.items[0], GroupType.Value);
                         }
                         else {
-                            const newGroup2 = groupItems(childGroup2, 0, GroupType.Value, 0, 0, ...childGroup2.items);
+                            const newGroup2 = groupItems(childGroup2, 0, GroupType.Value, 0, 0, childGroup2.items);
                             newGroup2.solved = true;
                         }
                         i--;
@@ -1129,7 +1131,7 @@ class GscFileParser {
                     if (childGroup1.type === GroupType.Expression && childGroup1.items.length === 1 &&
                         child1Inner1?.type === GroupType.Identifier && types.includes(child1Inner1.getTokensAsString()) &&
                         childGroup2?.typeEqualsToOneOf(...GscFileParser.valueTypesWithIdentifier)) {
-                        const newGroup = groupItems(parentGroup, i, GroupType.Value, 0, 0, childGroup1, childGroup2);
+                        const newGroup = groupItems(parentGroup, i, GroupType.Value, 0, 0, [childGroup1, childGroup2]);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup1, GroupType.CastExpression);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup2, GroupType.Value);
                         child1Inner1.type = GroupType.DataTypeKeyword;
@@ -1161,7 +1163,7 @@ class GscFileParser {
                     // !var1   !level.aaa   !(...)      ~var1
                     if (typeOfUnknownToken1 === TokenType.OperatorLeft &&
                         childGroup2?.isUnsolvedGroupOfOneOfType(...GscFileParser.valueTypesWithIdentifier)) {
-                        const newGroup = groupItems(parentGroup, i, GroupType.Value, 0, 0, childGroup1, childGroup2);
+                        const newGroup = groupItems(parentGroup, i, GroupType.Value, 0, 0, [childGroup1, childGroup2]);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup1, GroupType.Token);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup2, GroupType.Value);
                         i--;
@@ -1176,7 +1178,7 @@ class GscFileParser {
                         // aaa && !var1   aaa && !level.aaa   aaa && !(...)
                         if (typeOfUnknownToken3 === TokenType.OperatorLeft &&
                             childGroup4?.isUnsolvedGroupOfOneOfType(...GscFileParser.valueTypesWithIdentifier)) {
-                            const newGroup = groupItems(parentGroup, i + 2, GroupType.Value, 0, 0, childGroup3, childGroup4);
+                            const newGroup = groupItems(parentGroup, i + 2, GroupType.Value, 0, 0, [childGroup3, childGroup4]);
                             changeGroupToSolvedAndChangeType(newGroup, childGroup3, GroupType.Token);
                             changeGroupToSolvedAndChangeType(newGroup, childGroup4, GroupType.Value);
                             i--;
@@ -1186,14 +1188,14 @@ class GscFileParser {
                         // %anim_file_name
                         if (childGroup3?.getSingleToken()?.name === "%" &&
                             childGroup4?.typeEqualsToOneOf(GroupType.Identifier)) {
-                            const newGroup = groupItems(parentGroup, i + 2, GroupType.Constant, 0, 0, childGroup3, childGroup4);
+                            const newGroup = groupItems(parentGroup, i + 2, GroupType.Constant, 0, 0, [childGroup3, childGroup4]);
                             changeGroupToSolvedAndChangeType(newGroup, childGroup3, GroupType.Token);
                             changeGroupToSolvedAndChangeType(newGroup, childGroup4, GroupType.XAnim);
                             i--;
                             continue; // go again to the same index
                         }
                         if (childGroup3?.typeEqualsToOneOf(...GscFileParser.valueTypesWithIdentifier)) {
-                            const newGroup = groupItems(parentGroup, i, GroupType.Value, 0, 0, childGroup1, childGroup2, childGroup3);
+                            const newGroup = groupItems(parentGroup, i, GroupType.Value, 0, 0, [childGroup1, childGroup2, childGroup3]);
                             changeGroupToSolvedAndChangeType(newGroup, childGroup1, GroupType.Value);
                             changeGroupToSolvedAndChangeType(newGroup, childGroup2, GroupType.Token);
                             changeGroupToSolvedAndChangeType(newGroup, childGroup3, GroupType.Value);
@@ -1204,7 +1206,7 @@ class GscFileParser {
                     // %anim_file_name
                     else if (childGroup1.getSingleToken()?.name === "%" &&
                         childGroup2?.typeEqualsToOneOf(GroupType.Identifier)) {
-                        const newGroup = groupItems(parentGroup, i, GroupType.Constant, 0, 0, childGroup1, childGroup2);
+                        const newGroup = groupItems(parentGroup, i, GroupType.Constant, 0, 0, [childGroup1, childGroup2]);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup1, GroupType.Token);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup2, GroupType.XAnim);
                         i--;
@@ -1226,7 +1228,7 @@ class GscFileParser {
                     var childTokenName = childGroup1.getSingleToken()?.name; //.toLocaleLowerCase();
                     // return
                     if (childGroup1.type === GroupType.ReservedKeyword && keywordNames.includes(childTokenName ?? "")) {
-                        const newGroup = groupItems(parentGroup, i, finalType, 0, 0, childGroup1);
+                        const newGroup = groupItems(parentGroup, i, finalType, 0, 0, [childGroup1]);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup1, finalGroup1Type);
                         i--;
                         continue; // go again to the same index
@@ -1252,7 +1254,7 @@ class GscFileParser {
                     // if ()
                     if (childGroup1.type === GroupType.ReservedKeyword && keywordNames.includes(childTokenName ?? "") &&
                         childGroup2.typeEqualsToOneOf(...groupTypesRight)) {
-                        const newGroup = groupItems(parentGroup, i, finalType, 0, 0, childGroup1, childGroup2);
+                        const newGroup = groupItems(parentGroup, i, finalType, 0, 0, [childGroup1, childGroup2]);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup1, finalGroup1Type);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup2, finalGroup2Type);
                         i--;
@@ -1279,7 +1281,7 @@ class GscFileParser {
                     if (!childGroup3.isUnknownUnsolvedSingleTokenOfOneOfType(tokenType)) {
                         continue;
                     }
-                    const newGroup = groupItems(parentGroup, i, finalType, 0, 0, childGroup1, childGroup2, childGroup3);
+                    const newGroup = groupItems(parentGroup, i, finalType, 0, 0, [childGroup1, childGroup2, childGroup3]);
                     changeGroupToSolvedAndChangeType(newGroup, childGroup1, finalGroup1Type);
                     changeGroupToSolvedAndChangeType(newGroup, childGroup2, finalGroup2Type);
                     changeGroupToSolvedAndChangeType(newGroup, childGroup3, finalGroup3Type);
@@ -1302,7 +1304,7 @@ class GscFileParser {
                     if (!childGroup2.isUnknownUnsolvedSingleTokenOfOneOfType(tokenType)) {
                         continue;
                     }
-                    const newGroup = groupItems(parentGroup, i, finalType, 0, 0, childGroup1, childGroup2);
+                    const newGroup = groupItems(parentGroup, i, finalType, 0, 0, [childGroup1, childGroup2]);
                     changeGroupToSolvedAndChangeType(newGroup, childGroup1, finalGroup1Type);
                     changeGroupToSolvedAndChangeType(newGroup, childGroup2, finalGroup2Type);
                     i--;
@@ -1327,20 +1329,27 @@ class GscFileParser {
                         continue;
                     }
                     const childGroup2 = parentGroup.items[i + 1];
-                    if (!childGroup2.isUnsolvedGroupOfOneOfType(GroupType.Scope, GroupType.TerminatedStatement)) {
+                    // Statement may be also in developer block (found in CoD1 raw code)
+                    // According test in CoD2 engine, developer block /##/ act the same as {}
+                    //   if (1) /# a = 1; b = 1;#/  (both a and b get assigned)
+                    if (!childGroup2.isUnsolvedGroupOfOneOfType(GroupType.Scope, GroupType.TerminatedStatement, GroupType.DeveloperBlock)) {
+                        continue;
+                    }
+                    // Developer block /##/ is not valid for switch
+                    if (childGroup1.type === GroupType.SwitchDeclaration && childGroup2.type === GroupType.DeveloperBlock) {
                         continue;
                     }
                     const childGroup3 = parentGroup.items.at(i + 2);
                     const childGroup4 = parentGroup.items.at(i + 3);
                     if (childGroup1.type === GroupType.IfDeclaration && childGroup3 !== undefined && childGroup4 !== undefined && childGroup3.isReservedKeywordOfName("else")) {
-                        const newGroup = groupItems(parentGroup, i, GroupType.TerminatedStatement, 0, 0, childGroup1, childGroup2, childGroup3, childGroup4);
+                        const newGroup = groupItems(parentGroup, i, GroupType.TerminatedStatement, 0, 0, [childGroup1, childGroup2, childGroup3, childGroup4]);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup1, GroupType.IfDeclaration);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup2, GroupType.IfScope);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup3, GroupType.ReservedKeyword);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup4, GroupType.IfScope);
                     }
                     else {
-                        const newGroup = groupItems(parentGroup, i, GroupType.TerminatedStatement, 0, 0, childGroup1, childGroup2);
+                        const newGroup = groupItems(parentGroup, i, GroupType.TerminatedStatement, 0, 0, [childGroup1, childGroup2]);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup1, undefined);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup2, map.get(childGroup1.type));
                     }
@@ -1359,12 +1368,6 @@ class GscFileParser {
                 group_the_rest(innerGroup, group, lastFunctionScope);
             }
             switch (group.type) {
-                case GroupType.Unknown:
-                    if (group.isUnknownUnsolvedSingleTokenOfOneOfType(TokenType.Semicolon)) {
-                        group.type = GroupType.Terminator;
-                        group.solved = false;
-                    }
-                    break;
                 case GroupType.DeveloperBlock:
                     // Developer block inside function change to DeveloperBlockInner
                     if (lastFunctionScope !== undefined) {
@@ -1398,7 +1401,7 @@ class GscFileParser {
                             paramPos++;
                         }
                         else if (paramPos === 0 && childGroup1.type === GroupType.Terminator) {
-                            const newGroup = groupItems(group, i, GroupType.ForStatement, 0, 0, childGroup1);
+                            const newGroup = groupItems(group, i, GroupType.ForStatement, 0, 0, [childGroup1]);
                             changeGroupToSolvedAndChangeType(newGroup, childGroup1, GroupType.Terminator);
                             newGroup.solved = true;
                             paramPos++;
@@ -1407,7 +1410,7 @@ class GscFileParser {
                         else if (paramPos === 1 && typeEqualsToOneOf(childGroup1.type, ...GscFileParser.valueTypesWithIdentifier)) {
                             const childGroup2 = group.items.at(i + 1);
                             if (childGroup2?.type === GroupType.Terminator) {
-                                const newGroup = groupItems(group, i, GroupType.ForStatement, 0, 0, childGroup1, childGroup2);
+                                const newGroup = groupItems(group, i, GroupType.ForStatement, 0, 0, [childGroup1, childGroup2]);
                                 childGroup1.solved = true;
                                 changeGroupToSolvedAndChangeType(newGroup, childGroup2, GroupType.Terminator);
                                 newGroup.solved = true;
@@ -1415,7 +1418,7 @@ class GscFileParser {
                             paramPos++;
                         }
                         else if (paramPos === 1 && childGroup1.type === GroupType.Terminator) {
-                            const newGroup = groupItems(group, i, GroupType.ForStatement, 0, 0, childGroup1);
+                            const newGroup = groupItems(group, i, GroupType.ForStatement, 0, 0, [childGroup1]);
                             changeGroupToSolvedAndChangeType(newGroup, childGroup1, GroupType.Terminator);
                             newGroup.solved = true;
                             paramPos++;
@@ -1439,7 +1442,7 @@ class GscFileParser {
                         const childGroup1 = i === group.items.length ? undefined : group.items[i];
                         if (lastLabel !== -1 && i > lastLabel + 1 && (childGroup1 === undefined || childGroup1.type === GroupType.CaseLabel)) {
                             const groups = group.items.slice(lastLabel + 1, i);
-                            const newGroup = groupItems(group, lastLabel + 1, GroupType.CaseScope, 0, 0, ...groups);
+                            const newGroup = groupItems(group, lastLabel + 1, GroupType.CaseScope, 0, 0, groups);
                             i -= groups.length;
                             lastLabel = -1;
                         }
@@ -1559,8 +1562,7 @@ class GscFileParser {
                 case GroupType.Scope:
                 case GroupType.TerminatedStatement:
                 case GroupType.Terminator:
-                    if (parentGroup !== undefined && ((parentGroup.typeEqualsToOneOf(...GscFileParser.scopeTypes) && parentGroup.type !== GroupType.SwitchScope) ||
-                        (parentGroup.type === GroupType.DeveloperBlockInner))) {
+                    if (parentGroup !== undefined && ((parentGroup.typeEqualsToOneOf(...GscFileParser.scopeTypes) && parentGroup.type !== GroupType.SwitchScope))) {
                         if (group.type === GroupType.Terminator) {
                             if (group.solved === false && (previousItem === undefined || previousItem.solved)) {
                                 group.type = GroupType.ExtraTerminator;
@@ -1606,7 +1608,10 @@ class GscFileParser {
             }, tokens);
             return group;
         });
-        rootGroup.items.push(...unsolvedTokens);
+        //rootGroup.items.push(...unsolvedTokens);
+        unsolvedTokens.forEach(t => {
+            rootGroup.items.push(t);
+        });
         // https://en.cppreference.com/w/c/language/operator_precedence
         walkGroup(rootGroup, (group) => {
             groupByBracketPairs(group, TokenType.DeveloperStart, TokenType.DeveloperEnd, GroupType.DeveloperBlock);
@@ -1693,9 +1698,9 @@ class GscFileParser {
         // statement;
         const terminationNeededFor = [GroupType.Statement, ...GscFileParser.functionCallTypes,
             GroupType.KeywordCall, GroupType.KeywordCallWithObject];
-        group_byGroupAndToken(terminationNeededFor, TokenType.Semicolon, GroupType.TerminatedStatement, GroupType.Statement, GroupType.Terminator);
+        group_byGroupAndGroup(terminationNeededFor, [GroupType.Terminator], GroupType.TerminatedStatement, GroupType.Statement, GroupType.Terminator);
         // preprocessor;
-        group_byGroupAndToken([GroupType.PreprocessorStatement], TokenType.Semicolon, GroupType.TerminatedPreprocessorStatement, GroupType.PreprocessorStatement, GroupType.Terminator);
+        group_byGroupAndGroup([GroupType.PreprocessorStatement], [GroupType.Terminator], GroupType.TerminatedPreprocessorStatement, GroupType.PreprocessorStatement, GroupType.Terminator);
         // Declaration join
         // if() {} else
         // for (...) {}       

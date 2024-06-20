@@ -392,6 +392,151 @@ suite('GscFileParser.parse #2.5 developer', () => {
         checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2].items[1], GscFileParser_1.GroupType.DeveloperBlockInner, 13, 16, true, 1);
         checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2].items[1].items[0], GscFileParser_1.GroupType.DeveloperBlockInner, 14, 15, false, 0);
     });
+    test(`#2.5.8 developer weird`, async () => {
+        const gsc = `
+        func() {
+
+            // Ok
+            if (0) 
+                /#println("1");#/
+            if (0) 
+            /#
+                println("2");
+                println("3");
+            #/
+            else 
+            /#
+                println("4");
+                println("5");
+            #/
+        
+            // Ok
+            for(;;)
+            /#
+                println("6");
+                break;
+            #/
+        
+            // Ok
+            while(true)
+            /#
+                println("7");
+                break;
+            #/
+        
+            // Error
+            switch(int)
+            /#
+                
+            #/
+        }
+        `;
+        const tokens = GscFileParser_1.GscFileParser.tokenize(gsc);
+        const rootGroup = GscFileParser_1.GscFileParser.group(tokens);
+        checkGroup2(rootGroup, rootGroup, GscFileParser_1.GroupType.Root, 0, 77, false, 1);
+        checkGroup2(rootGroup, rootGroup.items[0], GscFileParser_1.GroupType.FunctionDefinition, 0, 77, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0], GscFileParser_1.GroupType.FunctionDeclaration, 0, 2, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0], GscFileParser_1.GroupType.FunctionName, 0, 0, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1], GscFileParser_1.GroupType.FunctionParametersExpression, 1, 2, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1], GscFileParser_1.GroupType.FunctionScope, 3, 77, true, 6);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0], GscFileParser_1.GroupType.TerminatedStatement, 4, 14, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[0], GscFileParser_1.GroupType.IfDeclaration, 4, 7, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[0].items[0], GscFileParser_1.GroupType.ReservedKeyword, 4, 4, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[0].items[1], GscFileParser_1.GroupType.Expression, 5, 7, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[0].items[1].items[0], GscFileParser_1.GroupType.Constant, 6, 6, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[1], GscFileParser_1.GroupType.IfScope, 8, 14, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[1].items[0], GscFileParser_1.GroupType.DeveloperBlockInner, 8, 14, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[1].items[0].items[0], GscFileParser_1.GroupType.TerminatedStatement, 9, 13, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[1].items[0].items[0].items[0], GscFileParser_1.GroupType.Statement, 9, 12, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[1].items[0].items[0].items[0].items[0], GscFileParser_1.GroupType.FunctionCall, 9, 12, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[1].items[0].items[0].items[0].items[0].items[0], GscFileParser_1.GroupType.FunctionName, 9, 9, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[1].items[0].items[0].items[0].items[0].items[1], GscFileParser_1.GroupType.FunctionParametersExpression, 10, 12, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[1].items[0].items[0].items[0].items[0].items[1].items[0], GscFileParser_1.GroupType.Constant, 11, 11, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[1].items[0].items[0].items[1], GscFileParser_1.GroupType.Terminator, 13, 13, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1], GscFileParser_1.GroupType.TerminatedStatement, 15, 43, true, 4);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[0], GscFileParser_1.GroupType.IfDeclaration, 15, 18, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[0].items[0], GscFileParser_1.GroupType.ReservedKeyword, 15, 15, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[0].items[1], GscFileParser_1.GroupType.Expression, 16, 18, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[0].items[1].items[0], GscFileParser_1.GroupType.Constant, 17, 17, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[1], GscFileParser_1.GroupType.IfScope, 19, 30, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[1].items[0], GscFileParser_1.GroupType.DeveloperBlockInner, 19, 30, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[1].items[0].items[0], GscFileParser_1.GroupType.TerminatedStatement, 20, 24, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[1].items[0].items[0].items[0], GscFileParser_1.GroupType.Statement, 20, 23, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[1].items[0].items[0].items[0].items[0], GscFileParser_1.GroupType.FunctionCall, 20, 23, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[1].items[0].items[0].items[0].items[0].items[0], GscFileParser_1.GroupType.FunctionName, 20, 20, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[1].items[0].items[0].items[0].items[0].items[1], GscFileParser_1.GroupType.FunctionParametersExpression, 21, 23, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[1].items[0].items[0].items[0].items[0].items[1].items[0], GscFileParser_1.GroupType.Constant, 22, 22, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[1].items[0].items[0].items[1], GscFileParser_1.GroupType.Terminator, 24, 24, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[1].items[0].items[1], GscFileParser_1.GroupType.TerminatedStatement, 25, 29, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[1].items[0].items[1].items[0], GscFileParser_1.GroupType.Statement, 25, 28, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[1].items[0].items[1].items[0].items[0], GscFileParser_1.GroupType.FunctionCall, 25, 28, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[1].items[0].items[1].items[0].items[0].items[0], GscFileParser_1.GroupType.FunctionName, 25, 25, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[1].items[0].items[1].items[0].items[0].items[1], GscFileParser_1.GroupType.FunctionParametersExpression, 26, 28, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[1].items[0].items[1].items[0].items[0].items[1].items[0], GscFileParser_1.GroupType.Constant, 27, 27, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[1].items[0].items[1].items[1], GscFileParser_1.GroupType.Terminator, 29, 29, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[2], GscFileParser_1.GroupType.ReservedKeyword, 31, 31, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[3], GscFileParser_1.GroupType.IfScope, 32, 43, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[3].items[0], GscFileParser_1.GroupType.DeveloperBlockInner, 32, 43, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[3].items[0].items[0], GscFileParser_1.GroupType.TerminatedStatement, 33, 37, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[3].items[0].items[0].items[0], GscFileParser_1.GroupType.Statement, 33, 36, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[3].items[0].items[0].items[0].items[0], GscFileParser_1.GroupType.FunctionCall, 33, 36, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[3].items[0].items[0].items[0].items[0].items[0], GscFileParser_1.GroupType.FunctionName, 33, 33, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[3].items[0].items[0].items[0].items[0].items[1], GscFileParser_1.GroupType.FunctionParametersExpression, 34, 36, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[3].items[0].items[0].items[0].items[0].items[1].items[0], GscFileParser_1.GroupType.Constant, 35, 35, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[3].items[0].items[0].items[1], GscFileParser_1.GroupType.Terminator, 37, 37, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[3].items[0].items[1], GscFileParser_1.GroupType.TerminatedStatement, 38, 42, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[3].items[0].items[1].items[0], GscFileParser_1.GroupType.Statement, 38, 41, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[3].items[0].items[1].items[0].items[0], GscFileParser_1.GroupType.FunctionCall, 38, 41, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[3].items[0].items[1].items[0].items[0].items[0], GscFileParser_1.GroupType.FunctionName, 38, 38, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[3].items[0].items[1].items[0].items[0].items[1], GscFileParser_1.GroupType.FunctionParametersExpression, 39, 41, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[3].items[0].items[1].items[0].items[0].items[1].items[0], GscFileParser_1.GroupType.Constant, 40, 40, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[3].items[0].items[1].items[1], GscFileParser_1.GroupType.Terminator, 42, 42, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2], GscFileParser_1.GroupType.TerminatedStatement, 44, 57, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2].items[0], GscFileParser_1.GroupType.ForDeclaration, 44, 48, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2].items[0].items[0], GscFileParser_1.GroupType.ReservedKeyword, 44, 44, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2].items[0].items[1], GscFileParser_1.GroupType.ForExpression, 45, 48, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2].items[0].items[1].items[0], GscFileParser_1.GroupType.ForStatement, 46, 46, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2].items[0].items[1].items[0].items[0], GscFileParser_1.GroupType.Terminator, 46, 46, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2].items[0].items[1].items[1], GscFileParser_1.GroupType.ForStatement, 47, 47, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2].items[0].items[1].items[1].items[0], GscFileParser_1.GroupType.Terminator, 47, 47, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2].items[1], GscFileParser_1.GroupType.ForScope, 49, 57, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2].items[1].items[0], GscFileParser_1.GroupType.DeveloperBlockInner, 49, 57, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2].items[1].items[0].items[0], GscFileParser_1.GroupType.TerminatedStatement, 50, 54, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2].items[1].items[0].items[0].items[0], GscFileParser_1.GroupType.Statement, 50, 53, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2].items[1].items[0].items[0].items[0].items[0], GscFileParser_1.GroupType.FunctionCall, 50, 53, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2].items[1].items[0].items[0].items[0].items[0].items[0], GscFileParser_1.GroupType.FunctionName, 50, 50, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2].items[1].items[0].items[0].items[0].items[0].items[1], GscFileParser_1.GroupType.FunctionParametersExpression, 51, 53, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2].items[1].items[0].items[0].items[0].items[0].items[1].items[0], GscFileParser_1.GroupType.Constant, 52, 52, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2].items[1].items[0].items[0].items[1], GscFileParser_1.GroupType.Terminator, 54, 54, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2].items[1].items[0].items[1], GscFileParser_1.GroupType.TerminatedStatement, 55, 56, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2].items[1].items[0].items[1].items[0], GscFileParser_1.GroupType.Statement, 55, 55, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2].items[1].items[0].items[1].items[0].items[0], GscFileParser_1.GroupType.ReservedKeyword, 55, 55, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2].items[1].items[0].items[1].items[1], GscFileParser_1.GroupType.Terminator, 56, 56, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[3], GscFileParser_1.GroupType.TerminatedStatement, 58, 70, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[3].items[0], GscFileParser_1.GroupType.WhileDeclaration, 58, 61, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[3].items[0].items[0], GscFileParser_1.GroupType.ReservedKeyword, 58, 58, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[3].items[0].items[1], GscFileParser_1.GroupType.Expression, 59, 61, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[3].items[0].items[1].items[0], GscFileParser_1.GroupType.Constant, 60, 60, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[3].items[1], GscFileParser_1.GroupType.WhileScope, 62, 70, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[3].items[1].items[0], GscFileParser_1.GroupType.DeveloperBlockInner, 62, 70, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[3].items[1].items[0].items[0], GscFileParser_1.GroupType.TerminatedStatement, 63, 67, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[3].items[1].items[0].items[0].items[0], GscFileParser_1.GroupType.Statement, 63, 66, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[3].items[1].items[0].items[0].items[0].items[0], GscFileParser_1.GroupType.FunctionCall, 63, 66, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[3].items[1].items[0].items[0].items[0].items[0].items[0], GscFileParser_1.GroupType.FunctionName, 63, 63, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[3].items[1].items[0].items[0].items[0].items[0].items[1], GscFileParser_1.GroupType.FunctionParametersExpression, 64, 66, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[3].items[1].items[0].items[0].items[0].items[0].items[1].items[0], GscFileParser_1.GroupType.Constant, 65, 65, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[3].items[1].items[0].items[0].items[1], GscFileParser_1.GroupType.Terminator, 67, 67, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[3].items[1].items[0].items[1], GscFileParser_1.GroupType.TerminatedStatement, 68, 69, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[3].items[1].items[0].items[1].items[0], GscFileParser_1.GroupType.Statement, 68, 68, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[3].items[1].items[0].items[1].items[0].items[0], GscFileParser_1.GroupType.ReservedKeyword, 68, 68, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[3].items[1].items[0].items[1].items[1], GscFileParser_1.GroupType.Terminator, 69, 69, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[4], GscFileParser_1.GroupType.SwitchDeclaration, 71, 74, false, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[4].items[0], GscFileParser_1.GroupType.ReservedKeyword, 71, 71, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[4].items[1], GscFileParser_1.GroupType.Expression, 72, 74, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[4].items[1].items[0], GscFileParser_1.GroupType.Reference, 73, 73, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[4].items[1].items[0].items[0], GscFileParser_1.GroupType.VariableName, 73, 73, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[5], GscFileParser_1.GroupType.DeveloperBlockInner, 75, 76, true, 0);
+    });
 });
 suite('GscFileParser.parse #2.6 variables', () => {
     test(`#2.6.0 structrue`, async () => {
@@ -2592,7 +2737,7 @@ suite('GscFileParser.parse #2.16 terminators', () => {
         checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1], GscFileParser_1.GroupType.ExtraTerminator, 8, 8, true, 0);
     });
     test(`#2.16.2 as statement`, async () => {
-        const gsc = `func() { for(;;); }`;
+        const gsc = `func() { for(;;); }`; // its is not valid syntax
         const tokens = GscFileParser_1.GscFileParser.tokenize(gsc);
         const rootGroup = GscFileParser_1.GscFileParser.group(tokens);
         checkGroup2(rootGroup, rootGroup, GscFileParser_1.GroupType.Root, 0, 10, false, 1);
@@ -2608,7 +2753,7 @@ suite('GscFileParser.parse #2.16 terminators', () => {
         checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[1].items[0].items[0], GscFileParser_1.GroupType.Terminator, 6, 6, true, 0);
         checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[1].items[1], GscFileParser_1.GroupType.ForStatement, 7, 7, true, 1);
         checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[1].items[1].items[0], GscFileParser_1.GroupType.Terminator, 7, 7, true, 0);
-        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1], GscFileParser_1.GroupType.ExtraTerminator, 9, 9, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1], GscFileParser_1.GroupType.Terminator, 9, 9, false, 0);
     });
     test(`#2.16.3 in switch`, async () => {
         const gsc = `switch(a) { ; }`;
@@ -2636,6 +2781,65 @@ suite('GscFileParser.parse #2.16 terminators', () => {
         checkGroup2(rootGroup, rootGroup.items[1].items[0].items[1], GscFileParser_1.GroupType.FunctionParametersExpression, 2, 3, true, 0);
         checkGroup2(rootGroup, rootGroup.items[1].items[1], GscFileParser_1.GroupType.FunctionScope, 4, 5, true, 0);
         checkGroup2(rootGroup, rootGroup.items[2], GscFileParser_1.GroupType.Terminator, 6, 6, false, 0);
+    });
+    test(`#2.16.5 no body - if`, async () => {
+        const gsc = `func() { if(1); } `; // its is not valid syntax
+        const tokens = GscFileParser_1.GscFileParser.tokenize(gsc);
+        const rootGroup = GscFileParser_1.GscFileParser.group(tokens);
+        checkGroup2(rootGroup, rootGroup, GscFileParser_1.GroupType.Root, 0, 9, false, 1);
+        checkGroup2(rootGroup, rootGroup.items[0], GscFileParser_1.GroupType.FunctionDefinition, 0, 9, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0], GscFileParser_1.GroupType.FunctionDeclaration, 0, 2, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0], GscFileParser_1.GroupType.FunctionName, 0, 0, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1], GscFileParser_1.GroupType.FunctionParametersExpression, 1, 2, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1], GscFileParser_1.GroupType.FunctionScope, 3, 9, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0], GscFileParser_1.GroupType.IfDeclaration, 4, 7, false, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[0], GscFileParser_1.GroupType.ReservedKeyword, 4, 4, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[1], GscFileParser_1.GroupType.Expression, 5, 7, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[1].items[0], GscFileParser_1.GroupType.Constant, 6, 6, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1], GscFileParser_1.GroupType.Terminator, 8, 8, false, 0);
+    });
+    test(`#2.16.6 no body - if else`, async () => {
+        const gsc = `func() { if(1);else; } `; // its is not valid syntax
+        const tokens = GscFileParser_1.GscFileParser.tokenize(gsc);
+        const rootGroup = GscFileParser_1.GscFileParser.group(tokens);
+        checkGroup2(rootGroup, rootGroup, GscFileParser_1.GroupType.Root, 0, 11, false, 1);
+        checkGroup2(rootGroup, rootGroup.items[0], GscFileParser_1.GroupType.FunctionDefinition, 0, 11, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0], GscFileParser_1.GroupType.FunctionDeclaration, 0, 2, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0], GscFileParser_1.GroupType.FunctionName, 0, 0, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1], GscFileParser_1.GroupType.FunctionParametersExpression, 1, 2, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1], GscFileParser_1.GroupType.FunctionScope, 3, 11, true, 4);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0], GscFileParser_1.GroupType.IfDeclaration, 4, 7, false, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[0], GscFileParser_1.GroupType.ReservedKeyword, 4, 4, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[1], GscFileParser_1.GroupType.Expression, 5, 7, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[1].items[0], GscFileParser_1.GroupType.Constant, 6, 6, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1], GscFileParser_1.GroupType.Terminator, 8, 8, false, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2], GscFileParser_1.GroupType.ReservedKeyword, 9, 9, false, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[3], GscFileParser_1.GroupType.Terminator, 10, 10, false, 0);
+    });
+    test(`#2.16.7 if with developer single statement`, async () => {
+        const gsc = `func() {	if (1) /#a = 1;#/ } `;
+        const tokens = GscFileParser_1.GscFileParser.tokenize(gsc);
+        const rootGroup = GscFileParser_1.GscFileParser.group(tokens);
+        checkGroup2(rootGroup, rootGroup, GscFileParser_1.GroupType.Root, 0, 14, false, 1);
+        checkGroup2(rootGroup, rootGroup.items[0], GscFileParser_1.GroupType.FunctionDefinition, 0, 14, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0], GscFileParser_1.GroupType.FunctionDeclaration, 0, 2, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0], GscFileParser_1.GroupType.FunctionName, 0, 0, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1], GscFileParser_1.GroupType.FunctionParametersExpression, 1, 2, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1], GscFileParser_1.GroupType.FunctionScope, 3, 14, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0], GscFileParser_1.GroupType.TerminatedStatement, 4, 13, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[0], GscFileParser_1.GroupType.IfDeclaration, 4, 7, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[0].items[0], GscFileParser_1.GroupType.ReservedKeyword, 4, 4, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[0].items[1], GscFileParser_1.GroupType.Expression, 5, 7, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[0].items[1].items[0], GscFileParser_1.GroupType.Constant, 6, 6, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[1], GscFileParser_1.GroupType.IfScope, 8, 13, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[1].items[0], GscFileParser_1.GroupType.DeveloperBlockInner, 8, 13, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[1].items[0].items[0], GscFileParser_1.GroupType.TerminatedStatement, 9, 12, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[1].items[0].items[0].items[0], GscFileParser_1.GroupType.Statement, 9, 11, true, 3);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[1].items[0].items[0].items[0].items[0], GscFileParser_1.GroupType.Reference, 9, 9, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[1].items[0].items[0].items[0].items[0].items[0], GscFileParser_1.GroupType.VariableName, 9, 9, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[1].items[0].items[0].items[0].items[1], GscFileParser_1.GroupType.Token, 10, 10, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[1].items[0].items[0].items[0].items[2], GscFileParser_1.GroupType.Constant, 11, 11, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[1].items[0].items[0].items[1], GscFileParser_1.GroupType.Terminator, 12, 12, true, 0);
     });
 });
 suite('GscFileParser.parse #2.17 function definition', () => {
