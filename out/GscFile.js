@@ -147,7 +147,13 @@ class GscFile {
             const fileContent = await vscode.workspace.fs.readFile(fileUri);
             content = Buffer.from(fileContent).toString('utf8'); // Convert the Uint8Array content to a string
         }
-        return GscFileParser_1.GscFileParser.parse(content);
+        try {
+            return GscFileParser_1.GscFileParser.parse(content);
+        }
+        catch (error) {
+            vscode.window.showErrorMessage("Error while parsing file " + vscode.workspace.asRelativePath(fileUri) + ". " + error);
+            throw error;
+        }
     }
     /**
      *

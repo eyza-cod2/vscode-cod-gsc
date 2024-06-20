@@ -549,7 +549,7 @@ class GscFileParser {
      * @returns The root tree of data structure tree
      */
     static group(tokens) {
-        function walkGroup(currentGroup, action, callForEmptyGroups = false) {
+        /*function walkGroup(currentGroup: GscGroup, action: (currentGroup: GscGroup) => void, callForEmptyGroups: boolean = false) {
             // This object have child items, process them first
             for (var i = 0; i < currentGroup.items.length; i++) {
                 var innerGroup = currentGroup.items[i];
@@ -557,6 +557,31 @@ class GscFileParser {
             }
             if (callForEmptyGroups || currentGroup.items.length > 0) {
                 action(currentGroup);
+            }
+        }*/
+        function walkGroup(currentGroup, action, callForEmptyGroups = false) {
+            try {
+                const stack = [{ group: currentGroup, processed: false }];
+                while (stack.length > 0) {
+                    const { group, processed } = stack.pop();
+                    if (processed) {
+                        // Process the current group after its children
+                        if (callForEmptyGroups || group.items.length > 0) {
+                            action(group);
+                        }
+                    }
+                    else {
+                        // Push the current group back onto the stack to be processed after its children
+                        stack.push({ group, processed: true });
+                        // Add child items to the stack
+                        for (let i = group.items.length - 1; i >= 0; i--) {
+                            stack.push({ group: group.items[i], processed: false });
+                        }
+                    }
+                }
+            }
+            catch (error) {
+                console.error(error);
             }
         }
         function groupItems(parentGroup, startIndex, wrapType, trimGroupStartBy, trimGroupEndBy, ...groups) {

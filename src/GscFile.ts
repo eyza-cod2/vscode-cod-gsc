@@ -76,14 +76,14 @@ export class GscFile {
      */
     public static async parseAndCacheAllFiles() {
         console.log("Parsing GSC files...");
-        const start = new Date().getTime();
+        const start = performance.now();
 
         // Find all GSC files in repository
         var files = await vscode.workspace.findFiles('**/*.gsc');
         for (const file of files) {
             var gsc = await this.parseAndCacheFile(file);
         }
-        let elapsed = new Date().getTime() - start;
+        let elapsed = performance.now() - start;
 
         //this.debugParsedFiles(true);
         //console.log(this, "Files:", this.parsedFiles.size, "Total time:", elapsed, "Errors:", errors);
@@ -138,6 +138,8 @@ export class GscFile {
     private static async parseFile(fileUri: vscode.Uri): Promise<GscData> {
         console.log("Parsing " + vscode.workspace.asRelativePath(fileUri) + "");
 
+        const start = performance.now();
+
         // Check if the file is opened in any editor
         const openedTextDocument = vscode.workspace.textDocuments.find(doc => doc.uri === fileUri);
         
@@ -148,7 +150,16 @@ export class GscFile {
             const fileContent = await vscode.workspace.fs.readFile(fileUri);      
             content =  Buffer.from(fileContent).toString('utf8'); // Convert the Uint8Array content to a string
         }
-        return GscFileParser.parse(content);
+        const endLoading = performance.now();
+        try {
+            const gscData = GscFileParser.parse(content);
+            const endParsing = performance.now();
+            console.log(`  total time: ${(endParsing - start).toFixed(1)}, loading: ${(endLoading - start).toFixed(1)}, parsing: ${(endParsing - endLoading).toFixed(1)}`);
+            return gscData;
+        } catch (error) {
+            vscode.window.showErrorMessage("Error while parsing file " + vscode.workspace.asRelativePath(fileUri) + ". " + error);
+            throw error;
+        }
     }
 
 
