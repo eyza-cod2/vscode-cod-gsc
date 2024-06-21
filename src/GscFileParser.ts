@@ -1932,8 +1932,10 @@ export class GscFileParser {
                                     paramTokens.push(element.getSingleToken()!);
                                 }
                             }
+                            const funcName = innerGroup.items[0].items[0].getSingleToken()!.name;
                             func = {
-                                name: innerGroup.items[0].items[0].getSingleToken()!.name,
+                                name: funcName,
+                                nameId: funcName.toLowerCase(),
                                 parameters: paramTokens,
                                 localVariableDefinitions: [],
                                 range: innerGroup.getRange(),
@@ -2815,7 +2817,11 @@ export class GscData {
 
 
 type GscFunction = {
+    /** Function name (original as it is defined in file) */
     name: string;
+    /** Lower-case function name, used to compare the same function names */
+    nameId: string;
+
     parameters: GscToken[];
     /** Local variable declarations like "a = 1;". Its always statement with item[0] as Reference */
     localVariableDefinitions: GscVariableDefinition[];

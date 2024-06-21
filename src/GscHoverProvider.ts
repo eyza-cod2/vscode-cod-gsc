@@ -35,11 +35,15 @@ export class GscHoverProvider implements vscode.HoverProvider {
                 // Get file URI and position where the file is defined
                 const definitions = await GscFile.getFunctionNameDefinitions(funcNameAndPath.name, funcNameAndPath.path, uri);
 
+                if (definitions.length === 0) {
+                    hoverText.appendText(`⚠️ Function '${funcNameAndPath.name}' was not found${(funcNameAndPath.path !== "" ? (" in '" + funcNameAndPath.path + "'") : "")}!`);
+                }
+
                 definitions.forEach(async d => {
 
                     const gscData = await GscFile.getFile(d.uri);
 
-                    const functionData = gscData.functions.find(f => f.name === funcNameAndPath.name);
+                    const functionData = gscData.functions.find(f => f.nameId === funcNameAndPath.name.toLowerCase());
 
                     if (functionData === undefined) { return; }
 
@@ -47,7 +51,7 @@ export class GscHoverProvider implements vscode.HoverProvider {
 
                     hoverText.appendText(vscode.workspace.asRelativePath(d.uri));
                     hoverText.appendMarkdown("\n\n"); // Two newlines for a new paragraph, for more space you could use "\n\n---\n\n" for a horizontal rule
-                    hoverText.appendMarkdown(`**${funcNameAndPath.name}**(${parametersText})`);
+                    hoverText.appendMarkdown(`**${functionData.name}**(${parametersText})`);
                 });
             }
         }

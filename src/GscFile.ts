@@ -39,6 +39,37 @@ export class GscFile {
             const gscData = await this.getFile(vscode.window.activeTextEditor.document.uri);
             console.log(GscFileParser.debugAsString(gscData.root.tokensAll, gscData.root, true));
         }));
+
+        // Command to print parsed gsc file structure
+        context.subscriptions.push(vscode.commands.registerCommand('gsc.debugItemBeforeCursor', async () => {
+            if (vscode.window.activeTextEditor === undefined) {
+                console.log("No active editor.");
+                return;
+            }
+            const position = vscode.window.activeTextEditor.selection.active;
+
+            console.log("Getting item before cursor position L:" + position.line + " C:" + position.character);
+
+            const gscData = await this.getFile(vscode.window.activeTextEditor.document.uri);
+            
+            // Get group before cursor
+            var groupAtCursor = gscData.root.findGroupOnLeftAtPosition(position);
+            if (groupAtCursor === undefined) {
+                console.log("No item found at position.");
+                return;
+            }
+            console.log(GscFileParser.debugAsString(gscData.root.tokensAll, groupAtCursor, true));
+
+            console.log();
+
+            const funcNameAndPath = groupAtCursor.getFunctionNameAndPath();
+            if (funcNameAndPath !== undefined) {
+                console.log("Function path: " + funcNameAndPath.path);
+                console.log("Function name: " + funcNameAndPath.name);
+            } else {
+                console.log("Function not detected.");
+            }
+        }));        
     }
 
     // Expose an event for external subscription
@@ -184,13 +215,14 @@ export class GscFile {
         if (path !== "") 
         {
             const filePath = path.replace(/\\/g, '/') + ".gsc";
+            funcName = funcName.toLowerCase();
 
             // Try to find the file in parsed files
             const gscFiles = GscFile.getCachedFiles();
             gscFiles.forEach((data, uri) => {
                 if (uri.endsWith(filePath)) {
                     data.functions.forEach(f => {
-                        if (f.name === funcName) {
+                        if (f.nameId === funcName) {
                             locations.push(new vscode.Location(vscode.Uri.parse(uri), new vscode.Position(f.range.start.line, f.range.start.character)));
                         }
                     });
@@ -204,7 +236,7 @@ export class GscFile {
             // Find function in this file
             const gscData = await GscFile.getFile(documentUri);
             gscData.functions.forEach(f => {
-                if (f.name === funcName) {
+                if (f.nameId === funcName) {
                     locations.push(new vscode.Location(documentUri, new vscode.Position(f.range.start.line, f.range.start.character)));
                 }
             });
@@ -218,7 +250,7 @@ export class GscFile {
                 gscFiles.forEach((data, uri) => {
                     if (uri.endsWith(filePath)) {
                         data.functions.forEach(f => {
-                            if (f.name === funcName) {
+                            if (f.nameId === funcName) {
                                 locations.push(new vscode.Location(vscode.Uri.parse(uri), new vscode.Position(f.range.start.line, f.range.start.character)));
                             }
                         });
