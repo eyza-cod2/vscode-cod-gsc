@@ -558,6 +558,10 @@ class GscFileParser {
                     else if (c === '\\' && c_next === '"') { // skip escaped "
                         skip += 1;
                     }
+                    else if (c === '\n' || c === '\r') { // unclosed " - set as invalid token
+                        addToken(TokenType.Unknown, levelChangeStart, i);
+                        level = Level.Default;
+                    }
                     else if (c === '"' || c === '') {
                         const map = new Map([
                             [Level.String, TokenType.String],
