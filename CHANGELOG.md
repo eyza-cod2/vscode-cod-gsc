@@ -4,6 +4,12 @@ All notable changes to the "gsc" extension will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
+## [0.0.6] - 2024-06-22
+
+- Fixed hover-over function name case-sensitive error (functions are case insensitive)
+- Fixed parsing error when double-quote does not have ending pair (a = "string;)
+
+
 ## [0.0.5] - 2024-06-20
 
 - Improved error reporting of unexpected tokens / missing semicolon

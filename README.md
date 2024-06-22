@@ -99,6 +99,7 @@ Function hover info
 - Implement "Go to definition" for variables
 - Implement some kind of JSDoc comments to improve function and variable description
 - Implement rename function / variable functionality
+- Detection of undefined variables
 
 
 
@@ -110,7 +111,7 @@ This extension is available through Visual Studio Marketplace.
 
 
 ## Support
-Please test this extension in vscode on your GSC files and report bugs / suggestions on the github page.
+Please test this extension in vscode on your GSC files and report bugs / suggestions on the github page or on discord [KILLTUBE #vscode-cod-gsc](https://discord.gg/NJrAZ937)
 
 
 [![Donate with PayPal](images/paypal.png)](https://www.paypal.com/donate/?hosted_button_id=R59Y6UN9LJVXQ)
