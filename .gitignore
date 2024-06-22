@@ -2,3 +2,7 @@ node_modules
 gsc-examples
 .vscode-test
 *.vsix
+
+# Ignore output folder
+dist
+out
