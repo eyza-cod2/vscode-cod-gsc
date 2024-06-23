@@ -204,30 +204,35 @@ export class GscFile {
 
 
     /**
-     * 
-     * @param documentUri 
-     * @returns 
+     * Get location inside of file where the function is defined. 
+     * If the file is not found, undefined is returned. If file is found but function is not found, it will return an empty array.
      */
-    public static async getFunctionNameDefinitions(funcName: string, path: string, documentUri: vscode.Uri): Promise<vscode.Location[]> {
-        const locations: vscode.Location[] = [];
+    public static async getFunctionNameDefinitions(funcName: string, path: string, documentUri: vscode.Uri): Promise<vscode.Location[] | undefined> {
+        const locations: vscode.Location[] = [];  
+        const funcNameId = funcName.toLowerCase();
 
         // Its external function call
         if (path !== "") 
         {
             const filePath = path.replace(/\\/g, '/') + ".gsc";
-            funcName = funcName.toLowerCase();
+            var fileFound = false;
 
             // Try to find the file in parsed files
             const gscFiles = GscFile.getCachedFiles();
             gscFiles.forEach((data, uri) => {
                 if (uri.endsWith(filePath)) {
+                    fileFound = true;
                     data.functions.forEach(f => {
-                        if (f.nameId === funcName) {
+                        if (f.nameId === funcNameId) {
                             locations.push(new vscode.Location(vscode.Uri.parse(uri), new vscode.Position(f.range.start.line, f.range.start.character)));
                         }
                     });
                 }
             });
+
+            if (fileFound === false) {
+                return undefined;
+            }
         } 
 
         // Its local function or included function
@@ -236,7 +241,7 @@ export class GscFile {
             // Find function in this file
             const gscData = await GscFile.getFile(documentUri);
             gscData.functions.forEach(f => {
-                if (f.nameId === funcName) {
+                if (f.nameId === funcNameId) {
                     locations.push(new vscode.Location(documentUri, new vscode.Position(f.range.start.line, f.range.start.character)));
                 }
             });
@@ -250,7 +255,7 @@ export class GscFile {
                 gscFiles.forEach((data, uri) => {
                     if (uri.endsWith(filePath)) {
                         data.functions.forEach(f => {
-                            if (f.nameId === funcName) {
+                            if (f.nameId === funcNameId) {
                                 locations.push(new vscode.Location(vscode.Uri.parse(uri), new vscode.Position(f.range.start.line, f.range.start.character)));
                             }
                         });

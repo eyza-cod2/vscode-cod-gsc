@@ -2819,7 +2819,7 @@ export class GscData {
 
 
 
-type GscFunction = {
+export type GscFunction = {
     /** Function name (original as it is defined in file) */
     name: string;
     /** Lower-case function name, used to compare the same function names */

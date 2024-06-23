@@ -8,6 +8,7 @@
 		{ "include": "#comments"},
 		{ "include": "#constants"},
 		{ "include": "#keywords"},
+		{ "include": "#functions"},
 		{ "include": "#variables"}
 	],
 	"repository": {
@@ -122,6 +123,20 @@
 					"comment": "Highlight &&1 &&2 &&3 keywords in string",
 					"name": "constant.character.escape.gsc",
 					"match": "&&[1-9]"
+				}
+			]
+		},
+
+		"functions": {
+			"patterns": [
+				{
+					"comment": "Function call: functionCall(",
+					"match": "\\b([A-Za-z_][A-Za-z_0-9]*)\\b(?=\\s*\\()",
+					"captures": {
+						"1": {
+							"name": "entity.name.function.gsc"
+						}
+					}
 				}
 			]
 		},

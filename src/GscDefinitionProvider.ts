@@ -43,7 +43,10 @@ export class GscDefinitionProvider implements vscode.DefinitionProvider {
         if (groupAtCursor.type === GroupType.FunctionName) {
             const funcData = groupAtCursor.getFunctionNameAndPath();
             if (funcData !== undefined) {
-                locations.push(...await GscFile.getFunctionNameDefinitions(funcData.name, funcData.path, documentUri));
+                const funcDefs = await GscFile.getFunctionNameDefinitions(funcData.name, funcData.path, documentUri);
+                if (funcDefs !== undefined) {
+                    locations.push(...funcDefs);
+                }
             }
         }
 

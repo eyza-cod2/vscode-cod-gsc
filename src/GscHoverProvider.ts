@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { GscFile } from './GscFile';
-import { GroupType, GscData } from './GscFileParser';
+import { GroupType, GscData, GscFunction } from './GscFileParser';
 
 export class GscHoverProvider implements vscode.HoverProvider {
     
@@ -17,13 +17,14 @@ export class GscHoverProvider implements vscode.HoverProvider {
         // Get parsed file
         const gscData = await GscFile.getFile(document.uri);
 
-        const hover = await this.getHover(gscData, position, document.uri);
+        const hover = await GscHoverProvider.getHover(gscData, position, document.uri);
 
         return hover;
     }
 
-    public async getHover(gscData: GscData, position: vscode.Position, uri: vscode.Uri): Promise<vscode.Hover> {
-        let hoverText = new vscode.MarkdownString();
+    public static async getHover(gscData: GscData, position: vscode.Position, uri: vscode.Uri): Promise<vscode.Hover> {
+        let markdown = new vscode.MarkdownString();
+        markdown.isTrusted = true; // enable HTML tags
 
         // Get group before cursor
         var groupAtCursor = gscData.root.findGroupOnLeftAtPosition(position);
@@ -35,30 +36,43 @@ export class GscHoverProvider implements vscode.HoverProvider {
                 // Get file URI and position where the file is defined
                 const definitions = await GscFile.getFunctionNameDefinitions(funcNameAndPath.name, funcNameAndPath.path, uri);
 
-                if (definitions.length === 0) {
-                    hoverText.appendText(`⚠️ Function '${funcNameAndPath.name}' was not found${(funcNameAndPath.path !== "" ? (" in '" + funcNameAndPath.path + "'") : "")}!`);
+                if (definitions === undefined) {
+                    GscHoverProvider.markdownAppendFileWasNotFound(markdown, funcNameAndPath.name, funcNameAndPath.path);
                 }
+                else if (definitions.length === 0) {
+                    GscHoverProvider.markdownAppendFunctionWasNotFound(markdown, funcNameAndPath.name, funcNameAndPath.path);
+                } 
+                else {
+                    definitions.forEach(async d => {
 
-                definitions.forEach(async d => {
-
-                    const gscData = await GscFile.getFile(d.uri);
-
-                    const functionData = gscData.functions.find(f => f.nameId === funcNameAndPath.name.toLowerCase());
-
-                    if (functionData === undefined) { return; }
-
-                    const parametersText = functionData.parameters.map(p => p.name).join(", ");
-
-                    hoverText.appendText(vscode.workspace.asRelativePath(d.uri));
-                    hoverText.appendMarkdown("\n\n"); // Two newlines for a new paragraph, for more space you could use "\n\n---\n\n" for a horizontal rule
-                    hoverText.appendMarkdown(`**${functionData.name}**(${parametersText})`);
-                });
+                        const gscData = await GscFile.getFile(d.uri);
+    
+                        const functionData = gscData.functions.find(f => f.nameId === funcNameAndPath.name.toLowerCase());
+    
+                        if (functionData === undefined) { return; }
+    
+                        GscHoverProvider.markdownAppendFunctionData(markdown, d.uri, functionData);
+                    });
+                }
             }
         }
 
+        return new vscode.Hover(markdown);
+    }
+
+    public static markdownAppendFileWasNotFound(md: vscode.MarkdownString, funcName: string, path: string) {
+        md.appendText(`⚠️ File '${path}.gsc' was not found!`);
+    }
+
+    public static markdownAppendFunctionWasNotFound(md: vscode.MarkdownString, funcName: string, path: string) {
+        md.appendText(`⚠️ Function '${funcName}' was not found${(path !== "" ? (" in '" + path + "'") : "")}!`);
+    }
+
+    public static markdownAppendFunctionData(md: vscode.MarkdownString, fileUri: vscode.Uri, functionData: GscFunction) {
+        const parametersText = functionData.parameters.map(p => p.name).join(", ");
         
+        md.appendCodeblock(`${functionData.name}(${parametersText})`);
 
-
-        return new vscode.Hover(hoverText);
+        md.appendMarkdown("File: ```" + vscode.workspace.asRelativePath(fileUri) + "```");
     }
 }
