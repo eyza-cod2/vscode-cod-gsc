@@ -4,6 +4,11 @@ All notable changes to the "gsc" extension will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
+## [0.0.7] - 2024-06-23
+
+- Improved hover-over function names (colorization, warnings, case insensitive match)
+
+
 ## [0.0.6] - 2024-06-22
 
 - Fixed hover-over function name case-sensitive error (functions are case insensitive)
