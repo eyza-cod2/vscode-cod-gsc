@@ -4,6 +4,13 @@ All notable changes to the "gsc" extension will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
+## [0.1.2] - 2024-08-24
+
+- Added code action "Change game root folder to 'xxx'" - it will automatically detects if files are in deeper folder structure
+- Fixed quick fix option "Ignore file xxx (workspace settings)"
+- Updated all packages
+
+
 ## [0.1.1] - 2024-08-24
 
 - Fixed images in update notification window

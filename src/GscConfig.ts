@@ -38,6 +38,14 @@ export class GscConfig {
 		}
 	}
 
+
+	public static changeRootFolder(uri: vscode.Uri, rootFolder: string) {
+		const config = vscode.workspace.getConfiguration('gsc', uri);
+		return config.update('gameRootFolder', rootFolder, vscode.ConfigurationTarget.WorkspaceFolder);
+	}
+
+
+
 	/**
 	 * Get array of ignored function names
 	 */
@@ -66,9 +74,15 @@ export class GscConfig {
 	public static addIgnoredFilePath(uri: vscode.Uri, value: string | string[]) {
 		const config = vscode.workspace.getConfiguration('gsc', uri);
 		const ignoredFilePaths: string[] = config.get('ignoredFilePaths', []);
-		ignoredFilePaths.push(...value);
+		if (typeof value === 'string') {
+			ignoredFilePaths.push(value);
+		} else{
+			ignoredFilePaths.push(...value);
+		}
 		return config.update('ignoredFilePaths', ignoredFilePaths, vscode.ConfigurationTarget.WorkspaceFolder);
 	}
+
+
 
 
 	public static isUniversalGame(game: GscGame): boolean {

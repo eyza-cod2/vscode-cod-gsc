@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { GscConfig } from './GscConfig';
+import * as path from 'path';
 
 export class GscCodeActionProvider implements vscode.CodeActionProvider {
    
@@ -36,10 +37,15 @@ export class GscCodeActionProvider implements vscode.CodeActionProvider {
             await GscConfig.addIgnoredFilePath(workspaceUri, [...paths]);
             await vscode.window.showInformationMessage(`Added all missing files to ignored file paths.`);
         }));
+
+        context.subscriptions.push(vscode.commands.registerCommand('gsc.changeRootFolder', async (workspaceUri: vscode.Uri, rootFolder: string) => {
+            await GscConfig.changeRootFolder(workspaceUri, rootFolder);
+            await vscode.window.showInformationMessage(`Changed root folder to '${rootFolder}'.`);
+        }));
     }
    
    
-    provideCodeActions(document: vscode.TextDocument, range: vscode.Range, context: vscode.CodeActionContext, token: vscode.CancellationToken): vscode.ProviderResult<(vscode.Command | vscode.CodeAction)[]> {
+    async provideCodeActions(document: vscode.TextDocument, range: vscode.Range, context: vscode.CodeActionContext, token: vscode.CancellationToken): Promise<vscode.CodeAction[]> {
         const codeActions: vscode.CodeAction[] = [];
         
         
@@ -80,9 +86,9 @@ export class GscCodeActionProvider implements vscode.CodeActionProvider {
 
                 // Split the path by the backslash
                 const parts = filePath.split('\\');
-                var rootFolder: string | undefined = undefined;
+                var fileParentFolder: string | undefined = undefined;
                 if (parts.length > 1) {
-                    rootFolder = parts[0];
+                    fileParentFolder = parts[0];
                 }
 
                 const action = new vscode.CodeAction('Ignore file "' + filePath + '" (workspace settings)', vscode.CodeActionKind.QuickFix);
@@ -93,12 +99,12 @@ export class GscCodeActionProvider implements vscode.CodeActionProvider {
                 };
                 codeActions.push(action);
 
-                if (rootFolder) {
-                    const action = new vscode.CodeAction('Ignore folder "' + rootFolder + '" (workspace settings)', vscode.CodeActionKind.QuickFix);
+                if (fileParentFolder) {
+                    const action = new vscode.CodeAction('Ignore folder "' + fileParentFolder + '" (workspace settings)', vscode.CodeActionKind.QuickFix);
                     action.command = {
-                        title: 'Add "' + rootFolder + '" to workspace settings',
+                        title: 'Add "' + fileParentFolder + '" to workspace settings',
                         command: 'gsc.addFilePathIntoIgnored',
-                        arguments: [workspaceFolder.uri, rootFolder]
+                        arguments: [workspaceFolder.uri, fileParentFolder]
                     };
                     codeActions.push(action);
                 }
@@ -110,6 +116,34 @@ export class GscCodeActionProvider implements vscode.CodeActionProvider {
                     arguments: [workspaceFolder.uri]
                 };
                 codeActions.push(action2);
+
+
+
+                // Check if this file is deeper in the folder structure
+                const filePathWithExtension = (filePath.replace(/\\/g, '/') + ".gsc").toLowerCase();
+                const files = await vscode.workspace.findFiles("**/*.gsc");
+                // Filter results manually for a case-insensitive match
+                for (const file of files) {              
+                    // Get the workspace folder for the found file
+                    const workspaceFolder = vscode.workspace.getWorkspaceFolder(file);
+                    if (!workspaceFolder) {
+                        continue;
+                    }
+                    const relativePath = path.relative(workspaceFolder.uri.fsPath, file.fsPath).toLowerCase().replace(/\\/g, '/');
+                    if (relativePath.endsWith(filePathWithExtension)) {
+                        // Extract the part of the path before the subPath
+                        const requiredRootFolder = relativePath.toLowerCase().replace(`/${filePathWithExtension.toLowerCase()}`, '');
+
+                        const action3 = new vscode.CodeAction('Change game root folder to "' + requiredRootFolder + '" (workspace settings)', vscode.CodeActionKind.QuickFix);
+                        action3.command = {
+                            title: 'Change game root folder to "' + requiredRootFolder + '" (workspace settings)',
+                            command: 'gsc.changeRootFolder',
+                            arguments: [workspaceFolder.uri, requiredRootFolder]
+                        };
+                        codeActions.splice(0, 0, action3); // Insert at the beginning
+                    }
+                }
+
             }
 
         }

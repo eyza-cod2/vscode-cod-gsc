@@ -116,6 +116,13 @@ export class Updates {
                 - Fixed images in update notification window
             </p>
 
+            <h2>All changes in 0.1.2:</h2>
+            <p>
+                - Added code action "Change game root folder to 'xxx'" - it will automatically detects if files are in deeper folder structure
+                - Fixed quick fix option "Ignore file xxx (workspace settings)"
+                - Updated all packages
+            </p>
+
             <h2>Contact</h2>
             <p>If you have any issues or feedback, feel free to reach out:</p>
             <ul>

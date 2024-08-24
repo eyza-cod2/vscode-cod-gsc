@@ -275,7 +275,6 @@ export class GscDiagnosticsCollection {
                     
                     d.code = "unknown_file_path_" + funcInfo.path;
 
-                    // TODO CodeAction change root folder
                     return d;
                 }
 
