@@ -118,9 +118,14 @@ export class Updates {
 
             <h2>All changes in 0.1.2:</h2>
             <p>
-                - Added code action "Change game root folder to 'xxx'" - it will automatically detects if files are in deeper folder structure
-                - Fixed quick fix option "Ignore file xxx (workspace settings)"
+                - Added code action "Change game root folder to 'xxx'" - it will automatically detects if files are in deeper folder structure<br>
+                - Fixed quick fix option "Ignore file xxx (workspace settings)"<br>
                 - Updated all packages
+            </p>
+
+            <h2>All changes in 0.1.3:</h2>
+            <p>
+                - Fixed error message appearing when new folder is created in workspace
             </p>
 
             <h2>Contact</h2>

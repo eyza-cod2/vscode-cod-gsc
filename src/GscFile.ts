@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
 import { GscFileParser, GscData, GscFunction } from './GscFileParser';
 import { GscConfig } from './GscConfig';
-
+import * as fs from 'fs';
+import * as path from 'path';
 
 /**
  * On startup scan every .gsc file, parse it, and save the result into memory.
@@ -140,8 +141,10 @@ export class GscFile {
      * @param fileUri Uri of file to parse
      */
     public static removeCachedFile(fileUri: vscode.Uri) {
-        this.parsedFiles.delete(fileUri.toString());
-        this._onDidDeleteDocument.fire(fileUri);
+        const deleted = this.parsedFiles.delete(fileUri.toString());     
+        if (deleted) {
+            this._onDidDeleteDocument.fire(fileUri);
+        }
     }
 
 
@@ -292,8 +295,16 @@ export class GscFile {
     }
 
 
+    static isValidGscFile(filePath: string): boolean {
+        return fs.existsSync(filePath) && fs.lstatSync(filePath).isFile() && path.extname(filePath).toLowerCase() === '.gsc';
+    }
+
+
     static onCreateFiles(e: vscode.FileCreateEvent) {
         for(const file of e.files) {
+            if (!GscFile.isValidGscFile(file.fsPath)) {
+                continue;
+            }
             void GscFile.parseAndCacheFile(file);       
             console.log("Added " + vscode.workspace.asRelativePath(file) + " for parsing, because new file is created");
         }
