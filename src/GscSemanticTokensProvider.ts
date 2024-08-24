@@ -42,16 +42,20 @@ export class GscSemanticTokensProvider implements vscode.DocumentSemanticTokensP
     async provideDocumentSemanticTokens(
 	  document: vscode.TextDocument
 	): Promise<vscode.SemanticTokens | undefined> {
-	  // analyze the document and return semantic tokens
-
-		const builder = new vscode.SemanticTokensBuilder(GscSemanticTokensProvider.legend);
-
-		//vscode.window.showWarningMessage("SemanticTokensBuilder");
-
-   
-        var gsc = await GscFile.parseAndCacheFile(document.uri);
-
         
+        // This function is called when 
+        //  - when the document's content has changed, or 
+        //  - when the document is first opened, or 
+        //  - when the language id of the document has changed.
+
+		//vscode.window.showWarningMessage("SemanticTokensBuilder: " + document.uri.toString());
+
+        const builder = new vscode.SemanticTokensBuilder(GscSemanticTokensProvider.legend);
+
+        // Get the parsed file
+        var gsc = await GscFile.parseAndCacheFile(document.uri);
+        
+
         function walkGroupItems(parentGroup: GscGroup, items: GscGroup[], action: (parentGroup: GscGroup, group: GscGroup) => void) {
             // This object have child items, process them first
             for (var i = 0; i < items.length; i++) {

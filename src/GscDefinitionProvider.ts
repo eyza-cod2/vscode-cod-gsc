@@ -17,7 +17,7 @@ export class GscDefinitionProvider implements vscode.DefinitionProvider {
         // Get parsed file
         const gscData = await GscFile.getFile(document.uri);
 
-        const locations = await this.getFunctionDefinitionLocations(gscData, position, document.uri);
+        const locations = await GscDefinitionProvider.getFunctionDefinitionLocations(gscData, position, document.uri);
 
         return locations;
     }
@@ -31,7 +31,7 @@ export class GscDefinitionProvider implements vscode.DefinitionProvider {
      *     _tests\definition_file::function_file();
      * @returns 
      */
-    public async getFunctionDefinitionLocations(gscData: GscData, position: vscode.Position, documentUri: vscode.Uri): Promise<vscode.Location[]> {
+    public static async getFunctionDefinitionLocations(gscData: GscData, position: vscode.Position, documentUri: vscode.Uri): Promise<vscode.Location[]> {
         const locations: vscode.Location[] = [];
         
         // Get group before cursor
@@ -41,11 +41,13 @@ export class GscDefinitionProvider implements vscode.DefinitionProvider {
         }
 
         if (groupAtCursor.type === GroupType.FunctionName) {
-            const funcData = groupAtCursor.getFunctionNameAndPath();
-            if (funcData !== undefined) {
-                const funcDefs = await GscFile.getFunctionNameDefinitions(funcData.name, funcData.path, documentUri);
+            const funcInfo = groupAtCursor.getFunctionReferenceInfo();
+            if (funcInfo !== undefined) {
+                const funcDefs = await GscFile.getFunctionNameDefinitions(funcInfo.name, funcInfo.path, documentUri);
                 if (funcDefs !== undefined) {
-                    locations.push(...funcDefs);
+                    funcDefs.forEach(f => {
+                        locations.push(new vscode.Location(vscode.Uri.parse(f.uri), new vscode.Position(f.func.range.start.line, f.func.range.start.character)));
+                    });
                 }
             }
         }

@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
-import { GscFileParser, GscData } from './GscFileParser';
+import { GscFileParser, GscData, GscFunction } from './GscFileParser';
+import { GscConfig } from './GscConfig';
 
 
 /**
@@ -10,110 +11,120 @@ import { GscFileParser, GscData } from './GscFileParser';
 export class GscFile {
 
     private static parsedFiles: Map<string, GscData> = new Map();
-    private static _onDidParseDocument: vscode.EventEmitter<vscode.Uri> = new vscode.EventEmitter<vscode.Uri>();
+    private static _onDidParseDocument: vscode.EventEmitter<{uri: vscode.Uri, data: GscData}> = new vscode.EventEmitter<{uri: vscode.Uri, data: GscData}>();
+    private static _onDidParseAllDocuments: vscode.EventEmitter<Map<string, GscData>> = new vscode.EventEmitter<Map<string, GscData>>();
     private static _onDidDeleteDocument: vscode.EventEmitter<vscode.Uri> = new vscode.EventEmitter<vscode.Uri>();
     private static parseAllFiles = false;
 
+    private static statusBarItem: vscode.StatusBarItem | undefined;
     
-    static activate(context: vscode.ExtensionContext) {
+    static async activate(context: vscode.ExtensionContext) {
         this.parseAllFiles = true;
+
+        // Create a status bar item to show background task indicator
+        GscFile.statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 0);
+        GscFile.statusBarItem.text = "$(sync~spin) Parsing GSC files...";
+        GscFile.statusBarItem.tooltip = "Background task in progress";
+        GscFile.statusBarItem.backgroundColor = new vscode.ThemeColor('statusBarItem.warningBackground'); // Example of using a theme color for error state
+        
+        context.subscriptions.push(GscFile.statusBarItem);
 
         context.subscriptions.push(vscode.workspace.onDidCreateFiles(this.onCreateFiles));
         context.subscriptions.push(vscode.workspace.onDidDeleteFiles(this.onDeleteFiles));
         context.subscriptions.push(vscode.workspace.onDidRenameFiles(this.onRenameFiles));
+        context.subscriptions.push(vscode.workspace.onDidChangeWorkspaceFolders(this.onChangeWorkspaceFolders));
 
-        // Command to print parsed gsc file data
-        context.subscriptions.push(vscode.commands.registerCommand('gsc.debugParsedGscFile', async () => {
-            if (vscode.window.activeTextEditor === undefined) {
-                return;
-            }
-            const gscData = await this.getFile(vscode.window.activeTextEditor.document.uri);
-            this.debugParsedFile(gscData);
-        }));
+        context.subscriptions.push(vscode.commands.registerCommand('gsc.debugParsedGscFile', this.debugParsedGscFile));
+        context.subscriptions.push(vscode.commands.registerCommand('gsc.debugParsedGscFileStructure', this.debugParsedGscFileStructure));
+        context.subscriptions.push(vscode.commands.registerCommand('gsc.debugItemBeforeCursor', this.debugItemBeforeCursor));        
+        context.subscriptions.push(vscode.commands.registerCommand('gsc.parseAll', () => setTimeout(() => this.initialParse(), 1)));        
+    }
 
-        // Command to print parsed gsc file structure
-        context.subscriptions.push(vscode.commands.registerCommand('gsc.debugParsedGscFileStructure', async () => {
-            if (vscode.window.activeTextEditor === undefined) {
-                return;
-            }
-            const gscData = await this.getFile(vscode.window.activeTextEditor.document.uri);
-            console.log(GscFileParser.debugAsString(gscData.root.tokensAll, gscData.root, true));
-        }));
 
-        // Command to print parsed gsc file structure
-        context.subscriptions.push(vscode.commands.registerCommand('gsc.debugItemBeforeCursor', async () => {
-            if (vscode.window.activeTextEditor === undefined) {
-                console.log("No active editor.");
-                return;
-            }
-            const position = vscode.window.activeTextEditor.selection.active;
+    /**
+     * Load specified .gsc from editor or from file system, parse it, and save them into memory
+     * @param fileUri Uri of file to parse
+     */
+    public static async parseAndCacheFile(fileUri: vscode.Uri, ignoreNotify: boolean = false): Promise<GscData>  {
+        var gsc = await this.parseFile(fileUri);
 
-            console.log("Getting item before cursor position L:" + position.line + " C:" + position.character);
+        // This file is part of workspace, save it into cache; otherwise ignore it
+        const workspaceFolder = vscode.workspace.getWorkspaceFolder(fileUri);
+        if (workspaceFolder !== undefined) {
+            this.parsedFiles.set(fileUri.toString(), gsc); // Add or update
+        }
 
-            const gscData = await this.getFile(vscode.window.activeTextEditor.document.uri);
+        // Run initial scan of all files
+        if (this.parseAllFiles) {    
+            this.parseAllFiles = false;  
             
-            // Get group before cursor
-            var groupAtCursor = gscData.root.findGroupOnLeftAtPosition(position);
-            if (groupAtCursor === undefined) {
-                console.log("No item found at position.");
-                return;
-            }
-            console.log(GscFileParser.debugAsString(gscData.root.tokensAll, groupAtCursor, true));
+            await this.initialParse();
 
-            console.log();
+            this._onDidParseDocument.fire({uri: fileUri, data: gsc});
 
-            const funcNameAndPath = groupAtCursor.getFunctionNameAndPath();
-            if (funcNameAndPath !== undefined) {
-                console.log("Function path: " + funcNameAndPath.path);
-                console.log("Function name: " + funcNameAndPath.name);
-            } else {
-                console.log("Function not detected.");
-            }
-        }));        
-    }
-
-    // Expose an event for external subscription
-    public static get onDidParseDocument(): vscode.Event<vscode.Uri> {
-        return this._onDidParseDocument.event;
-    }
-
-    public static get onDidDeleteDocument(): vscode.Event<vscode.Uri> {
-        return this._onDidDeleteDocument.event;
-    }
-
-    static onCreateFiles(e: vscode.FileCreateEvent) {
-        for(const file of e.files) {
-            this.parseAndCacheFile(file);       
-            console.log(this, "Added " + vscode.workspace.asRelativePath(file) + " for parsing");
+            return gsc;
         }
+        else if (ignoreNotify === false) {
+            // Notify all subscribers that the document has been parsed
+            this._onDidParseDocument.fire({uri: fileUri, data: gsc});
+        }
+
+        return gsc;
     }
 
-    static onDeleteFiles(e: vscode.FileDeleteEvent) {
-        for(const file of e.files) {
-            this.removeCachedFile(file);
-            console.log(this, "Removed " + vscode.workspace.asRelativePath(file) + " from parsing");
-        }
-    }
 
-    static onRenameFiles(e: vscode.FileRenameEvent) {
-        for(const {oldUri, newUri} of e.files) {
-            this.removeCachedFile(oldUri);
-            this.parseAndCacheFile(newUri);
-        }
+    public static async initialParse() {
+        if (GscFile.statusBarItem) {
+            GscFile.statusBarItem.show();
+        } 
+
+        // Parse all
+        await GscFile.parseAndCacheAllFiles(true); // true = ignore notify
+
+
+        // Notify subscribers that all files has been parsed
+        const files = this.getCachedFiles();
+        this._onDidParseAllDocuments.fire(files);
+
+        if (GscFile.statusBarItem) {
+            GscFile.statusBarItem.hide();
+            GscFile.statusBarItem.dispose();
+            GscFile.statusBarItem = undefined;
+        } 
     }
 
     /**
      * Load all .gsc files opened in editor or found in workspace file system, parse them and save them into memory
      */
-    public static async parseAndCacheAllFiles() {
+    public static async parseAndCacheAllFiles(ignoreNotify: boolean = false) {
         console.log("Parsing GSC files...");
         const start = performance.now();
 
         // Find all GSC files in repository
         var files = await vscode.workspace.findFiles('**/*.gsc');
-        for (const file of files) {
-            var gsc = await this.parseAndCacheFile(file);
+
+        const poolSize = 4; // Number of files to parse concurrently
+        let i = 0;
+        
+        const parseFile = async (file: vscode.Uri, index: number) => {
+            const gsc = await this.parseAndCacheFile(file, ignoreNotify);
+            if (GscFile.statusBarItem) {
+                GscFile.statusBarItem.text = `$(sync~spin) Parsing GSC file ${index + 1}/${files.length}...`;
+                GscFile.statusBarItem.tooltip = file.fsPath;
+            }
+        };
+        
+        // Split the files into chunks of files
+        const chunks = [];
+        for (let i = 0; i < files.length; i += poolSize) {
+            chunks.push(files.slice(i, i + poolSize));
         }
+        
+        for (const chunk of chunks) {
+            await Promise.all(chunk.map((file, index) => parseFile(file, i + index)));
+            i += chunk.length;
+        }
+
         let elapsed = performance.now() - start;
 
         //this.debugParsedFiles(true);
@@ -122,25 +133,7 @@ export class GscFile {
         console.log("All GSC files parsed, files: " + this.parsedFiles.size + ", time: " + elapsed + "ms");
     }
 
-    /**
-     * Load specified .gsc from editor or from file system, parse it, and save them into memory
-     * @param fileUri Uri of file to parse
-     */
-    public static async parseAndCacheFile(fileUri: vscode.Uri): Promise<GscData>  {
-        var gsc = await this.parseFile(fileUri);
-        this.parsedFiles.set(fileUri.toString(), gsc); // Add or update
-        // Notify all subscribers that the document has been parsed
-        this._onDidParseDocument.fire(fileUri);
 
-        // Run initial scan of all files
-        if (this.parseAllFiles) {    
-            this.parseAllFiles = false;   
-            await GscFile.parseAndCacheAllFiles(); 
-            return this.getFile(fileUri);
-        }
-
-        return gsc;
-    }
 
     /**
      * Load specified .gsc from editor or from file system, parse it, and save them into memory
@@ -148,10 +141,18 @@ export class GscFile {
      */
     public static removeCachedFile(fileUri: vscode.Uri) {
         this.parsedFiles.delete(fileUri.toString());
+        this._onDidDeleteDocument.fire(fileUri);
     }
 
 
     public static async getFile(fileUri: vscode.Uri): Promise<GscData> {
+        
+        // This file is not part of workspace, do not use cached files but parse it instead
+        const workspaceFolder = vscode.workspace.getWorkspaceFolder(fileUri);
+        if (workspaceFolder === undefined) {
+            return this.parseFile(fileUri);
+        }
+        
         var gsc = this.parsedFiles.get(fileUri.toString()) ?? await this.parseAndCacheFile(fileUri);
         return gsc;
     }
@@ -166,8 +167,8 @@ export class GscFile {
      * @param fileUri Uri of file to parse
      * @returns Parsed data
      */
-    private static async parseFile(fileUri: vscode.Uri): Promise<GscData> {
-        console.log("Parsing " + vscode.workspace.asRelativePath(fileUri) + "");
+    public static async parseFile(fileUri: vscode.Uri): Promise<GscData> {
+        //console.log("Parsing " + vscode.workspace.asRelativePath(fileUri) + "");
 
         const start = performance.now();
 
@@ -181,14 +182,14 @@ export class GscFile {
             const fileContent = await vscode.workspace.fs.readFile(fileUri);      
             content =  Buffer.from(fileContent).toString('utf8'); // Convert the Uint8Array content to a string
         }
-        const endLoading = performance.now();
+        //const endLoading = performance.now();
         try {
             const gscData = GscFileParser.parse(content);
-            const endParsing = performance.now();
-            console.log(`  total time: ${(endParsing - start).toFixed(1)}, loading: ${(endLoading - start).toFixed(1)}, parsing: ${(endParsing - endLoading).toFixed(1)}`);
+            //const endParsing = performance.now();
+            //console.log(`  total time: ${(endParsing - start).toFixed(1)}, loading: ${(endLoading - start).toFixed(1)}, parsing: ${(endParsing - endLoading).toFixed(1)}`);
             return gscData;
         } catch (error) {
-            vscode.window.showErrorMessage("Error while parsing file " + vscode.workspace.asRelativePath(fileUri) + ". " + error);
+            await vscode.window.showErrorMessage("Error while parsing file " + vscode.workspace.asRelativePath(fileUri) + ". " + error);
             throw error;
         }
     }
@@ -207,24 +208,32 @@ export class GscFile {
      * Get location inside of file where the function is defined. 
      * If the file is not found, undefined is returned. If file is found but function is not found, it will return an empty array.
      */
-    public static async getFunctionNameDefinitions(funcName: string, path: string, documentUri: vscode.Uri): Promise<vscode.Location[] | undefined> {
-        const locations: vscode.Location[] = [];  
+    public static async getFunctionNameDefinitions(funcName: string, path: string, documentUri: vscode.Uri): Promise<{func: GscFunction, uri: string}[] | undefined> {
+        const funcDefs: {func: GscFunction, uri: string} [] = [];  
         const funcNameId = funcName.toLowerCase();
+
+        const fileGameRootFolderUri = GscConfig.getGameRootFolderOfFile(documentUri);
+        if (!fileGameRootFolderUri) {
+            return funcDefs;
+        }
 
         // Its external function call
         if (path !== "") 
         {
-            const filePath = path.replace(/\\/g, '/') + ".gsc";
+            const gscFilePathUri = vscode.Uri.joinPath(fileGameRootFolderUri, path + ".gsc").toString().toLowerCase();
+            
             var fileFound = false;
+
 
             // Try to find the file in parsed files
             const gscFiles = GscFile.getCachedFiles();
             gscFiles.forEach((data, uri) => {
-                if (uri.endsWith(filePath)) {
+
+                if (uri.toLowerCase() === gscFilePathUri) {
                     fileFound = true;
                     data.functions.forEach(f => {
                         if (f.nameId === funcNameId) {
-                            locations.push(new vscode.Location(vscode.Uri.parse(uri), new vscode.Position(f.range.start.line, f.range.start.character)));
+                            funcDefs.push({func: f, uri: uri});
                         }
                     });
                 }
@@ -242,21 +251,21 @@ export class GscFile {
             const gscData = await GscFile.getFile(documentUri);
             gscData.functions.forEach(f => {
                 if (f.nameId === funcNameId) {
-                    locations.push(new vscode.Location(documentUri, new vscode.Position(f.range.start.line, f.range.start.character)));
+                    funcDefs.push({func: f, uri: documentUri.toString()});
                 }
             });
 
             // Find function also in included files
-            gscData.includes.forEach(path => {
-                const filePath = path.replace(/\\/g, '/') + ".gsc";
+            gscData.includes.forEach(includedPath => {
+                const gscFilePathUri = vscode.Uri.joinPath(fileGameRootFolderUri, includedPath + ".gsc").toString().toLowerCase();
 
                 // Try to find the file in parsed files
                 const gscFiles = GscFile.getCachedFiles();
                 gscFiles.forEach((data, uri) => {
-                    if (uri.endsWith(filePath)) {
+                    if (uri.toLowerCase() === gscFilePathUri) {
                         data.functions.forEach(f => {
                             if (f.nameId === funcNameId) {
-                                locations.push(new vscode.Location(vscode.Uri.parse(uri), new vscode.Position(f.range.start.line, f.range.start.character)));
+                                funcDefs.push({func: f, uri: uri});
                             }
                         });
                     }
@@ -264,16 +273,114 @@ export class GscFile {
             });
         }
         
-        return locations;
+        return funcDefs;
     }
 
 
 
+    // Expose an event for external subscription
+    public static get onDidParseDocument(): vscode.Event<{uri: vscode.Uri, data: GscData}> {
+        return this._onDidParseDocument.event;
+    }
+
+    public static get onDidParseAllDocuments(): vscode.Event<Map<string, GscData>> {
+        return this._onDidParseAllDocuments.event;
+    }
+
+    public static get onDidDeleteDocument(): vscode.Event<vscode.Uri> {
+        return this._onDidDeleteDocument.event;
+    }
+
+
+    static onCreateFiles(e: vscode.FileCreateEvent) {
+        for(const file of e.files) {
+            void GscFile.parseAndCacheFile(file);       
+            console.log("Added " + vscode.workspace.asRelativePath(file) + " for parsing, because new file is created");
+        }
+    }
+    static onDeleteFiles(e: vscode.FileDeleteEvent) {
+        for(const file of e.files) {
+            GscFile.removeCachedFile(file);
+            console.log("Removed " + vscode.workspace.asRelativePath(file) + " from parsing, because the file was deleted");
+        }
+    }
+    static onRenameFiles(e: vscode.FileRenameEvent) {
+        for(const file of e.files) {
+            GscFile.removeCachedFile(file.oldUri);
+            
+            // No need to parse the new uri, because if opened in editor, it will be parsed by semantic tokens provider
+            //void GscFile.parseAndCacheFile(file.newUri);
+
+            // TODO check which files were referencing the old file and update the references
+
+            console.log("Re-parsed " + vscode.workspace.asRelativePath(file.newUri) + " because the file was renamed");
+        }
+    }
+    static onChangeWorkspaceFolders(e: vscode.WorkspaceFoldersChangeEvent) {
+        const filesToDelete: vscode.Uri[] = [];       
+        for(const folder of e.removed) {
+            if (GscFile.parsedFiles.has(folder.uri.toString())) {
+                filesToDelete.push(folder.uri);
+            }
+        }
+        for(const uri of filesToDelete) {
+            GscFile.removeCachedFile(uri);
+            console.log("Removed " + vscode.workspace.asRelativePath(uri) + " from parsing, because workspace folder was removed");
+        }
+
+        for(const folder of e.added) {
+            void GscFile.parseAndCacheFile(folder.uri);       
+            console.log("Added " + vscode.workspace.asRelativePath(folder.uri) + " for parsing, because workspace folder was added");
+        }
+    }
 
 
 
+    static async debugParsedGscFile() {
+        if (vscode.window.activeTextEditor === undefined) {
+            return;
+        }
+        const gscData = await GscFile.getFile(vscode.window.activeTextEditor.document.uri);
+        GscFile.debugParsedFile(gscData);
+    }
 
+    static async debugParsedGscFileStructure() {
+        if (vscode.window.activeTextEditor === undefined) {
+            return;
+        }
+        const gscData = await GscFile.getFile(vscode.window.activeTextEditor.document.uri);
+        console.log(GscFileParser.debugAsString(gscData.root.tokensAll, gscData.root, true));
+    }
 
+    static async debugItemBeforeCursor() {
+        if (vscode.window.activeTextEditor === undefined) {
+            console.log("No active editor.");
+            return;
+        }
+        const position = vscode.window.activeTextEditor.selection.active;
+
+        console.log("Getting item before cursor position L:" + position.line + " C:" + position.character);
+
+        const gscData = await GscFile.getFile(vscode.window.activeTextEditor.document.uri);
+        
+        // Get group before cursor
+        var groupAtCursor = gscData.root.findGroupOnLeftAtPosition(position);
+        if (groupAtCursor === undefined) {
+            console.log("No item found at position.");
+            return;
+        }
+        console.log(GscFileParser.debugAsString(gscData.root.tokensAll, groupAtCursor, true));
+
+        console.log();
+
+        const funcNameAndPath = groupAtCursor.getFunctionReferenceInfo();
+        if (funcNameAndPath !== undefined) {
+            console.log("Function path: " + funcNameAndPath.path);
+            console.log("Function name: " + funcNameAndPath.name);
+        } else {
+            console.log("Function not detected.");
+        }
+    }
 
     public static debugParsedFile(gsc: GscData) {
         

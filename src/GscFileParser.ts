@@ -2578,17 +2578,25 @@ export class GscGroup {
             scopeOfCursorGroup = groupAtCursor.findParentOfType(...GscFileParser.scopeTypes, GroupType.Array) ?? groupAtCursor;
         }
 
+        const variableTokens = [TokenType.Keyword, TokenType.Structure, TokenType.ArrayStart, TokenType.ArrayEnd, TokenType.Array, TokenType.Number, 
+            TokenType.String, TokenType.LocalizedString, TokenType.CvarString];
+
+
         // Loop tokens
         for (var i = groupAtCursor.tokenIndexEnd; i >= 0; i--) {
             const token = tokens[i];
+            const tokenLast = tokens.at(i + 1);
 
             if (token.range.end.isAfter(position)) {
                 continue;
             }
 
-            const variableTokens = [TokenType.Keyword, TokenType.Structure, TokenType.ArrayStart, TokenType.ArrayEnd, TokenType.Array, TokenType.Number, 
-                TokenType.String, TokenType.LocalizedString, TokenType.CvarString];
-            if (!variableTokens.includes(token.type) || i === scopeOfCursorGroup.tokenIndexStart) {
+            // Stop looping backwards when:
+            if (
+                !variableTokens.includes(token.type) ||                                 // we reached non-variable type
+                i === scopeOfCursorGroup.tokenIndexStart ||                             // we reached scope start
+                (tokenLast?.type === token.type && token.type === TokenType.Keyword))   // we found 2 keywords next to each other (like 'wait level')
+            {
                 const startIndex = i + 1;
                 
                 // Now go to right until cursor pos is reached
@@ -2748,31 +2756,49 @@ export class GscGroup {
 
 
     /**
-     * Gets function name and path. The group must be of type {@linkcode GroupType.FunctionName}.
-     * @example
-     *  funcName()                          => {name: "funcName", path: ""}
-     *  maps\mp\gametypes\file::funcName()  => {name: "funcName", path: "maps\mp\gametypes\file"}
-     * @returns 
+     * Gets function info like name, path, parameters, etc. The group must be of type {@linkcode GroupType.FunctionName}.
      */
-    public getFunctionNameAndPath(): {name: string, path: string} | undefined {
+    public getFunctionReferenceInfo(): {name: string, path: string, callOn: GscGroup | undefined, params: GscGroup[], paramsGroup: GscGroup | undefined, pathGroup: GscGroup | undefined} | undefined {
         const locations: vscode.Location[] = [];
         const group = this as GscGroup;
+
+        // Func name
         if (group.type !== GroupType.FunctionName) {
             return undefined;
         }
-
         const funcName = group.getFirstToken().name;
-        var path = "";
+        
 
         // Its external function call
+        var path = "";
+        var pathGroup: GscGroup | undefined = undefined;
         if (((group.parent?.type === GroupType.FunctionCall && group.parent?.parent?.type === GroupType.FunctionCall) ||
               group.parent?.type === GroupType.FunctionPointer && group.parent?.parent?.type === GroupType.FunctionPointerExternal) &&
             group.parent.parent.items[0].type === GroupType.Path) 
         {
+            pathGroup = group.parent.parent.items[0];
             path = group.parent.parent.items[0].getTokensAsString();
         }
+
+        // Get parameters
+        const params: GscGroup[] = [];
+        var paramContainer: GscGroup | undefined = undefined;
+        if (group.parent?.items.length === 2 && group.parent.items[1].type === GroupType.FunctionParametersExpression) {
+            paramContainer = group.parent.items[1];
+            group.parent.items[1].items.forEach(p => {
+                if (p.type !== GroupType.Token) { // ignore ,
+                    params.push(p);
+                }
+            });
+        }
+
+        // Get callon
+        var callon: GscGroup | undefined = undefined;
+        if (group.parent?.parent?.typeEqualsToOneOf(GroupType.FunctionCallWithObject, GroupType.FunctionCallWithObjectAndThread)) {
+            callon = group.parent?.parent.items[0];
+        }
         
-        return {name: funcName, path: path};
+        return {name: funcName, path: path, callOn: callon, params: params, paramsGroup: paramContainer, pathGroup: pathGroup};
     }
 
 

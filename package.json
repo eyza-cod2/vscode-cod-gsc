@@ -2,12 +2,12 @@
   "name": "cod-gsc",
   "displayName": "CoD GSC",
   "description": "GSC language support for Call of Duty (CoD1, CoD2, CoD3, CoD4, CoD5:WaW, CoD6:MW2, COD7:BO)",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "publisher": "eyza",
   "icon": "logo.png",
   "license": "LGPL-3.0-or-later",
   "engines": {
-    "vscode": "^1.87.0"
+    "vscode": "^1.92.0"
   },
   "categories": [
     "Programming Languages"
@@ -22,21 +22,34 @@
     "type": "git",
     "url": "https://github.com/eyza-cod2/vscode-cod-gsc.git"
   },
-  "activationEvents": [],
-  "main": "./dist/extension.js",
+  "activationEvents": ["onStartupFinished"],
+  "main": "./out/extension.js",
   "contributes": {
-    "languages": [{
-      "id": "gsc",
-      "aliases": ["GSC", "gsc"],
-      "extensions": [".gsc"],
-      "configuration": "./language-configuration.json"
-    }],
-    "grammars": [{
-      "language": "gsc",
-      "scopeName": "source.gsc",
-      "path": "./syntaxes/gsc.tmLanguage.json"
-    }],
+    "languages": [
+      {
+        "id": "gsc",
+        "aliases": [
+          "GSC",
+          "gsc"
+        ],
+        "extensions": [
+          ".gsc"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "gsc",
+        "scopeName": "source.gsc",
+        "path": "./syntaxes/gsc.tmLanguage.json"
+      }
+    ],
     "commands": [
+      {
+        "command": "gsc.selectGame",
+        "title": "Select game"
+      },
       {
         "command": "gsc.debugParsedGscFile",
         "title": "GSC: Print parsed GSC file data into console"
@@ -48,32 +61,77 @@
       {
         "command": "gsc.debugItemBeforeCursor",
         "title": "GSC: Print GSC item before cursor"
+      },
+      {
+        "command": "gsc.refreshDiagnosticsCollection",
+        "title": "GSC: Refresh diagnostics collection"
+      },
+      {
+        "command": "gsc.parseAll",
+        "title": "GSC: Parse all files"
+      },
+      {
+        "command": "gsc.showErrorInfo",
+        "title": "Report an Issue"
+    }
+    ],
+    "configuration": {
+      "title": "GSC",
+      "properties": {
+        "gsc.game": {
+          "type": "string",
+          "enum": [
+            "Universal game",
+            "CoD2 MP",
+            "CoD2 SP"
+          ],
+          "description": "The game for which the GSC files are intended. Each game has different syntax rules and list of predefined function.",
+          "scope": "resource"
+        },
+        "gsc.gameRootFolder": {
+          "type": "string",
+          "default": "",
+          "description": "Folder that will be used as a game root folder. Its relative to workspace folder. If empty, the workspace folder is used. For example, if your gsc files are in path `<workspace>/src/maps/mp/gametypes/_script.gsc`, and from game point of view the root folder path starts as `maps\\mp\\gametypes\\_script`, enter `src` into this field to specify the game root folder. This folder path is used for auto-completion, functions definitions and error diagnostics.",
+          "scope": "resource"
+        },
+        "gsc.ignoredFunctionNames": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "description": "An array of function names that will be ignored during error diagnostics (case insensitive). For example: `ignoredFunctionName`",
+          "scope": "resource"
+        },
+        "gsc.ignoredFilePaths": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "description": "An array of file paths that will be ignored during error diagnostics (case insensitive). For example: `maps\\mp\\gametypes\\ignoredScript`",
+          "scope": "resource"
+        }
       }
-    ]
+    }
   },
   "scripts": {
-    "vscode:prepublish": "npm run package",
-    "compile": "webpack",
-    "watch": "webpack --watch",
-    "package": "webpack --mode production --devtool hidden-source-map",
-    "compile-tests": "tsc -p . --outDir out",
-    "watch-tests": "tsc -p . -w --outDir out",
-    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.87.0",
-    "@types/mocha": "^10.0.6",
-    "@types/node": "18.x",
-    "@typescript-eslint/eslint-plugin": "^7.4.0",
-    "@typescript-eslint/parser": "^7.4.0",
+    "@types/mocha": "^10.0.7",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.92.0",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "@vscode/test-cli": "^0.0.9",
+    "@vscode/test-electron": "^2.4.1",
     "eslint": "^8.57.0",
-    "typescript": "^5.3.3",
-    "ts-loader": "^9.5.1",
-    "webpack": "^5.91.0",
-    "webpack-cli": "^5.1.4",
-    "@vscode/test-cli": "^0.0.8",
-    "@vscode/test-electron": "^2.3.9"
+    "typescript": "^5.4.5"
   }
 }

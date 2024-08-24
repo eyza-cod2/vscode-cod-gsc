@@ -3188,24 +3188,7 @@ suite('GscFileParser.parse #2.17 function definition', () => {
         checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[1], GroupType.Terminator, 7, 7, true, 0);
     });
 
-/*  TODO
-    test(`#2.16.1 param`, async () => {
-        const gsc = `func(p1) { func(p1); }`;
-        const tokens = GscFileParser.tokenize(gsc);
-        const rootGroup = GscFileParser.groupenize(tokens);
-
-        checkGroup2(rootGroup, rootGroup, GroupType.Root, 0, 0, false, 1);
-    }); 
-
-
-    test(`#2.16.2 param`, async () => {
-        const gsc = `func(p1, p2) { func(p1, p2); }`;
-        const tokens = GscFileParser.tokenize(gsc);
-        const rootGroup = GscFileParser.groupenize(tokens);
-
-        checkGroup2(rootGroup, rootGroup, GroupType.Root, 0, 0, false, 1);
-    });
-    */    
+  
 });
 
 

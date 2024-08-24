@@ -4,6 +4,22 @@ All notable changes to the "gsc" extension will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
+## [0.1.0] - 2024-08-24
+
+- Added settings - game selection, game root folder, ignored file paths, ignored function names
+- Added option in status bar to switch the game
+- Added support for CoD2 MP + SP
+- Added CoD2 MP + SP function definitions for auto-suggestion, hover a parameters error diagnostics
+- Added warning message when build-in function is overwritten by local function
+- Added code action provider to easily add file path into ignored list
+- Added yellow status bar information indicating parsing and diagnosing tasks in background
+- Added issue manual reporting
+- Fixed case-sensitivity for file paths and function names
+- Fixed structure & array auto-suggestion when written after keyword (e.g. 'wait level.xxx')
+- Fixed re-diagnosing files when renamed, deleted or workspace folder changed
+- Fixed handling GSC files outside of the workspace
+
+
 ## [0.0.7] - 2024-06-23
 
 - Improved hover-over function names (colorization, warnings, case insensitive match)
