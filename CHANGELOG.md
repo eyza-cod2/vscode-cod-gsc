@@ -4,6 +4,11 @@ All notable changes to the "gsc" extension will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
+## [0.1.1] - 2024-08-24
+
+- Fixed images in update notification window
+
+
 ## [0.1.0] - 2024-08-24
 
 - Added settings - game selection, game root folder, ignored file paths, ignored function names

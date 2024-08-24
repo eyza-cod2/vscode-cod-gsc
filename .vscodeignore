@@ -11,4 +11,3 @@ vsc-extension-quickstart.md
 **/*.ts
 **/.vscode-test.*
 gsc-examples
-images

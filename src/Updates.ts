@@ -95,7 +95,7 @@ export class Updates {
             <p>You can ignore error about missing files.</p>
             <img src="${getImageUri('vscode-quick-fix.png')}">
 
-            <h2>All changes:</h2>
+            <h2>All changes in 0.1.0:</h2>
             <p>
                 - Added settings - game selection, game root folder, ignored file paths, ignored function names<br>
                 - Added option in status bar to switch the game<br>
@@ -109,6 +109,11 @@ export class Updates {
                 - Fixed structure & array auto-suggestion when written after keyword (e.g. 'wait level.xxx')<br>
                 - Fixed re-diagnosing files when renamed, deleted or workspace folder changed<br>
                 - Fixed handling GSC files outside of the workspace
+            </p>
+
+            <h2>All changes in 0.1.1:</h2>
+            <p>
+                - Fixed images in update notification window
             </p>
 
             <h2>Contact</h2>

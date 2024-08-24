@@ -2,7 +2,7 @@
   "name": "cod-gsc",
   "displayName": "CoD GSC",
   "description": "GSC language support for Call of Duty (CoD1, CoD2, CoD3, CoD4, CoD5:WaW, CoD6:MW2, COD7:BO)",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "eyza",
   "icon": "logo.png",
   "license": "LGPL-3.0-or-later",
@@ -72,7 +72,7 @@
       },
       {
         "command": "gsc.showErrorInfo",
-        "title": "Report an Issue"
+        "title": "GSC: Report an Issue"
     }
     ],
     "configuration": {
