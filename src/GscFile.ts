@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
-import { GscFileParser, GscData, GscFunction } from './GscFileParser';
-import { GscConfig } from './GscConfig';
+import { GscFileParser, GscData } from './GscFileParser';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -78,6 +77,8 @@ export class GscFile {
         if (GscFile.statusBarItem) {
             GscFile.statusBarItem.show();
         } 
+
+        this.parsedFiles.clear();
 
         // Parse all
         await GscFile.parseAndCacheAllFiles(true); // true = ignore notify
@@ -201,86 +202,6 @@ export class GscFile {
 
 
 
-
-
-
-
-
-
-    /**
-     * Get location inside of file where the function is defined. 
-     * If the file is not found, undefined is returned. If file is found but function is not found, it will return an empty array.
-     */
-    public static async getFunctionNameDefinitions(funcName: string, path: string, documentUri: vscode.Uri): Promise<{func: GscFunction, uri: string}[] | undefined> {
-        const funcDefs: {func: GscFunction, uri: string} [] = [];  
-        const funcNameId = funcName.toLowerCase();
-
-        const fileGameRootFolderUri = GscConfig.getGameRootFolderOfFile(documentUri);
-        if (!fileGameRootFolderUri) {
-            return funcDefs;
-        }
-
-        // Its external function call
-        if (path !== "") 
-        {
-            const gscFilePathUri = vscode.Uri.joinPath(fileGameRootFolderUri, path + ".gsc").toString().toLowerCase();
-            
-            var fileFound = false;
-
-
-            // Try to find the file in parsed files
-            const gscFiles = GscFile.getCachedFiles();
-            gscFiles.forEach((data, uri) => {
-
-                if (uri.toLowerCase() === gscFilePathUri) {
-                    fileFound = true;
-                    data.functions.forEach(f => {
-                        if (f.nameId === funcNameId) {
-                            funcDefs.push({func: f, uri: uri});
-                        }
-                    });
-                }
-            });
-
-            if (fileFound === false) {
-                return undefined;
-            }
-        } 
-
-        // Its local function or included function
-        else {
-
-            // Find function in this file
-            const gscData = await GscFile.getFile(documentUri);
-            gscData.functions.forEach(f => {
-                if (f.nameId === funcNameId) {
-                    funcDefs.push({func: f, uri: documentUri.toString()});
-                }
-            });
-
-            // Find function also in included files
-            gscData.includes.forEach(includedPath => {
-                const gscFilePathUri = vscode.Uri.joinPath(fileGameRootFolderUri, includedPath + ".gsc").toString().toLowerCase();
-
-                // Try to find the file in parsed files
-                const gscFiles = GscFile.getCachedFiles();
-                gscFiles.forEach((data, uri) => {
-                    if (uri.toLowerCase() === gscFilePathUri) {
-                        data.functions.forEach(f => {
-                            if (f.nameId === funcNameId) {
-                                funcDefs.push({func: f, uri: uri});
-                            }
-                        });
-                    }
-                });          
-            });
-        }
-        
-        return funcDefs;
-    }
-
-
-
     // Expose an event for external subscription
     public static get onDidParseDocument(): vscode.Event<{uri: vscode.Uri, data: GscData}> {
         return this._onDidParseDocument.event;
@@ -310,39 +231,22 @@ export class GscFile {
         }
     }
     static onDeleteFiles(e: vscode.FileDeleteEvent) {
-        for(const file of e.files) {
-            GscFile.removeCachedFile(file);
-            console.log("Removed " + vscode.workspace.asRelativePath(file) + " from parsing, because the file was deleted");
-        }
+        // Refresh all to ensure correct validation
+        console.log("Re-parsing all because some file was deleted");
+        void GscFile.initialParse();
     }
+
+    // Called when file or folder is renamed or moved
     static onRenameFiles(e: vscode.FileRenameEvent) {
-        for(const file of e.files) {
-            GscFile.removeCachedFile(file.oldUri);
-            
-            // No need to parse the new uri, because if opened in editor, it will be parsed by semantic tokens provider
-            //void GscFile.parseAndCacheFile(file.newUri);
-
-            // TODO check which files were referencing the old file and update the references
-
-            console.log("Re-parsed " + vscode.workspace.asRelativePath(file.newUri) + " because the file was renamed");
-        }
+        // Refresh all to ensure correct validation
+        console.log("Re-parsing all because some file was renamed");
+        void GscFile.initialParse();
     }
-    static onChangeWorkspaceFolders(e: vscode.WorkspaceFoldersChangeEvent) {
-        const filesToDelete: vscode.Uri[] = [];       
-        for(const folder of e.removed) {
-            if (GscFile.parsedFiles.has(folder.uri.toString())) {
-                filesToDelete.push(folder.uri);
-            }
-        }
-        for(const uri of filesToDelete) {
-            GscFile.removeCachedFile(uri);
-            console.log("Removed " + vscode.workspace.asRelativePath(uri) + " from parsing, because workspace folder was removed");
-        }
 
-        for(const folder of e.added) {
-            void GscFile.parseAndCacheFile(folder.uri);       
-            console.log("Added " + vscode.workspace.asRelativePath(folder.uri) + " for parsing, because workspace folder was added");
-        }
+    static onChangeWorkspaceFolders(e: vscode.WorkspaceFoldersChangeEvent) {
+        // Refresh all to ensure correct validation
+        console.log("Re-parsing all because workspace folders changed");
+        void GscFile.initialParse();
     }
 
 

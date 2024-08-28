@@ -11,7 +11,6 @@ This extension is still under development and is not fully finished. Check the l
 |----------|---------|----------------|
 | CoD1     | ✅ Tested     | raw files     |
 | CoD2     | ✅ Tested         | raw files<br>zPAM 3.33 mod - https://github.com/eyza-cod2/zpam3    |
-| CoD3     | ❌ Not tested     | -    |
 | CoD4     | ✅ Tested         | raw files<br>Promod 2.20 mod - https://github.com/promod/promod4<br>OpenWarfare mod - https://github.com/cod4mw/openwarfare    |
 | CoD5     | ❌ Not tested     | -    |
 | CoD6:MW2 | ❌ Not tested     | -    |
@@ -31,17 +30,25 @@ Syntax highlighting
 
 ![Syntax highlight](images/vscode-syntax-highlight-1.png)
 
-Completion items
+Completion items (local functions)
 
-![Completion](images/vscode-completion-2.gif)
+![Completion](images/vscode-completion-4.png)
 
-Completion items (with recognized variable type)
+Completion items (included functions)
 
-![Completion](images/vscode-completion-1.png)
+![Completion](images/vscode-completion-5.png)
 
 Completion items (with CoD2 MP functions)
 
 ![Completion](images/vscode-completion-3.png)
+
+Completion items (variables)
+
+![Completion](images/vscode-completion-2.gif)
+
+Completion items (variables with recognized variable type)
+
+![Completion](images/vscode-completion-1.png)
 
 Diagnostics
 
@@ -56,7 +63,11 @@ Function hover info
 ![Function hover](images/vscode-function-hover.gif)
 ![Function hover](images/vscode-function-hover-spawn.png)
 
-Code actions
+Code actions (include folder for file references)
+
+![Function hover](images/vscode-workspace-folder-include.gif)
+
+Code actions (ignore missing files)
 
 ![Function hover](images/vscode-quick-fix.png)
 

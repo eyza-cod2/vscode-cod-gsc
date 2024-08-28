@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extension Updated</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h1 {
+            color: #007acc;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid rgb(25, 25, 25);
+            margin-top: 0px;
+            margin-bottom: 20px;
+        }
+        p {
+            margin-top: 20px;
+        }
+        p.lines {
+            white-space: pre-line; 
+            margin-top: 0;
+        }
+        a {
+            text-decoration: none;
+            color: #007acc;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        hr {
+            margin-top: 80px;
+        }
+
+        .warning {
+            padding: 10px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .new-version, .old-version {
+            border: 1px solid grey;
+            border-radius: 8px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+        .new-version h2, .old-version h2 {
+            margin-top: 0;
+        }
+        .new-version {
+            border-left: 5px solid;
+            border-color: green;
+        }
+        .old-version {
+            border-left: 3px solid grey;
+        }
+    </style>
+</head>
+<body>
+    <h1>COD GSC Extension ${fromVersionToVersion}</h1>
+
+    <div class="warning">
+        ⚠️ This extension is still in development. If you encounter any issues, please report them
+        <ul>
+            <li><a href="${GITHUB_URL}" target="_blank">GitHub Issues</a></li>
+            <li><a href="${DISCORD_URL}" target="_blank">Discord Server</a></li>
+            <li><a href="${EMAIL}">Email</a></li>
+        </ul>
+    </div>
+
+    <div ${VERSION_0.1.4}>
+        <h2>Version [0.1.4] - 2024-08-28</h2>
+
+        <h3>Included folders</h3>
+        <p>
+            Added ability to include workspace folders for external GSC files references. 
+            Useful if your mod contains only part of the files and other files are in different folder. 
+            You have to add these folders into your workspace setup to be able to include the folders. 
+            If empty, each workspace folder is isolated from each other.
+        </p>
+        <img src="../images/vscode-workspace-folder-include.gif">
+        
+        <h3>
+            Added local and included functions into auto-suggestion
+        </h3>
+        <p>
+            Local functions are now included in auto-suggestion.
+        </p>
+        <img src="../images/vscode-completion-4.png">
+        <p>
+            Function included via '#include' are now included in auto-suggestion.
+        </p>
+        <img src="../images/vscode-completion-5.png">
+    
+        <h3>All changes:</h3>
+        <p class="lines">
+            - Added ability to include workspace folders for external GSC files references
+            - Added local and included functions into auto-suggestion 
+            - Added settings to disable error diagnostics
+            - Improved hover over local functions
+            - Improved update change log popup window
+            - Fixed code action "Change game root folder to xxx" - it suggested folders from different workspace folders + it was able to use file instead of folder
+            - Fixed re-diagnosing files when file is moved to another folder
+            - Fixed automatic extension activation on startup - now the extension is activated when some GSC file is opened
+            - Fixed error message appearing when new folder is added into multi-root workspace
+        </p>
+    </div>
+    
+    <div ${VERSION_0.1.3}>
+        <h2>Version [0.1.3] - 2024-08-24</h2>
+        <p class="lines">
+            - Fixed error message appearing when new folder is created in workspace
+        </p>
+    </div>
+
+    <div ${VERSION_0.1.2}>
+        <h2>Version [0.1.2] - 2024-08-24</h2>
+        <p class="lines">
+            - Added code action "Change game root folder to 'xxx'" - it will automatically detects if files are in deeper folder structure
+            - Fixed quick fix option "Ignore file xxx (workspace settings)"
+            - Updated all packages
+        </p>
+    </div>
+
+    <div ${VERSION_0.1.1}>
+        <h2>Version [0.1.1] - 2024-08-24</h2>
+        <p class="lines">
+            - Fixed images in update notification window
+        </p>
+    </div>
+
+    <div ${VERSION_0.1.0}>
+        <h2>Version [0.1.0] - 2024-08-24</h2>
+
+        <h3>Completion items (with CoD2 MP functions)</h3>
+        <p>Currently supported games are CoD2 MP and CoD2 SP. There is also 'Universal game' that will show functions from all games</p>
+        <img src="../images/vscode-completion-3.png">
+
+        <h3>Hover over function name</h3>
+        <p>Additional info is showed when hovering over function names</p>
+        <img src="../images/vscode-function-hover-spawn.png">
+
+        <h3>Status bar</h3>
+        <p>Games can be changed in status bar. Optionally it can be changed in extension settings.</p>
+        <img src="../images/vscode-statusbar-game.png">
+
+        <h3>Code Actions</h3>
+        <p>You can ignore error about missing files.</p>
+        <img src="../images/vscode-quick-fix.png">
+
+        <h3>All changes:</h3>
+        <p class="lines">
+            - Added settings - game selection, game root folder, ignored file paths, ignored function names
+            - Added option in status bar to switch the game
+            - Added support for CoD2 MP + SP
+            - Added CoD2 MP + SP function definitions for auto-suggestion, hover a parameters error diagnostics
+            - Added warning message when build-in function is overwritten by local function
+            - Added code action provider to easily add file path into ignored list
+            - Added yellow status bar information indicating parsing and diagnosing tasks in background
+            - Added issue manual reporting
+            - Fixed case-sensitivity for file paths and function names
+            - Fixed structure & array auto-suggestion when written after keyword (e.g. 'wait level.xxx')
+            - Fixed re-diagnosing files when renamed, deleted or workspace folder changed
+            - Fixed handling GSC files outside of the workspace
+        </p>
+    </div>
+
+    <div ${VERSION_0.0.7}>
+        <h2>Version [0.0.7] - 2024-06-23</h2>
+
+        <h3>All changes:</h3>
+        <p class="lines">
+            - Improved hover-over function names (colorization, warnings, case insensitive match)
+        </p>
+    </div>
+
+    <div ${VERSION_0.0.6}>
+        <h2>Version [0.0.6] - 2024-06-22</h2>
+
+        <h3>All changes:</h3>
+        <p class="lines">
+            - Fixed hover-over function name case-sensitive error (functions are case insensitive)
+            - Fixed parsing error when double-quote does not have ending pair (a = "string;)
+        </p>
+    </div>
+
+    <div ${VERSION_0.0.5}>
+        <h2>Version [0.0.5] - 2024-06-20</h2>
+
+        <h3>All changes:</h3>
+        <p class="lines">
+            - Improved error reporting of unexpected tokens / missing semicolon
+            - Added syntax support for casting (used in COD1)
+            - Fixed stack overflow error while parsing large files (caused by ...spread operator + recursive functions)
+            - Fixed developer block /##/ which can be used as regular scope
+        </p>
+    </div>
+
+    <div ${VERSION_0.0.4}>
+        <h2>Version [0.0.4] - 2024-06-17</h2>
+
+        <h3>All changes:</h3>
+        <p class="lines">
+            - New GSC parser
+            - New analyzer
+            - New completion item provider
+            - New diagnostics provider
+            - New semantics provider
+            - New definition provider
+            - New hover provider
+        </p>
+    </div>
+
+    <div ${VERSION_0.0.3}>
+        <h2>Version [0.0.3] - 2024-03-29</h2>
+
+        <h3>All changes:</h3>
+        <p class="lines">
+            - Added "HoverProvider" and "DefinitionProvider" that works with functions-
+            - Improved gsc syntax highlighting
+        </p>
+    </div>
+
+    <div ${VERSION_0.0.2}>
+        <h2>Version [0.0.2] - 2024-03-28</h2>
+
+        <h3>All changes:</h3>
+        <p class="lines">
+            - Changed from "New Language Support" to "New Extension (TypeScript)" in 'yo code' template
+            - Basic syntax highlights of .gsc files
+        </p>
+    </div>
+
+    <div ${VERSION_0.0.1}>
+        <h2>Version [0.0.1] - 2024-03-27</h2>
+
+        <h3>All changes:</h3>
+        <p class="lines">
+            - Initial release
+        </p>
+    </div>
+</body>
+</html>

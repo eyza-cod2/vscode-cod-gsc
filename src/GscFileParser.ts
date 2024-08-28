@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { GscFile } from './GscFile';
+import { GscFunction, GscVariableDefinition } from './GscFunctions';
 
 
 export enum GroupType {
@@ -1936,15 +1936,14 @@ export class GscFileParser {
                                 }
                             }
                             const funcName = innerGroup.items[0].items[0].getSingleToken()!.name;
-                            func = {
-                                name: funcName,
-                                nameId: funcName.toLowerCase(),
-                                parameters: paramTokens,
-                                localVariableDefinitions: [],
-                                range: innerGroup.getRange(),
-                                scopeRange: innerGroup.items[1].getRange()
-                            };
-
+                            func = new GscFunction(
+                                funcName,
+                                funcName.toLowerCase(),
+                                paramTokens,
+                                [],
+                                innerGroup.getRange(),
+                                innerGroup.items[1].getRange()
+                            );
 
                             data.functions.push(func);
                         }                                 
@@ -2845,23 +2844,7 @@ export class GscData {
 
 
 
-export type GscFunction = {
-    /** Function name (original as it is defined in file) */
-    name: string;
-    /** Lower-case function name, used to compare the same function names */
-    nameId: string;
 
-    parameters: GscToken[];
-    /** Local variable declarations like "a = 1;". Its always statement with item[0] as Reference */
-    localVariableDefinitions: GscVariableDefinition[];
-    range: vscode.Range;
-    scopeRange: vscode.Range;
-};
-
-export type GscVariableDefinition = {
-    variableReference: GscGroup,
-    type: GscVariableDefinitionType
-};
 
 
 

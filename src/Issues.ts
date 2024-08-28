@@ -4,7 +4,17 @@ import { DISCORD_URL, EMAIL, EXTENSION_ID, GITHUB_ISSUES_URL } from './extension
 
 export class Issues {
 
+    private static isDisposed = false;
+
     static activate(context: vscode.ExtensionContext) {
+        
+        Issues.isDisposed = false;
+        context.subscriptions.push({
+            dispose: () => {
+                Issues.isDisposed = true;
+            }
+        });
+        
         let disposable = vscode.commands.registerCommand('gsc.showErrorInfo', async (errorDetails: string) => {
             const panel = vscode.window.createWebviewPanel(
                 'errorInfo', // Identifies the type of the webview
@@ -27,6 +37,11 @@ export class Issues {
 
         // Handle uncaught exceptions
         process.on('uncaughtException', (error) => {
+            if (Issues.isDisposed) {
+                console.log("Extension has been disposed, ignoring unhandled rejection.");
+                return; // Ignore the error since the extension is disposed
+            }
+            
             try {
                 Issues.handleGlobalError(error);
             } catch (error) { }
@@ -34,6 +49,11 @@ export class Issues {
 
         // Handle unhandled promise rejections
         process.on('unhandledRejection', (reason: any) => {
+            if (Issues.isDisposed) {
+                console.log("Extension has been disposed, ignoring unhandled rejection.");
+                return; // Ignore the error since the extension is disposed
+            }
+            
             try {
                 Issues.handleGlobalError(reason instanceof Error ? reason : new Error(reason));
             } catch (error) {}
@@ -41,9 +61,11 @@ export class Issues {
     }
 
     static handleGlobalError(error: Error) {
-        const errorMessage = `An error occurred: ${error.message}`;
+        const ver = vscode.extensions.getExtension(EXTENSION_ID)?.packageJSON.version;
+
+        const errorMessage = `Error in CoD GSC Extension v${ver}: ${error.message}`;
         const errorDetails = `
-Extension Version: ${vscode.extensions.getExtension(EXTENSION_ID)?.packageJSON.version}
+Extension Version: ${ver}
 VSCode Version: ${vscode.version}
 OS: ${os.type()} ${os.release()}
 

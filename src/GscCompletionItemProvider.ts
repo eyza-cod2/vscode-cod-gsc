@@ -1,8 +1,17 @@
 import * as vscode from 'vscode';
 import { GscFile } from './GscFile';
-import { GroupType, GscData, GscGroup, GscVariableDefinition, GscVariableDefinitionType } from './GscFileParser';
+import { GroupType, GscData, GscGroup, GscVariableDefinitionType } from './GscFileParser';
 import { CodFunctions } from './CodFunctions';
 import { GscConfig, GscGame } from './GscConfig';
+import { GscFunctions, GscVariableDefinition } from './GscFunctions';
+
+export interface CompletionConfig {
+    variableItems: boolean;
+    pathItems: boolean;
+    keywordItems: boolean;
+    functionItems: boolean;
+    functionPredefinedItems: boolean;
+}
 
 export class GscCompletionItemProvider implements vscode.CompletionItemProvider {
     
@@ -21,10 +30,12 @@ export class GscCompletionItemProvider implements vscode.CompletionItemProvider 
 
         const currentGame = GscConfig.getSelectedGame(document.uri);
 
-        const items = await GscCompletionItemProvider.getCompletionItems(gscData, position, currentGame);
+        const items = await GscCompletionItemProvider.getCompletionItems(gscData, position, currentGame, undefined, document.uri);
 
         return items;
     }
+
+    
     
 
     /**
@@ -37,7 +48,8 @@ export class GscCompletionItemProvider implements vscode.CompletionItemProvider 
         gscData: GscData,
         position: vscode.Position,
         currentGame: GscGame,
-        onlyVariables: boolean = false
+        config?: CompletionConfig,
+        uri?: vscode.Uri
     ): Promise<vscode.CompletionItem[]> 
     {
         const completionItems: vscode.CompletionItem[] = [];
@@ -91,20 +103,26 @@ export class GscCompletionItemProvider implements vscode.CompletionItemProvider 
             if (groupAtCursor.type !== GroupType.Path) {
 
                 // Add items for variables like level.aaa, game["bbb"] and local1.aaa[0][1]
-                this.createVariableItems(completionItems, functionGroup.localVariableDefinitions, variableBeforeCursor, inWord, inStructureVariable, inArrayBrackets);
-                     
-                if (onlyVariables === false) {
-
-                    // Add items for predefined keywords (like true, false, undefined, if, else, waittillframeend, ...)
+                if (!config || config.variableItems) {
+                    this.createVariableItems(completionItems, functionGroup.localVariableDefinitions, variableBeforeCursor, inWord, inStructureVariable, inArrayBrackets);
+                }
+                // Add items for predefined keywords (like true, false, undefined, if, else, waittillframeend, ...)
+                if (!config || config.keywordItems) {
                     this.createKeywordItems(completionItems, inWord, inStructureVariable, inArrayBrackets);
-
-                    this.createFunctionItems(completionItems, inWord, inStructureVariable, inArrayBrackets, currentGame);
+                }
+                // Add items for predefined functions
+                if (!config || config.functionPredefinedItems) {
+                    await this.createPredefinedFunctionItems(completionItems, inWord, inStructureVariable, inArrayBrackets, currentGame);
+                }
+                // Add items for predefined functions
+                if (!config || config.functionItems) {
+                    await this.createFunctionItems(completionItems, inWord, inStructureVariable, inArrayBrackets, uri, currentGame);
                 }
           
             } else {
 
                 // Add items for path
-                if (onlyVariables === false) {
+                if (!config || config.pathItems) {
                     await this.createPathItems(completionItems, position, groupAtCursor);
                 }  
             }
@@ -297,25 +315,40 @@ export class GscCompletionItemProvider implements vscode.CompletionItemProvider 
 
 
 
-    private static createFunctionItems(completionItems: vscode.CompletionItem[], inWord: boolean, inStructureVariable: boolean, inArrayBrackets: boolean, currentGame: GscGame) {
+    private static async createPredefinedFunctionItems(completionItems: vscode.CompletionItem[], inWord: boolean, inStructureVariable: boolean, inArrayBrackets: boolean, currentGame: GscGame) {
         
         if (inWord || inArrayBrackets) {
             
+            // Build-in functions
             const defs = CodFunctions.getDefinitions(currentGame);
-
-            const isUniversalGame = GscConfig.isUniversalGame(currentGame);
-            
+            const isUniversalGame = GscConfig.isUniversalGame(currentGame);        
             defs.forEach(f => {
                 var desc = "";
                 if (f.returnType !== "") {
                     desc = "(" + f.returnType + ")";
                 }
-
                 const item = new vscode.CompletionItem({label: f.name, description: desc, detail: ""}, vscode.CompletionItemKind.Function);
                 item.documentation = f.generateMarkdownDescription(isUniversalGame);
-
                 completionItems.push(item);
             });
+        }
+    }
+
+
+    private static async createFunctionItems(completionItems: vscode.CompletionItem[], inWord: boolean, inStructureVariable: boolean, inArrayBrackets: boolean, uri: vscode.Uri | undefined, currentGame: GscGame) {
+        
+        if (inWord || inArrayBrackets) {        
+            // Uri is undefined in tests
+            if (uri !== undefined) {
+                // Local functions and included functions
+                const res = await GscFunctions.getFunctionReferenceState(undefined, uri, [], [], currentGame);
+    
+                res.definitions.forEach(f => {
+                    const item = new vscode.CompletionItem({label: f.func.name, description: "", detail: ""}, vscode.CompletionItemKind.Function);
+                    item.documentation = f.func.generateMarkdownDescription(f.uri.toString() === uri.toString(), f.uri, f.reason);
+                    completionItems.push(item);
+                });
+            }
         }
     }
 

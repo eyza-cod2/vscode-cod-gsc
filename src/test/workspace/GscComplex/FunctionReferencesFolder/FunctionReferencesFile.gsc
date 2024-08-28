@@ -1,0 +1,7 @@
+funcName() {
+
+}
+
+includedFuncName() {
+    
+}

@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { GscFileParser, GscGroup, GroupType, GscVariableDefinitionType, GscData } from '../GscFileParser';
-import { GscCompletionItemProvider } from '../GscCompletionItemProvider';
+import { CompletionConfig, GscCompletionItemProvider } from '../GscCompletionItemProvider';
 import { GscGame } from '../GscConfig';
 
 function checkItem(gscData: GscData, items: vscode.CompletionItem[], index: number, labelName: string, kind: vscode.CompletionItemKind, types: GscVariableDefinitionType[]) {
@@ -36,7 +36,13 @@ function printCompletionItems(items: vscode.CompletionItem[]) {
     return debugText;
 }
 
-
+const cfgVariablesOnly: CompletionConfig = {
+    variableItems: true,
+    pathItems: false,
+    keywordItems: false,
+    functionItems: false,
+    functionPredefinedItems: false,
+};
 
 
 suite('CompletionItemProvider.getCompletionItemsFromGsc #3.1', () => {
@@ -49,7 +55,7 @@ suite('CompletionItemProvider.getCompletionItemsFromGsc #3.1', () => {
             }
         `;
         const gscData = GscFileParser.parse(gsc);
-        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(3, 0), GscGame.UniversalGame, true);
+        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(3, 0), GscGame.UniversalGame, cfgVariablesOnly);
 
         checkItem(gscData, items, 0, "level", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Structure]);
         checkItem(gscData, items, 1, "game", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Array]);
@@ -68,7 +74,7 @@ suite('CompletionItemProvider.getCompletionItemsFromGsc #3.1', () => {
             }
         `;
         const gscData = GscFileParser.parse(gsc);
-        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(4, 0), GscGame.UniversalGame, true);
+        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(4, 0), GscGame.UniversalGame, cfgVariablesOnly);
 
         checkItem(gscData, items, 0, "level", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Structure]);
         checkItem(gscData, items, 1, "game", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Array]);
@@ -88,7 +94,7 @@ func() {
 }
         `;
         const gscData = GscFileParser.parse(gsc);
-        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(4, 5), GscGame.UniversalGame, true);
+        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(4, 5), GscGame.UniversalGame, cfgVariablesOnly);
 
         checkItem(gscData, items, 0, "level", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Structure]);
         checkItem(gscData, items, 1, "game", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Array]);
@@ -121,7 +127,7 @@ suite('CompletionItemProvider.getCompletionItemsFromGsc #3.2 local structure', (
         `;
         const gscData = GscFileParser.parse(gsc);
 
-        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(4, 0), GscGame.UniversalGame, true);
+        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(4, 0), GscGame.UniversalGame, cfgVariablesOnly);
 
         checkItem(gscData, items, 0, "level", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Structure]);
         checkItem(gscData, items, 1, "game", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Array]);
@@ -143,7 +149,7 @@ suite('CompletionItemProvider.getCompletionItemsFromGsc #3.2 local structure', (
         `;
         const gscData = GscFileParser.parse(gsc);
 
-        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(6, 0), GscGame.UniversalGame, true);
+        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(6, 0), GscGame.UniversalGame, cfgVariablesOnly);
 
         checkItem(gscData, items, 0, "level", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Structure]);
         checkItem(gscData, items, 1, "game", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Array]);
@@ -165,7 +171,7 @@ func() {
 }
         `;
         const gscData = GscFileParser.parse(gsc);
-        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(6, 5), GscGame.UniversalGame, true);
+        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(6, 5), GscGame.UniversalGame, cfgVariablesOnly);
 
         checkItem(gscData, items, 0, "level", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Structure]);
         checkItem(gscData, items, 1, "game", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Array]);
@@ -186,7 +192,7 @@ func() {
 }
         `;
         const gscData = GscFileParser.parse(gsc);
-        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(6, 16), GscGame.UniversalGame, true);
+        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(6, 16), GscGame.UniversalGame, cfgVariablesOnly);
 
         checkItem(gscData, items, 0, "field1", vscode.CompletionItemKind.Field, [GscVariableDefinitionType.Integer]);
         assert.ok(items.length === 1, "Unexpected length of items.\n\n" + printCompletionItems(items));
@@ -203,7 +209,7 @@ func() {
 }
         `;
         const gscData = GscFileParser.parse(gsc);
-        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(5, 16), GscGame.UniversalGame, true);
+        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(5, 16), GscGame.UniversalGame, cfgVariablesOnly);
 
         checkItem(gscData, items, 0, "field1", vscode.CompletionItemKind.Field, [GscVariableDefinitionType.Integer]);
         checkItem(gscData, items, 1, "field2", vscode.CompletionItemKind.Field, [GscVariableDefinitionType.Integer]);
@@ -221,7 +227,7 @@ func() {
 }
         `;
         const gscData = GscFileParser.parse(gsc);
-        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(5, 17), GscGame.UniversalGame, true);
+        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(5, 17), GscGame.UniversalGame, cfgVariablesOnly);
 
         checkItem(gscData, items, 0, "aa_field1", vscode.CompletionItemKind.Field, [GscVariableDefinitionType.Integer]);
     });
@@ -236,7 +242,7 @@ func() {
 }
         `;
         const gscData = GscFileParser.parse(gsc);
-        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(5, 15), GscGame.UniversalGame, true);
+        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(5, 15), GscGame.UniversalGame, cfgVariablesOnly);
 
         checkItem(gscData, items, 0, "level", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Structure]);
         checkItem(gscData, items, 1, "game", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Array]);
@@ -268,7 +274,7 @@ suite('CompletionItemProvider.getCompletionItemsFromGsc #3.4 local array', () =>
             }
         `;
         const gscData = GscFileParser.parse(gsc);
-        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(3, 0), GscGame.UniversalGame, true);
+        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(3, 0), GscGame.UniversalGame, cfgVariablesOnly);
 
         checkItem(gscData, items, 0, "level", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Structure]);
         checkItem(gscData, items, 1, "game", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Array]);
@@ -288,7 +294,7 @@ suite('CompletionItemProvider.getCompletionItemsFromGsc #3.4 local array', () =>
             }
         `;
         const gscData = GscFileParser.parse(gsc);
-        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(4, 0), GscGame.UniversalGame, true);
+        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(4, 0), GscGame.UniversalGame, cfgVariablesOnly);
 
         checkItem(gscData, items, 0, "level", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Structure]);
         checkItem(gscData, items, 1, "game", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Array]);
@@ -309,7 +315,7 @@ func() {
 }
         `;
         const gscData = GscFileParser.parse(gsc);
-        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(4, 5), GscGame.UniversalGame, true);
+        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(4, 5), GscGame.UniversalGame, cfgVariablesOnly);
 
         checkItem(gscData, items, 3, "struct1", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Array]);
         checkItem(gscData, items, 4, "struct2", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Array]);
@@ -327,7 +333,7 @@ func() {
 }
         `;
         const gscData = GscFileParser.parse(gsc);
-        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(4, 11), GscGame.UniversalGame, true);
+        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(4, 11), GscGame.UniversalGame, cfgVariablesOnly);
 
         checkItem(gscData, items, 3, "struct1", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Array]);
         checkItem(gscData, items, 4, "struct1[0]", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Integer]);
@@ -347,7 +353,7 @@ func() {
 }
         `;
         const gscData = GscFileParser.parse(gsc);
-        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(5, 12), GscGame.UniversalGame, true);
+        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(5, 12), GscGame.UniversalGame, cfgVariablesOnly);
 
         checkItem(gscData, items, 0, "level", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Structure]);
         checkItem(gscData, items, 1, "game", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Array]);
@@ -371,7 +377,7 @@ func() {
 }
         `;
         const gscData = GscFileParser.parse(gsc);
-        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(5, 12), GscGame.UniversalGame, true);
+        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(5, 12), GscGame.UniversalGame, cfgVariablesOnly);
 
         checkItem(gscData, items, 0, "level", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Structure]);
         checkItem(gscData, items, 1, "game", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Array]);
@@ -394,7 +400,7 @@ func() {
 }
         `;
         const gscData = GscFileParser.parse(gsc);
-        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(5, 14), GscGame.UniversalGame, true);
+        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(5, 14), GscGame.UniversalGame, cfgVariablesOnly);
 
         checkItem(gscData, items, 0, "[0]", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Integer]);
         checkItem(gscData, items, 1, "[1]", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Integer]);
@@ -413,7 +419,7 @@ func() {
 }
         `;
         const gscData = GscFileParser.parse(gsc);
-        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(5, 15), GscGame.UniversalGame, true);
+        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(5, 15), GscGame.UniversalGame, cfgVariablesOnly);
 
         checkItem(gscData, items, 0, "level", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Structure]);
         checkItem(gscData, items, 1, "game", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Array]);
@@ -437,7 +443,7 @@ func() {
 }
         `;
         const gscData = GscFileParser.parse(gsc);
-        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(5, 15), GscGame.UniversalGame, true);
+        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(5, 15), GscGame.UniversalGame, cfgVariablesOnly);
 
         checkItem(gscData, items, 0, "level", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Structure]);
         checkItem(gscData, items, 1, "game", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Array]);
@@ -469,7 +475,7 @@ func() {
 }
         `;
         const gscData = GscFileParser.parse(gsc);
-        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(11, 13), GscGame.UniversalGame, true);
+        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(11, 13), GscGame.UniversalGame, cfgVariablesOnly);
 
         checkItem(gscData, items, 0, "field2", vscode.CompletionItemKind.Field, [GscVariableDefinitionType.Array]);
         checkItem(gscData, items, 1, "field2[0]", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Integer]);
@@ -495,7 +501,7 @@ func() {
 }
         `;
         const gscData = GscFileParser.parse(gsc);
-        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(11, 24), GscGame.UniversalGame, true);
+        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(11, 24), GscGame.UniversalGame, cfgVariablesOnly);
 
         checkItem(gscData, items, 0, "level", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Structure]);
         checkItem(gscData, items, 1, "game", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Array]);
@@ -525,7 +531,7 @@ func() {
 }
         `;
         const gscData = GscFileParser.parse(gsc);
-        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(11, 30), GscGame.UniversalGame, true);
+        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(11, 30), GscGame.UniversalGame, cfgVariablesOnly);
 
         checkItem(gscData, items, 0, "field1", vscode.CompletionItemKind.Field, [GscVariableDefinitionType.Integer]);
         checkItem(gscData, items, 1, "field2", vscode.CompletionItemKind.Field, [GscVariableDefinitionType.Array]);
@@ -549,7 +555,7 @@ func() {
 }
         `;
         const gscData = GscFileParser.parse(gsc);
-        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(11, 26), GscGame.UniversalGame, true);
+        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(11, 26), GscGame.UniversalGame, cfgVariablesOnly);
 
         checkItem(gscData, items, 0, ".aaa", vscode.CompletionItemKind.Field, [GscVariableDefinitionType.Integer]);
         checkItem(gscData, items, 1, ".bbb", vscode.CompletionItemKind.Field, [GscVariableDefinitionType.Integer]);
@@ -573,7 +579,7 @@ func() {
 }
         `;
         const gscData = GscFileParser.parse(gsc);
-        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(11, 27), GscGame.UniversalGame, true);
+        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(11, 27), GscGame.UniversalGame, cfgVariablesOnly);
 
         checkItem(gscData, items, 0, "aaa", vscode.CompletionItemKind.Field, [GscVariableDefinitionType.Integer]);
         checkItem(gscData, items, 1, "bbb", vscode.CompletionItemKind.Field, [GscVariableDefinitionType.Integer]);
@@ -591,7 +597,7 @@ func() {
 }
         `;
         const gscData = GscFileParser.parse(gsc);
-        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(4, 10), GscGame.UniversalGame, true);
+        const items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(4, 10), GscGame.UniversalGame, cfgVariablesOnly);
 
         checkItem(gscData, items, 3, "struct1", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Array]);
         checkItem(gscData, items, 4, "struct2", vscode.CompletionItemKind.Variable, [GscVariableDefinitionType.Array]);
@@ -620,27 +626,27 @@ func() {
         const gscData = GscFileParser.parse(gsc);
 
         // First char
-        var items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(0, 0), GscGame.UniversalGame, true);
+        var items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(0, 0), GscGame.UniversalGame, cfgVariablesOnly);
         assert.ok(items.length === 0, "Unexpected length of items 1.\n\n" + printCompletionItems(items));
 
         // In params
-        var items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(1, 5), GscGame.UniversalGame, true);
+        var items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(1, 5), GscGame.UniversalGame, cfgVariablesOnly);
         assert.ok(items.length === 0, "Unexpected length of items 2.\n\n" + printCompletionItems(items));
 
         // Before {
-        var items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(1, 7), GscGame.UniversalGame, true);
+        var items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(1, 7), GscGame.UniversalGame, cfgVariablesOnly);
         assert.ok(items.length === 0, "Unexpected length of items 3.\n\n" + printCompletionItems(items));
 
         // After {
-        var items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(1, 8), GscGame.UniversalGame, true);
+        var items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(1, 8), GscGame.UniversalGame, cfgVariablesOnly);
         assert.ok(items.length !== 0, "Unexpected length of items 4.\n\n" + printCompletionItems(items));
 
         // Before }
-        var items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(10, 0), GscGame.UniversalGame, true);
+        var items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(10, 0), GscGame.UniversalGame, cfgVariablesOnly);
         assert.ok(items.length !== 0, "Unexpected length of items 4.\n\n" + printCompletionItems(items));
 
         // After }
-        var items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(10, 1), GscGame.UniversalGame, true);
+        var items = await GscCompletionItemProvider.getCompletionItems(gscData, new vscode.Position(10, 1), GscGame.UniversalGame, cfgVariablesOnly);
         assert.ok(items.length === 0, "Unexpected length of items 4.\n\n" + printCompletionItems(items));
     });
 

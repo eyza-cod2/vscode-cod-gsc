@@ -1,8 +1,9 @@
 import * as vscode from 'vscode';
 import { GscFile } from './GscFile';
-import { GroupType, GscData, GscGroup, TokenType } from './GscFileParser';
+import { GroupType, GscData, GscGroup } from './GscFileParser';
 import { CodFunctions } from './CodFunctions';
-import { GscConfig, GscGame } from './GscConfig';
+import { ConfigErrorDiagnostics, GscConfig, GscGame } from './GscConfig';
+import { GscFunctions, GscFunctionState } from './GscFunctions';
 
 export class GscDiagnosticsCollection {
     private static diagnosticCollection: vscode.DiagnosticCollection | undefined;
@@ -114,8 +115,13 @@ export class GscDiagnosticsCollection {
         //console.log("[DiagnosticsProvider]", "Document changed, creating diagnostics...");
 
         // Check if the URI is part of the workspace
-        if (!vscode.workspace.getWorkspaceFolder(uri)) {
+        const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
+        if (!workspaceFolder) {
             return; // Exit if the URI is not part of the workspace
+        }
+
+        if (GscConfig.getErrorDiagnostics(uri) === ConfigErrorDiagnostics.Disable) {
+            return; // Exit if the error diagnostics are disabled
         }
 
         const diagnostics: vscode.Diagnostic[] = [];
@@ -139,6 +145,9 @@ export class GscDiagnosticsCollection {
                 diagnostics.push(diag);
             }
         }
+
+        // TODO check where this file is referenced to update particular files
+        // It will be crusual for #include files
 
         this.diagnosticCollection?.set(uri, diagnostics);
 
@@ -238,106 +247,111 @@ export class GscDiagnosticsCollection {
             
         // Function call or reference
         } else {
+
             const funcInfo = group.getFunctionReferenceInfo();
             if (funcInfo !== undefined) {
                 
-                // This function name is ignored by configuration
-                for (const name of ignoredFunctionNames) {
-                    if (name.toLowerCase() === funcInfo.name.toLowerCase()) {
-                        return;
-                    }
-                }
+                const res = await GscFunctions.getFunctionReferenceState({name: funcInfo.name, path: funcInfo.path}, uri, ignoredFunctionNames, ignoredFilePaths, currentGame);
     
-                // Get file URI and position where the file is defined
-                const definitions = await GscFile.getFunctionNameDefinitions(funcInfo.name, funcInfo.path, uri);
-                
-                // Check if this function is predefined function
-                var isPredefinedFunction = CodFunctions.isPredefinedFunction(funcInfo.name, currentGame);
+                switch (res.state as GscFunctionState) {      
+                    case GscFunctionState.NameIgnored:
+                        return;
 
-
-                // File not found
-                if (definitions === undefined) {
-                    
-                    // This file path is ignored by configuration
-                    for (const ignoredPath of ignoredFilePaths) {
-                        if (funcInfo.path.toLowerCase().startsWith(ignoredPath.toLowerCase())) {
-                            return;
+                    // Function was found in exactly one place
+                    case GscFunctionState.Found:
+                        const funcDef = res.definitions[0].func;
+                        if (funcInfo.params.length > funcDef.parameters.length) {  
+                            if (funcDef.parameters.length === 0) {
+                                var r = new vscode.Range(funcInfo.params[funcDef.parameters.length].getRange().start, funcInfo.params[funcInfo.params.length - 1].getRange().end);
+                                return new vscode.Diagnostic(r, `Function '${funcDef.name}' does not expect any parameters, got ${funcInfo.params.length}`, vscode.DiagnosticSeverity.Error);
+                            } else {
+                                var r = new vscode.Range(funcInfo.params[funcDef.parameters.length].getRange().start, funcInfo.params[funcInfo.params.length - 1].getRange().end);
+                                return new vscode.Diagnostic(r, `Function '${funcDef.name}' expect ${funcDef.parameters.length} parameter${(funcDef.parameters.length === 1 ? "" : "s")}, got ${funcInfo.params.length}`, vscode.DiagnosticSeverity.Error);
+                            }
                         }
-                    }
-                                    
-                    var r = group.getRange();
-                    if (funcInfo.pathGroup) {
-                        r = funcInfo.pathGroup.getRange();
-                    }
-                    const workspaceFolder = vscode.Uri.joinPath(vscode.workspace.getWorkspaceFolder(uri)?.uri ?? uri, "../");
-                    const gameFolder = GscConfig.getGameRootFolderOfFile(uri)?.toString().replace(workspaceFolder.toString(), "");
-                    const d = new vscode.Diagnostic(r, `File '${funcInfo.path}.gsc' was not found in workspace folder '${gameFolder}'`, vscode.DiagnosticSeverity.Error);
-                    
-                    d.code = "unknown_file_path_" + funcInfo.path;
+                        break;
 
-                    return d;
-                }
 
-                // Function was found in exactly one place
-                else if (definitions.length === 1) {
+                    // Function is defined on too many places
+                    case GscFunctionState.FoundOnMultiplePlaces:
+                        return new vscode.Diagnostic(group.getRange(), `Function '${funcInfo.name}' is defined in ${res.definitions.length} places!`, vscode.DiagnosticSeverity.Error);
 
-                    const funcDef = definitions[0].func;
-                    if (funcInfo.params.length > funcDef.parameters.length) {  
-                        if (funcDef.parameters.length === 0) {
-                            var r = new vscode.Range(funcInfo.params[funcDef.parameters.length].getRange().start, funcInfo.params[funcInfo.params.length - 1].getRange().end);
-                            return new vscode.Diagnostic(r, `Function '${funcDef.name}' does not expect any parameters, got ${funcInfo.params.length}`, vscode.DiagnosticSeverity.Error);
-                        } else {
-                            var r = new vscode.Range(funcInfo.params[funcDef.parameters.length].getRange().start, funcInfo.params[funcInfo.params.length - 1].getRange().end);
-                            return new vscode.Diagnostic(r, `Function '${funcDef.name}' expect ${funcDef.parameters.length} parameter${(funcDef.parameters.length === 1 ? "" : "s")}, got ${funcInfo.params.length}`, vscode.DiagnosticSeverity.Error);
+
+                    // This function is predefined function
+                    case GscFunctionState.FoundInPredefined:
+                        // Find in predefined functions
+                        const preDefFunc = CodFunctions.getByName(funcInfo.name, funcInfo.callOn !== undefined, currentGame);
+
+                        // Predefined function was not found because the callon mismatch
+                        if (preDefFunc === undefined) {
+                            if (funcInfo.callOn) {
+                                return new vscode.Diagnostic(funcInfo.callOn.getRange(), `Function '${funcInfo.name}' can not be called on object (does not support callon object)`, vscode.DiagnosticSeverity.Error);
+                            } else {
+                                return new vscode.Diagnostic(group.getRange(), `Function '${funcInfo.name}' must be called on object (callon object is missing)`, vscode.DiagnosticSeverity.Error);
+                            }
                         }
-                    }
-                }
 
-                // Function is defined on too many places
-                else if (definitions.length > 1) {
-                    return new vscode.Diagnostic(group.getRange(), `Function '${funcInfo.name}' is defined in ${definitions.length} places!`, vscode.DiagnosticSeverity.Error);
-                }
+                        const paramsMinMax = preDefFunc.getNumberOfParameters();
 
-
-                // This function is predefined function
-                else if (funcInfo.path === "" && isPredefinedFunction) {
-                    // Find in predefined functions
-                    const preDefFunc = CodFunctions.getByName(funcInfo.name, funcInfo.callOn !== undefined, currentGame);
-
-                    // Predefined function was not found because the callon mismatch
-                    if (preDefFunc === undefined) {
-                        if (funcInfo.callOn) {
-                            return new vscode.Diagnostic(funcInfo.callOn.getRange(), `Function '${funcInfo.name}' can not be called on object (does not support callon object)`, vscode.DiagnosticSeverity.Error);
-                        } else {
-                            return new vscode.Diagnostic(group.getRange(), `Function '${funcInfo.name}' must be called on object (callon object is missing)`, vscode.DiagnosticSeverity.Error);
+                        if (funcInfo.params.length > paramsMinMax.max) {
+                            if (paramsMinMax.max === 0) {
+                                var r = new vscode.Range(funcInfo.params[paramsMinMax.max].getRange().start, funcInfo.params[funcInfo.params.length - 1].getRange().end);                       
+                                return new vscode.Diagnostic(r, `Function '${funcInfo.name}' does not expect any parameters, got ${funcInfo.params.length}`, vscode.DiagnosticSeverity.Error);
+                            } else {
+                                var r = new vscode.Range(funcInfo.params[paramsMinMax.max].getRange().start, funcInfo.params[funcInfo.params.length - 1].getRange().end); 
+                                return new vscode.Diagnostic(r, `Function '${funcInfo.name}' expect max ${paramsMinMax.max} parameter${(paramsMinMax.max === 1 ? "" : "s")}, got ${funcInfo.params.length}`, vscode.DiagnosticSeverity.Error);
+                            }
+                        } else if (funcInfo.params.length < paramsMinMax.min) {
+                            var r = funcInfo.paramsGroup?.getRange() ?? group.getRange();
+                            return new vscode.Diagnostic(r, `Function '${funcInfo.name}' expect min ${paramsMinMax.min} parameter${(paramsMinMax.min === 1 ? "" : "s")}, got ${funcInfo.params.length}`, vscode.DiagnosticSeverity.Error);
                         }
-                    }
+                        break;
 
-                    const paramsMinMax = preDefFunc.getNumberOfParameters();
 
-                    if (funcInfo.params.length > paramsMinMax.max) {
-                        if (paramsMinMax.max === 0) {
-                            var r = new vscode.Range(funcInfo.params[paramsMinMax.max].getRange().start, funcInfo.params[funcInfo.params.length - 1].getRange().end);                       
-                            return new vscode.Diagnostic(r, `Function '${funcInfo.name}' does not expect any parameters, got ${funcInfo.params.length}`, vscode.DiagnosticSeverity.Error);
-                        } else {
-                            var r = new vscode.Range(funcInfo.params[paramsMinMax.max].getRange().start, funcInfo.params[funcInfo.params.length - 1].getRange().end); 
-                            return new vscode.Diagnostic(r, `Function '${funcInfo.name}' expect max ${paramsMinMax.max} parameter${(paramsMinMax.max === 1 ? "" : "s")}, got ${funcInfo.params.length}`, vscode.DiagnosticSeverity.Error);
+                    case GscFunctionState.NotFoundFile:
+                        // This file path is ignored by configuration
+                        for (const ignoredPath of ignoredFilePaths) {
+                            if (funcInfo.path.toLowerCase().startsWith(ignoredPath.toLowerCase())) {
+                                return;
+                            }
                         }
-                    } else if (funcInfo.params.length < paramsMinMax.min) {
-                        var r = funcInfo.paramsGroup?.getRange() ?? group.getRange();
-                        return new vscode.Diagnostic(r, `Function '${funcInfo.name}' expect min ${paramsMinMax.min} parameter${(paramsMinMax.min === 1 ? "" : "s")}, got ${funcInfo.params.length}`, vscode.DiagnosticSeverity.Error);
-                    }    
-                }
+                                        
+                        var r = group.getRange();
+                        if (funcInfo.pathGroup) {
+                            r = funcInfo.pathGroup.getRange();
+                        }
+                        const workspaceFolder = vscode.Uri.joinPath(vscode.workspace.getWorkspaceFolder(uri)?.uri ?? uri, "../");
+                        const gameFolder = GscConfig.getGameRootFolderOfFile(uri)?.toString().replace(workspaceFolder.toString(), "");
+                        const d = new vscode.Diagnostic(r, `File '${funcInfo.path}.gsc' was not found in workspace folder '${gameFolder}'`, vscode.DiagnosticSeverity.Error);
+                        
+                        d.code = "unknown_file_path_" + funcInfo.path;
 
-                // Function was not found
-                else if (currentGame !== GscGame.UniversalGame) {
-                    const d = new vscode.Diagnostic(group.getRange(), `Function '${funcInfo.name}' is not defined${(funcInfo.path !== "" ? (" in '" + funcInfo.path + ".gsc'") : "")}!`, vscode.DiagnosticSeverity.Error);
-                
-                    if (funcInfo.path === "") {
-                        d.code = "unknown_function_" + funcInfo.name; // Special constant to create a CodeAction to add function name into ignored list
-                    }
-                    
-                    return d;
+                        return d;
+
+
+
+                    case GscFunctionState.NotFoundFileButIgnored:
+                        break;
+
+
+                    case GscFunctionState.NotFoundFunctionExternal:
+                        const d1 = new vscode.Diagnostic(group.getRange(), `Function '${funcInfo.name}' is not defined in '${funcInfo.path}.gsc'!`, vscode.DiagnosticSeverity.Error);               
+                        // TODO now it ignores local and external, but it should be probably separated
+                        //if (funcInfo.path === "") {
+                            d1.code = "unknown_function_" + funcInfo.name; // Special constant to create a CodeAction to add function name into ignored list
+                        //}
+                        return d1;
+
+
+                    case GscFunctionState.NotFoundFunctionLocal:
+                        if (currentGame !== GscGame.UniversalGame) {
+                            const d = new vscode.Diagnostic(group.getRange(), `Function '${funcInfo.name}' is not defined!`, vscode.DiagnosticSeverity.Error);
+                            if (funcInfo.path === "") {
+                                d.code = "unknown_function_" + funcInfo.name; // Special constant to create a CodeAction to add function name into ignored list
+                            }                        
+                            return d;
+                        }
+                        break;
                 }
 
 
@@ -347,13 +361,9 @@ export class GscDiagnosticsCollection {
 
 
     static async onDidChangeConfiguration(e: vscode.ConfigurationChangeEvent) {
-        if (e.affectsConfiguration('gsc', vscode.window.activeTextEditor?.document.uri)) {
-                
-            //vscode.window.showInformationMessage("Config changed, updating diagnostics...");
-
-            const files = GscFile.getCachedFiles();
-            await this.updateDiagnosticsAll(files);
-        }
+        //vscode.window.showInformationMessage("Config changed, updating diagnostics...");
+        const files = GscFile.getCachedFiles();
+        await this.updateDiagnosticsAll(files);
     }
 
     static async refreshDiagnosticsCollection() {

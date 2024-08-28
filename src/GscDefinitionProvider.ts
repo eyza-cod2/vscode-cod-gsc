@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { GscFile } from './GscFile';
 import { GroupType, GscData, GscFileParser } from './GscFileParser';
+import { GscFunctions } from './GscFunctions';
 
 export class GscDefinitionProvider implements vscode.DefinitionProvider {
 
@@ -43,7 +44,7 @@ export class GscDefinitionProvider implements vscode.DefinitionProvider {
         if (groupAtCursor.type === GroupType.FunctionName) {
             const funcInfo = groupAtCursor.getFunctionReferenceInfo();
             if (funcInfo !== undefined) {
-                const funcDefs = await GscFile.getFunctionNameDefinitions(funcInfo.name, funcInfo.path, documentUri);
+                const funcDefs = await GscFunctions.getAvailableFunctionsForUri(documentUri, funcInfo.name, funcInfo.path);
                 if (funcDefs !== undefined) {
                     funcDefs.forEach(f => {
                         locations.push(new vscode.Location(vscode.Uri.parse(f.uri), new vscode.Position(f.func.range.start.line, f.func.range.start.character)));

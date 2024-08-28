@@ -2,7 +2,7 @@
   "name": "cod-gsc",
   "displayName": "CoD GSC",
   "description": "GSC language support for Call of Duty (CoD1, CoD2, CoD3, CoD4, CoD5:WaW, CoD6:MW2, COD7:BO)",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "publisher": "eyza",
   "icon": "logo.png",
   "license": "LGPL-3.0-or-later",
@@ -22,7 +22,7 @@
     "type": "git",
     "url": "https://github.com/eyza-cod2/vscode-cod-gsc.git"
   },
-  "activationEvents": ["onStartupFinished"],
+  "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
     "languages": [
@@ -73,11 +73,21 @@
       {
         "command": "gsc.showErrorInfo",
         "title": "GSC: Report an Issue"
-    }
+      }
     ],
     "configuration": {
       "title": "GSC",
       "properties": {
+        "gsc.errorDiagnostics": {
+          "type": "string",
+          "enum": [
+            "Enable",
+            "Disable"
+          ],
+          "default": "Enable",
+          "description": "Enables error diagnostics for GSC files like syntax errors, unknown files, undefined functions, etc.",
+          "scope": "resource"
+        },
         "gsc.game": {
           "type": "string",
           "enum": [
@@ -111,6 +121,15 @@
           },
           "description": "An array of file paths that will be ignored during error diagnostics (case insensitive). For example: `maps\\mp\\gametypes\\ignoredScript`",
           "scope": "resource"
+        },
+        "gsc.includedWorkspaceFolders": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "description": "An array of workspace folder names (in multi-root workspace) that will be included for GSC file references. Useful if your mod contains only part of the files and other files are in different folder. You have to add these folders into your workspace setup to be able to include the folders. If empty, each workspace folder is isolated from each other.",
+          "scope": "resource"
         }
       }
     }
@@ -126,6 +145,7 @@
   "devDependencies": {
     "@types/mocha": "^10.0.7",
     "@types/node": "20.x",
+    "@types/semver": "^7.5.8",
     "@types/vscode": "^1.92.0",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",

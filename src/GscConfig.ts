@@ -8,6 +8,14 @@ export enum GscGame {
 	CoD2MP = "CoD2 MP",
 }
 
+// These must match with package.json settings
+export enum ConfigErrorDiagnostics {
+	Enable = "Enable",
+	Disable = "Disable"
+}
+
+
+
 export class GscConfig {
 
 	public static game: GscGame = GscGame.UniversalGame;
@@ -83,6 +91,49 @@ export class GscConfig {
 	}
 
 
+	public static getErrorDiagnostics(uri: vscode.Uri): ConfigErrorDiagnostics {
+		// Load ignored function names
+        const config = vscode.workspace.getConfiguration('gsc', uri);
+		const selectedOption = config.get<string>('errorDiagnostics', GscGame.UniversalGame);
+
+		return GscConfig.errorDiagnosticsStringToEnum(selectedOption, ConfigErrorDiagnostics.Enable);
+	}
+	public static async updateErrorDiagnostics(uri: vscode.Uri, value: ConfigErrorDiagnostics) {
+		// Load ignored function names
+        const config = vscode.workspace.getConfiguration('gsc', uri);
+		await config.update("errorDiagnostics", value, vscode.ConfigurationTarget.WorkspaceFolder);
+	}
+	public static errorDiagnosticsStringToEnum(game: string, def: ConfigErrorDiagnostics = ConfigErrorDiagnostics.Enable): ConfigErrorDiagnostics {	
+		return (Object.values(ConfigErrorDiagnostics) as Array<string>).includes(game)
+        ? (game as ConfigErrorDiagnostics)
+        : def;
+	}
+
+
+
+
+
+
+	/**
+	 * Get array of included workspace folders
+	 */
+	public static getIncludedWorkspaceFolders(uri: vscode.Uri) {
+		// Load ignored function names
+        const config = vscode.workspace.getConfiguration('gsc', uri);
+        const includedWorkspaceFolders: string[] = config.get('includedWorkspaceFolders', []);
+
+		return includedWorkspaceFolders;
+	}
+	public static addIncludedWorkspaceFolders(uri: vscode.Uri, value: string | string[]) {
+		const config = vscode.workspace.getConfiguration('gsc', uri);
+		const includedWorkspaceFolders: string[] = config.get('includedWorkspaceFolders', []);
+		if (typeof value === 'string') {
+			includedWorkspaceFolders.push(value);
+		} else{
+			includedWorkspaceFolders.push(...value);
+		}
+		return config.update('includedWorkspaceFolders', includedWorkspaceFolders, vscode.ConfigurationTarget.WorkspaceFolder);
+	}
 
 
 	public static isUniversalGame(game: GscGame): boolean {

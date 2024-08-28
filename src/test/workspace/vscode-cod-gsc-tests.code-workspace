@@ -1,13 +1,40 @@
 {
 	"folders": [
 		{
+			"name": "GscDiagnosticsCollection.CoD2MP",
 			"path": "GscDiagnosticsCollection.CoD2MP"
 		},
 		{
+			"name": "GscDiagnosticsCollection.UniversalGame",
 			"path": "GscDiagnosticsCollection.UniversalGame"
 		},
 		{
+			"name": "GscComplex",
 			"path": "GscComplex"
+		},
+		{
+			"name": "GscQuickFix",
+			"path": "GscQuickFix"
+		},
+		{
+			"name": "GscQuickFix.1",
+			"path": "GscQuickFix.1"
+		},
+		{
+			"name": "GscQuickFix.2",
+			"path": "GscQuickFix.2"
+		},
+		{
+			"name": "GscQuickFix.3",
+			"path": "GscQuickFix.3"
+		},
+		{
+			"name": "GscQuickFix.4",
+			"path": "GscQuickFix.4"
+		},
+		{
+			"name": "GscCompletionItemProvider",
+			"path": "GscCompletionItemProvider"
 		}
 	]
 }

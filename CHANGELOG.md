@@ -4,6 +4,19 @@ All notable changes to the "gsc" extension will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
+## [0.1.4] - 2024-08-28
+
+- Added ability to include workspace folders for external GSC files references
+- Added local and included functions into auto-suggestion
+- Added settings to disable error diagnostics
+- Improved hover over local functions
+- Improved update change log popup window
+- Fixed code action "Change game root folder to xxx" - it suggested folders from different workspace folders + it was able to use file instead of folder
+- Fixed re-diagnosing files when file is moved to another folder
+- Fixed automatic extension activation on startup - now the extension is activated when some GSC file is opened
+- Fixed error message appearing when new folder is added into multi-root workspace
+
+
 ## [0.1.3] - 2024-08-24
 
 - Fixed error message appearing when new folder is created in workspace

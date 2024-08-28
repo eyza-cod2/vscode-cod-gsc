@@ -1,8 +1,9 @@
 import * as vscode from 'vscode';
 import { GscFile } from './GscFile';
-import { GroupType, GscData, GscFunction } from './GscFileParser';
+import { GroupType, GscData } from './GscFileParser';
 import { CodFunctions } from './CodFunctions';
-import { GscConfig } from './GscConfig';
+import { ConfigErrorDiagnostics, GscConfig } from './GscConfig';
+import { GscFunctions, GscFunctionState } from './GscFunctions';
 
 export class GscHoverProvider implements vscode.HoverProvider {
     
@@ -37,71 +38,96 @@ export class GscHoverProvider implements vscode.HoverProvider {
 
                 const currentGame = GscConfig.getSelectedGame(uri);
                 const isUniversalGame = GscConfig.isUniversalGame(currentGame);
+                const ignoredFunctionNames: string[] = GscConfig.getIgnoredFunctionNames(uri);
+                const ignoredFilePaths = GscConfig.getIgnoredFilePaths(uri);
+                const errorDiagnosticsDisabled = GscConfig.getErrorDiagnostics(uri) === ConfigErrorDiagnostics.Disable;
 
-                // Get file URI and position where the file is defined
-                const definitions = await GscFile.getFunctionNameDefinitions(funcInfo.name, funcInfo.path, uri);
+                const res = await GscFunctions.getFunctionReferenceState({name: funcInfo.name, path: funcInfo.path}, uri, ignoredFunctionNames, ignoredFilePaths, currentGame);
+    
+                switch (res.state as GscFunctionState) {
+                    case GscFunctionState.NameIgnored:
+                        markdown.appendText(`🛈 Function name '${funcInfo.name}' is ignored by workspace settings!`);
+                        break;
 
-                // File not found
-                if (definitions === undefined) {
-                    if (isUniversalGame) {
-                        GscHoverProvider.markdownAppendFileWasNotFound(markdown, funcInfo.name, funcInfo.path);
-                    }
-                }
+                    case GscFunctionState.Found:
+                        res.definitions.forEach(async d => {
 
-                // Function was found in exactly one place
-                else if (definitions.length === 1) {
-                    definitions.forEach(async d => {
-                        GscHoverProvider.markdownAppendFunctionData(markdown, d.uri, d.func);
-                    });
-                }
-
-                // Function is defined on too many places
-                else if (definitions.length > 1) {
-                    
-                }
-
-                // This function is predefined function
-                else if (funcInfo.path === "" && CodFunctions.isPredefinedFunction(funcInfo.name, currentGame)) {
-                    // Find in predefined functions
-                    var preDefFunc = CodFunctions.getByName(funcInfo.name, funcInfo.callOn !== undefined, currentGame);
-
-                    if (preDefFunc === undefined) {
-                        preDefFunc = CodFunctions.getByName(funcInfo.name, undefined, currentGame)!;
-                    }
-
-                    markdown.appendMarkdown(preDefFunc.generateMarkdownDescription().value);
-                }
-
-                // Function not found
-                else {
-                    if (isUniversalGame) {
+                            markdown.appendMarkdown(d.func.generateMarkdownDescription(d.uri === uri.toString(), d.uri, d.reason).value);
+    
+                            /*public static markdownAppendFunctionData(md: vscode.MarkdownString, fileUri: string, functionData: GscFunction) {
+                                const parametersText = functionData.parameters.map(p => p.name).join(", ");
+                                
+                                md.appendCodeblock(`${functionData.name}(${parametersText})`);
                         
-                        // Try to find all possible predefined functions
-                        var preDefFunc = CodFunctions.getByName(funcInfo.name, funcInfo.callOn !== undefined, undefined);
+                                md.appendMarkdown("File: ```" + vscode.workspace.asRelativePath(vscode.Uri.parse(fileUri)) + "```");
+                            }*/
+                        });
+                        break;
+
+
+                    case GscFunctionState.FoundOnMultiplePlaces:
+                        // There would be error by diagnostics
+                        break;
+
+
+                    case GscFunctionState.FoundInPredefined:
+                        // Find in predefined functions
+                        var preDefFunc = CodFunctions.getByName(funcInfo.name, funcInfo.callOn !== undefined, currentGame);
 
                         if (preDefFunc === undefined) {
-                            preDefFunc = CodFunctions.getByName(funcInfo.name, undefined, undefined)!;
+                            preDefFunc = CodFunctions.getByName(funcInfo.name, undefined, currentGame)!;
                         }
 
-                        if (preDefFunc !== undefined) {
-                            markdown.appendMarkdown(preDefFunc.generateMarkdownDescription(true).value);
+                        markdown.appendMarkdown(preDefFunc.generateMarkdownDescription().value);
+                        break;
+
+
+                    case GscFunctionState.NotFoundFile:
+                        // There would be also error by diagnostics, but it will be on file path, not on function name
+                        GscHoverProvider.markdownAppendFileWasNotFound(markdown, funcInfo.name, funcInfo.path);
+                        if (errorDiagnosticsDisabled) {
+                            markdown.appendText(`\n\n🛈 Error diagnostics disabled via workspace settings`);
+                        }
+                        break;
+
+                    case GscFunctionState.NotFoundFileButIgnored:
+                        markdown.appendText(`🛈 File '${funcInfo.path}.gsc' was not found, but its ignored by workspace settings!`);
+                        break;
+
+
+                    case GscFunctionState.NotFoundFunctionExternal:
+                        // There would be error by diagnostics, unless disabled
+                        if (errorDiagnosticsDisabled) {
+                            markdown.appendText(`⚠️ Function '${funcInfo.name}' is not defined in '${funcInfo.path}.gsc'!`);
+                        }
+                        break;
+
+
+                    case GscFunctionState.NotFoundFunctionLocal:
+                        if (isUniversalGame) {
+                            
+                            // Try to find all possible predefined functions
+                            var preDefFunc = CodFunctions.getByName(funcInfo.name, funcInfo.callOn !== undefined, undefined);
+
+                            if (preDefFunc === undefined) {
+                                preDefFunc = CodFunctions.getByName(funcInfo.name, undefined, undefined)!;
+                            }
+
+                            if (preDefFunc !== undefined) {
+                                markdown.appendMarkdown(preDefFunc.generateMarkdownDescription(true).value);
+                            } else {
+                                GscHoverProvider.markdownAppendFunctionWasNotFound(markdown, funcInfo.name, funcInfo.path);
+                            }
                         } else {
-                            GscHoverProvider.markdownAppendFunctionWasNotFound(markdown, funcInfo.name, funcInfo.path);
+                            // There would be error by diagnostics, unless disabled
+                            if (errorDiagnosticsDisabled) {
+                                markdown.appendText(`⚠️ Function '${funcInfo.name}' is not defined!!`);
+                                markdown.appendText(`\n\n🛈 Error diagnostics disabled via workspace settings`);
+                            }
                         }
-                    }
-
-                    // Function was ignored
-                    else {
-                        
-                        const ignoredFunctionNames: string[] = GscConfig.getIgnoredFunctionNames(uri);
-
-                        const isIgnored = ignoredFunctionNames.find(name => name.toLowerCase() === funcInfo.name.toLowerCase()) !== undefined;
-                        if (isIgnored) {
-                            markdown.appendText(`This function name is ignored by workspace settings`);
-                        }
-            
-                    }
+                        break;
                 }
+
 
             }
         }
@@ -115,14 +141,6 @@ export class GscHoverProvider implements vscode.HoverProvider {
 
     public static markdownAppendFunctionWasNotFound(md: vscode.MarkdownString, funcName: string, path: string) {
         md.appendText(`⚠️ Function '${funcName}' was not found${(path !== "" ? (" in '" + path + "'") : "")}!`);
-    }
-
-    public static markdownAppendFunctionData(md: vscode.MarkdownString, fileUri: string, functionData: GscFunction) {
-        const parametersText = functionData.parameters.map(p => p.name).join(", ");
-        
-        md.appendCodeblock(`${functionData.name}(${parametersText})`);
-
-        md.appendMarkdown("File: ```" + vscode.workspace.asRelativePath(vscode.Uri.parse(fileUri)) + "```");
     }
 
 
