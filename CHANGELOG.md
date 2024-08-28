@@ -4,6 +4,11 @@ All notable changes to the "gsc" extension will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
+## [0.1.6] - 2024-08-28
+
+- Fixed missing file ./src/Updates.html in package
+
+
 ## [0.1.5] - 2024-08-28
 
 - Fixed missing package 'semver'
