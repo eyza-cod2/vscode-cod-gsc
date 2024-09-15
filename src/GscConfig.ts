@@ -46,7 +46,7 @@ export class GscConfig {
 		const gameRootSubpath = config.get<string>('gameRootFolder');
 
 		if (gameRootSubpath) {
-			return {uri: vscode.Uri.joinPath(workspaceFolder.uri, gameRootSubpath), workspaceFolder: workspaceFolder, relativePath: workspaceFolder.name + "/" + gameRootSubpath};
+			return {uri: vscode.Uri.joinPath(workspaceFolder.uri, gameRootSubpath.replace('\\', '/')), workspaceFolder: workspaceFolder, relativePath: workspaceFolder.name + "/" + gameRootSubpath};
 		} else {        
             return {uri: workspaceFolder.uri, workspaceFolder: workspaceFolder, relativePath: workspaceFolder.name};
 		}

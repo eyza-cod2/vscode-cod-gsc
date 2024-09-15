@@ -378,7 +378,7 @@ export class GscFiles {
     public static getReferencedFileForFile(gscFile: GscFile, referencedFilePath: string): GscDataAndReferenceState {
     
         for (const referenceableGameRoot of gscFile.referenceableGameRootFolders) {
-            const gscFilePathUri = vscode.Uri.joinPath(referenceableGameRoot.uri, referencedFilePath + ".gsc");                      
+            const gscFilePathUri = vscode.Uri.joinPath(referenceableGameRoot.uri, referencedFilePath.replace('\\', '/') + ".gsc");                      
             const gsc = GscFiles.getCachedFile(gscFilePathUri, referenceableGameRoot.workspaceFolder.uri);
 
             if (gsc === undefined) {
