@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import assert from 'assert';
 import { GscHoverProvider } from '../../GscHoverProvider';
 import { GscDefinitionProvider } from '../../GscDefinitionProvider';
-import { before } from 'mocha';
 import * as tests from '../Tests.test';
 import { GscFunction } from '../../GscFunctions';
 
@@ -14,7 +13,7 @@ These files are copied into temp folder (configured in .vscode-test.mjs)
 
 suite('GscComplex', () => {
 
-    before(async () => {
+    setup(async () => {
         await tests.activateExtension();
     });
     

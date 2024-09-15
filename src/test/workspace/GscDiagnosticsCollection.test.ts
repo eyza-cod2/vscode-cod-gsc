@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
 import assert from 'assert';
-import { before } from 'mocha';
 import * as tests from '../Tests.test';
 
 
@@ -11,7 +10,7 @@ These files are copied into temp folder (configured in .vscode-test.mjs)
 
 suite('GscDiagnosticsCollection.CoD2MP', () => {
 
-    before(async () => {
+    setup(async () => {
         await tests.activateExtension();
     });
 
@@ -86,7 +85,7 @@ suite('GscDiagnosticsCollection.CoD2MP', () => {
 
 suite('GscDiagnosticsCollection.UniversalGame', () => {
 
-    before(async () => {
+    setup(async () => {
         await tests.activateExtension();
     });
 

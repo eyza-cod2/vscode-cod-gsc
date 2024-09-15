@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
 import assert from 'assert';
-import { before } from 'mocha';
 import * as tests from '../Tests.test';
 import { CompletionConfig, GscCompletionItemProvider } from '../../GscCompletionItemProvider';
 import { GscGame } from '../../GscConfig';
@@ -34,7 +33,7 @@ These files are copied into temp folder (configured in .vscode-test.mjs)
 
 suite('GscCompletionItemProvider', () => {
 
-    before(async () => {
+    setup(async () => {
         await tests.activateExtension();
     });
 

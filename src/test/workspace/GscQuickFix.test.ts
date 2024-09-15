@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
 import assert from 'assert';
-import { before } from 'mocha';
 import * as tests from '../Tests.test';
 
 
@@ -9,7 +8,7 @@ import * as tests from '../Tests.test';
 
 suite('GscQuickFix', () => {
 
-    before(async () => {
+    setup(async () => {
         await tests.activateExtension();
     });
 
