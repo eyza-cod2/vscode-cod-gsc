@@ -4,7 +4,14 @@ All notable changes to the "gsc" extension will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
-## [0.1.7] - 2024-09-14
+## [0.1.8] - 2024-09-15
+
+- Fixed file path separator on linux system for GSC file path references
+- Added CI for Github Actions (automated integration tests)
+- Dependencies updated
+
+
+## [0.1.7] - 2024-09-15
 
 - Auto-suggestion for variables 'level' and 'game' now take included workspace folder into account
 - Improved caching of parsed files
@@ -12,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 - Added error diagnostic for #include
 - Added new debugging window to inspect the files
 - Added log window into Output Channels
+
 
 ## [0.1.6] - 2024-08-28
 
