@@ -37,7 +37,7 @@ export class GscFiles {
         context.subscriptions.push(vscode.workspace.onDidDeleteFiles(this.onDeleteFiles));
         context.subscriptions.push(vscode.workspace.onDidRenameFiles(this.onRenameFiles));
         context.subscriptions.push(vscode.workspace.onDidChangeWorkspaceFolders(e => this.onChangeWorkspaceFolders(e)));  
-        context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e => this.onDidChangeConfiguration(e)))
+        context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e => this.onDidChangeConfiguration(e)));
         context.subscriptions.push(vscode.window.onDidChangeTextEditorSelection(e => this.onChangeEditorSelection(e)));
 
         context.subscriptions.push(vscode.commands.registerCommand('gsc.debugParsedGscFile', this.debugParsedGscFile));
@@ -783,11 +783,11 @@ class GscWorkspaceFileData {
     static getConfig(workspaceFolder: vscode.WorkspaceFolder) {
 
         // Get config for workspace folder
-        const referenceableGameRootFolders = GscFiles.getReferenceableGameRootFolders(workspaceFolder)
-        const currentGame = GscConfig.getSelectedGame(workspaceFolder.uri)
-        const ignoredFunctionNames = GscConfig.getIgnoredFunctionNames(workspaceFolder.uri)
-        const ignoredFilePaths = GscConfig.getIgnoredFilePaths(workspaceFolder.uri)
-        const errorDiagnostics = GscConfig.getErrorDiagnostics(workspaceFolder.uri)
+        const referenceableGameRootFolders = GscFiles.getReferenceableGameRootFolders(workspaceFolder);
+        const currentGame = GscConfig.getSelectedGame(workspaceFolder.uri);
+        const ignoredFunctionNames = GscConfig.getIgnoredFunctionNames(workspaceFolder.uri);
+        const ignoredFilePaths = GscConfig.getIgnoredFilePaths(workspaceFolder.uri);
+        const errorDiagnostics = GscConfig.getErrorDiagnostics(workspaceFolder.uri);
 
         return {referenceableGameRootFolders, currentGame, ignoredFunctionNames, ignoredFilePaths, errorDiagnostics};
     }

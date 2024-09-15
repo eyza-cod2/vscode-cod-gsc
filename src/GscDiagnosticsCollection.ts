@@ -375,7 +375,7 @@ export class GscDiagnosticsCollection {
                         if (gscFile.ignoredFilePaths.some(ignoredPath => funcInfo.path.toLowerCase().startsWith(ignoredPath.toLowerCase()))) {
                             return;
                         }
-                        var r = (funcInfo.pathGroup) ? funcInfo.pathGroup.getRange() : group.getRange()
+                        var r = (funcInfo.pathGroup) ? funcInfo.pathGroup.getRange() : group.getRange();
                         const folders = gscFile.referenceableGameRootFolders.map(f => "'" + f.relativePath + "'").join(", ");
                         const d = new vscode.Diagnostic(r, `File '${funcInfo.path}.gsc' was not found in workspace folder ${folders}`, vscode.DiagnosticSeverity.Error);               
                         d.code = "unknown_file_path_" + funcInfo.path;

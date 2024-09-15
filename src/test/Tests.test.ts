@@ -188,7 +188,7 @@ export function checkCompletions(gscFile: GscFile, items: vscode.CompletionItem[
 export function waitForDiagnosticsUpdate(uri: vscode.Uri): Promise<vscode.Diagnostic[]> {
     return new Promise((resolve, reject) => {
         const disposable = vscode.languages.onDidChangeDiagnostics((e) => {
-            console.log("onDidChangeDiagnostics event fired");
+            //console.log("onDidChangeDiagnostics event fired");
             if (e.uris.some(changedUri => changedUri.toString() === uri.toString())) {
                 const diagnostics = vscode.languages.getDiagnostics(uri);
                 disposable.dispose();  // Clean up the event listener
