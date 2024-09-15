@@ -1,8 +1,7 @@
 import * as vscode from 'vscode';
-import { GscFile } from './GscFile';
-import { GroupType, GscData, GscFileParser } from './GscFileParser';
 import { GscConfig } from './GscConfig';
 import { EXTENSION_ID } from './extension';
+import { LoggerOutput } from './LoggerOutput';
 
 export class GscStatusBar {
 
@@ -59,7 +58,7 @@ export class GscStatusBar {
 
 					const selectedGame = GscConfig.getSelectedGame(activeEditor.document.uri);
 
-					console.log(`Updating status bar with game: ${selectedGame} because of: ${debugText}`);
+					LoggerOutput.log(`[GscFile] Updating status bar with game: ${selectedGame} because of: ${debugText}`);
 
 					gameBarItem.text = "$(notebook-open-as-text) " + (selectedGame);
 					

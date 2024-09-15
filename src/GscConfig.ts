@@ -15,34 +15,40 @@ export enum ConfigErrorDiagnostics {
 }
 
 
+export type GscGameRootFolder = {
+	uri: vscode.Uri;
+	workspaceFolder: vscode.WorkspaceFolder;
+	relativePath: string
+}
+
 
 export class GscConfig {
 
 	public static game: GscGame = GscGame.UniversalGame;
 
 
-	static async activate(context: vscode.ExtensionContext) {       
+	static async activate(context: vscode.ExtensionContext) { 
 	}
 
 
 	/**
 	 * Get path to game root folder. By default the game root folder is the workspace path. It can be changed in settings. Each folder can also have custom settings.
 	 */
-	public static getGameRootFolderOfFile(uri: vscode.Uri): vscode.Uri | undefined {
+	public static getGameRootFolder(fileOrWorkspaceURI: vscode.Uri): GscGameRootFolder | undefined {
 		
-		const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
+		const workspaceFolder = vscode.workspace.getWorkspaceFolder(fileOrWorkspaceURI);
 		
 		if (!workspaceFolder) {
 			return undefined;
 		}
 
-		const config = vscode.workspace.getConfiguration('gsc', uri);
-		const configFolder = config.get<string>('gameRootFolder');
+		const config = vscode.workspace.getConfiguration('gsc', fileOrWorkspaceURI);
+		const gameRootSubpath = config.get<string>('gameRootFolder');
 
-		if (configFolder) {
-			return vscode.Uri.joinPath(workspaceFolder.uri, configFolder);
+		if (gameRootSubpath) {
+			return {uri: vscode.Uri.joinPath(workspaceFolder.uri, gameRootSubpath), workspaceFolder: workspaceFolder, relativePath: workspaceFolder.name + "/" + gameRootSubpath};
 		} else {        
-            return workspaceFolder.uri;
+            return {uri: workspaceFolder.uri, workspaceFolder: workspaceFolder, relativePath: workspaceFolder.name};
 		}
 	}
 

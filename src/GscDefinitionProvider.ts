@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { GscFile } from './GscFile';
+import { GscFile, GscFiles } from './GscFiles';
 import { GroupType, GscData, GscFileParser } from './GscFileParser';
 import { GscFunctions } from './GscFunctions';
 
@@ -16,9 +16,9 @@ export class GscDefinitionProvider implements vscode.DefinitionProvider {
     ): Promise<vscode.Location[] | null> 
     {
         // Get parsed file
-        const gscData = await GscFile.getFile(document.uri);
+        const gscFile = await GscFiles.getFileData(document.uri);
 
-        const locations = await GscDefinitionProvider.getFunctionDefinitionLocations(gscData, position, document.uri);
+        const locations = await GscDefinitionProvider.getFunctionDefinitionLocations(gscFile, position);
 
         return locations;
     }
@@ -32,8 +32,10 @@ export class GscDefinitionProvider implements vscode.DefinitionProvider {
      *     _tests\definition_file::function_file();
      * @returns 
      */
-    public static async getFunctionDefinitionLocations(gscData: GscData, position: vscode.Position, documentUri: vscode.Uri): Promise<vscode.Location[]> {
+    public static async getFunctionDefinitionLocations(gscFile: GscFile, position: vscode.Position): Promise<vscode.Location[]> {
         const locations: vscode.Location[] = [];
+
+        const gscData = gscFile.data;
         
         // Get group before cursor
         var groupAtCursor = gscData.root.findGroupOnLeftAtPosition(position);
@@ -44,7 +46,7 @@ export class GscDefinitionProvider implements vscode.DefinitionProvider {
         if (groupAtCursor.type === GroupType.FunctionName) {
             const funcInfo = groupAtCursor.getFunctionReferenceInfo();
             if (funcInfo !== undefined) {
-                const funcDefs = await GscFunctions.getAvailableFunctionsForUri(documentUri, funcInfo.name, funcInfo.path);
+                const funcDefs = await GscFunctions.getAvailableFunctionsForFile(gscFile, funcInfo.name, funcInfo.path);
                 if (funcDefs !== undefined) {
                     funcDefs.forEach(f => {
                         locations.push(new vscode.Location(vscode.Uri.parse(f.uri), new vscode.Position(f.func.range.start.line, f.func.range.start.character)));

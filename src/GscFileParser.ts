@@ -2145,9 +2145,8 @@ export class GscFileParser {
     }
 
 
-    public static debugGroupAsString(tokens: GscToken[], parentGroup: GscGroup | undefined, currentGroup: GscGroup, level: number, printChilds: boolean, startGroup: GscGroup | undefined = undefined): string {
+    public static debugGroupAsString(tokens: GscToken[], parentGroup: GscGroup | undefined, currentGroup: GscGroup, level: number, printChilds: boolean, startGroup: GscGroup | undefined = undefined, startGroupFound: boolean = false): string {
         var s: string[] = [];
-        var startGroupFound: boolean = false;
 
         function write(text: string) {
             s.push(text);
@@ -2159,21 +2158,30 @@ export class GscFileParser {
         //var spaces1 = ".    ".repeat((level+1)/2);
         //var spaces2 = ".    ".repeat((level+1)/2) + ".  ";
 
+
         var spaces1 = ".  ".repeat((level+1)/2);
         var spaces2 = ".  ".repeat((level+1)/2) + ". ";
 
-        if (startGroup !== undefined && startGroupFound === false) {
-            writeLine(spaces1 + GroupType[currentGroup.type] + " ("+currentGroup.tokenIndexStart + " - " + currentGroup.tokenIndexEnd + "):");
+        if (startGroup !== undefined) {
+            if (startGroupFound === false) {
+                writeLine(spaces1 + GroupType[currentGroup.type] + " ("+currentGroup.tokenIndexStart + " - " + currentGroup.tokenIndexEnd + "):");
+            }
+
+            if (currentGroup !== startGroup) {
+                for (let item of currentGroup.items) {
+                    write(this.debugGroupAsString(tokens, currentGroup, item, level + 2, printChilds, startGroup, startGroupFound));
+                }
+                return s.join("");
+            } else if (currentGroup === startGroup) {
+                startGroupFound = true;
+            }
+
+            if (startGroupFound && currentGroup === startGroup && parentGroup !== undefined) {
+                spaces1 = ">" + spaces1.substring(1);
+                spaces2 = ">" + spaces2.substring(1);
+            }
         }
 
-        if (startGroup !== undefined && currentGroup !== startGroup) {
-            for (let item of currentGroup.items) {
-                write(this.debugGroupAsString(tokens, currentGroup, item, level + 2, printChilds, startGroup));
-            }
-            return s.join("");
-        } else if (currentGroup === startGroup) {
-            startGroupFound = true;
-        }
 
         //var spaces2 = new Array((level+1) * 2 + 1).join(' ');
         writeLine(spaces1 + "{");
@@ -2188,7 +2196,7 @@ export class GscFileParser {
             writeLine(spaces2 + "!!! DEADCODE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
 
-        if (currentGroup.parent !== parentGroup) {
+        if (currentGroup.parent !== parentGroup && currentGroup !== startGroup) {
             writeLine(spaces2 + "!!! PARENT MISMATCH !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
 
@@ -2223,7 +2231,7 @@ export class GscFileParser {
             if (printChilds) {
                 writeLine(spaces2 + "[");
                 for (let item of currentGroup.items) {
-                    write(this.debugGroupAsString(tokens, currentGroup, item, level + 2, printChilds, startGroup));
+                    write(this.debugGroupAsString(tokens, currentGroup, item, level + 2, printChilds, startGroup, startGroupFound));
                 }
                 writeLine(spaces2 + "]");
             }

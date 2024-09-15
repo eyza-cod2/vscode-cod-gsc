@@ -1,9 +1,10 @@
 import * as vscode from 'vscode';
-import { GscFile } from './GscFile';
+import { GscFile, GscFiles } from './GscFiles';
 import { GroupType, GscData, GscGroup, GscVariableDefinitionType } from './GscFileParser';
 import { CodFunctions } from './CodFunctions';
 import { GscConfig, GscGame } from './GscConfig';
 import { GscFunctions, GscVariableDefinition } from './GscFunctions';
+import { LoggerOutput } from './LoggerOutput';
 
 export interface CompletionConfig {
     variableItems: boolean;
@@ -26,11 +27,11 @@ export class GscCompletionItemProvider implements vscode.CompletionItemProvider 
 
 
         // Get parsed file
-        const gscData = await GscFile.parseAndCacheFile(document.uri);
+        const gscFile = await GscFiles.getFileData(document.uri);
 
         const currentGame = GscConfig.getSelectedGame(document.uri);
 
-        const items = await GscCompletionItemProvider.getCompletionItems(gscData, position, currentGame, undefined, document.uri);
+        const items = await GscCompletionItemProvider.getCompletionItems(gscFile, position, currentGame, undefined, document.uri);
 
         return items;
     }
@@ -45,7 +46,7 @@ export class GscCompletionItemProvider implements vscode.CompletionItemProvider 
      * @returns 
      */
     public static async getCompletionItems(
-        gscData: GscData,
+        gscFile: GscFile,
         position: vscode.Position,
         currentGame: GscGame,
         config?: CompletionConfig,
@@ -54,10 +55,12 @@ export class GscCompletionItemProvider implements vscode.CompletionItemProvider 
     {
         const completionItems: vscode.CompletionItem[] = [];
 
+        LoggerOutput.log("[GscCompletionItemProvider] Start");
         //console.log("CompletionItemProvider --------------------------------------------------------");
 
         const startTime = performance.now();
 
+        const gscData = gscFile.data;
 
         // Get group before cursor
         var groupAtCursor = gscData.root.findGroupOnLeftAtPosition(position);
@@ -104,7 +107,7 @@ export class GscCompletionItemProvider implements vscode.CompletionItemProvider 
 
                 // Add items for variables like level.aaa, game["bbb"] and local1.aaa[0][1]
                 if (!config || config.variableItems) {
-                    this.createVariableItems(completionItems, functionGroup.localVariableDefinitions, variableBeforeCursor, inWord, inStructureVariable, inArrayBrackets);
+                    this.createVariableItems(completionItems, functionGroup.localVariableDefinitions, variableBeforeCursor, inWord, inStructureVariable, inArrayBrackets, uri);
                 }
                 // Add items for predefined keywords (like true, false, undefined, if, else, waittillframeend, ...)
                 if (!config || config.keywordItems) {
@@ -116,7 +119,7 @@ export class GscCompletionItemProvider implements vscode.CompletionItemProvider 
                 }
                 // Add items for predefined functions
                 if (!config || config.functionItems) {
-                    await this.createFunctionItems(completionItems, inWord, inStructureVariable, inArrayBrackets, uri, currentGame);
+                    await this.createFunctionItems(completionItems, inWord, inStructureVariable, inArrayBrackets, gscFile, currentGame);
                 }
           
             } else {
@@ -130,7 +133,7 @@ export class GscCompletionItemProvider implements vscode.CompletionItemProvider 
         }
 
         const duration = performance.now() - startTime;
-        console.log("CompletionProvider done, exec time: " + duration + "ms");
+        LoggerOutput.log("[GscCompletionItemProvider] Done, exec time: " + duration + "ms");
 
         return completionItems;
     }
@@ -139,7 +142,7 @@ export class GscCompletionItemProvider implements vscode.CompletionItemProvider 
 
 
     private static createVariableItems(completionItems: vscode.CompletionItem[], localVariableDefinitions: GscVariableDefinition[], 
-        variableBeforeCursor: string, inWord: boolean, inStructureVariable: boolean, inArrayBrackets: boolean) 
+        variableBeforeCursor: string, inWord: boolean, inStructureVariable: boolean, inArrayBrackets: boolean, uri: vscode.Uri | undefined) 
     {
         // Select local variables 
         const variableItems: {name: string, detail: string | undefined, types: Set<GscVariableDefinitionType>, kind: vscode.CompletionItemKind}[] = [];
@@ -166,26 +169,33 @@ export class GscCompletionItemProvider implements vscode.CompletionItemProvider 
             getCompletionItemFromVariableDefinition(g);
         });
 
-        // Level variables
-        if (variableBeforeCursor.startsWith("level")) {
-            const gscFiles = GscFile.getCachedFiles();
-            gscFiles.forEach(g => {
-                g.levelVariablesDefinitions.forEach(g => {
-                    getCompletionItemFromVariableDefinition(g);
-                });
-            });
-        }
+        if (uri !== undefined) {
 
-        // Game variables
-        if (variableBeforeCursor.startsWith("game")) {
-            const gscFiles = GscFile.getCachedFiles();
-            gscFiles.forEach(g => {
-                g.gameVariablesDefinitions.forEach(g => {
-                    getCompletionItemFromVariableDefinition(g);
-                });
-            });
-        }
+            const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
 
+            if (workspaceFolder !== undefined) {
+                const gscFiles = GscFiles.getReferenceableCachedFiles(workspaceFolder);
+
+                // Level variables
+                if (variableBeforeCursor.startsWith("level")) {
+                    gscFiles.forEach(g => {
+                        g.data.levelVariablesDefinitions.forEach(g => {
+                            getCompletionItemFromVariableDefinition(g);
+                        });
+                    });
+                }
+    
+                // Game variables
+                if (variableBeforeCursor.startsWith("game")) {
+                    gscFiles.forEach(g => {
+                        g.data.gameVariablesDefinitions.forEach(g => {
+                            getCompletionItemFromVariableDefinition(g);
+                        });
+                    });
+                }
+            }
+
+        }
 
         function getCompletionItemFromVariableDefinition(g: GscVariableDefinition) {
 
@@ -335,17 +345,17 @@ export class GscCompletionItemProvider implements vscode.CompletionItemProvider 
     }
 
 
-    private static async createFunctionItems(completionItems: vscode.CompletionItem[], inWord: boolean, inStructureVariable: boolean, inArrayBrackets: boolean, uri: vscode.Uri | undefined, currentGame: GscGame) {
+    private static async createFunctionItems(completionItems: vscode.CompletionItem[], inWord: boolean, inStructureVariable: boolean, inArrayBrackets: boolean, gscFile: GscFile | undefined, currentGame: GscGame) {
         
         if (inWord || inArrayBrackets) {        
             // Uri is undefined in tests
-            if (uri !== undefined) {
+            if (gscFile !== undefined) {
                 // Local functions and included functions
-                const res = await GscFunctions.getFunctionReferenceState(undefined, uri, [], [], currentGame);
+                const res = await GscFunctions.getFunctionReferenceState(undefined, gscFile);
     
                 res.definitions.forEach(f => {
                     const item = new vscode.CompletionItem({label: f.func.name, description: "", detail: ""}, vscode.CompletionItemKind.Function);
-                    item.documentation = f.func.generateMarkdownDescription(f.uri.toString() === uri.toString(), f.uri, f.reason);
+                    item.documentation = f.func.generateMarkdownDescription(f.uri === gscFile.uri.toString(), f.uri, f.reason);
                     completionItems.push(item);
                 });
             }

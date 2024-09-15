@@ -4,6 +4,15 @@ All notable changes to the "gsc" extension will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
+## [0.1.7] - 2024-09-14
+
+- Auto-suggestion for variables 'level' and 'game' now take included workspace folder into account
+- Improved caching of parsed files
+- Changed the order of how files are being searched in workspace when they get referenced - its sorted by how the workspace folder appears in explorer tab, the last folder is searched first
+- Added error diagnostic for #include
+- Added new debugging window to inspect the files
+- Added log window into Output Channels
+
 ## [0.1.6] - 2024-08-28
 
 - Fixed missing file ./src/Updates.html in package

@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
 import { GscGroup, GscToken, GscVariableDefinitionType } from './GscFileParser';
-import { GscConfig, GscGame } from './GscConfig';
+import { GscConfig, GscGame, GscGameRootFolder } from './GscConfig';
 import * as fs from 'fs';
 import * as path from 'path';
-import { GscFile } from './GscFile';
+import { GscFile, GscFileReferenceState, GscFiles } from './GscFiles';
 import { CodFunctions } from './CodFunctions';
 
 
@@ -123,10 +123,7 @@ export class GscFunctions {
      */
     static async getFunctionReferenceState(
         funcInfo: {name:string, path: string} | undefined,
-        uri: vscode.Uri, 
-        ignoredFunctionNames: string[], 
-        ignoredFilePaths: string[], 
-        currentGame: GscGame)
+        gscFile: GscFile)
         : Promise<GscFunctionStateAndDefinitions>
     {
         function ret(state: GscFunctionState, definitions: GscFunctionDefinition[]) {
@@ -134,17 +131,17 @@ export class GscFunctions {
         }
 
         // This function name is ignored by configuration
-        if (funcInfo && ignoredFunctionNames.some(name => name.toLowerCase() === funcInfo.name.toLowerCase())) {
+        if (funcInfo && gscFile.ignoredFunctionNames.some(name => name.toLowerCase() === funcInfo.name.toLowerCase())) {
             return ret(GscFunctionState.NameIgnored, []);
         }
            
         // Get file URI and position where the file is defined
-        const definitions = await GscFunctions.getAvailableFunctionsForUri(uri, funcInfo?.name, funcInfo?.path);
+        const definitions = await GscFunctions.getAvailableFunctionsForFile(gscFile, funcInfo?.name, funcInfo?.path);
 
         // File not found
         if (definitions === undefined) {          
             // This file path is ignored by configuration
-            if (funcInfo && ignoredFilePaths.some(ignoredPath => funcInfo.path.toLowerCase().startsWith(ignoredPath.toLowerCase()))) {
+            if (funcInfo && gscFile.ignoredFilePaths.some(ignoredPath => funcInfo.path.toLowerCase().startsWith(ignoredPath.toLowerCase()))) {
                 return ret(GscFunctionState.NotFoundFileButIgnored, []);
             }
             return ret(GscFunctionState.NotFoundFile, []);           
@@ -162,7 +159,7 @@ export class GscFunctions {
 
 
         // This function is predefined function
-        else if (funcInfo && funcInfo.path === "" && CodFunctions.isPredefinedFunction(funcInfo.name, currentGame)) {
+        else if (funcInfo && funcInfo.path === "" && CodFunctions.isPredefinedFunction(funcInfo.name, gscFile.currentGame)) {
             return ret(GscFunctionState.FoundInPredefined, definitions);
         }
 
@@ -187,101 +184,62 @@ export class GscFunctions {
      * Get array of functions that are available for specified document URI. If funcName is specified, only functions with that name are returned.
      * If the file is not found, undefined is returned. If file is found but function is not found, it will return an empty array.
      */
-    public static async getAvailableFunctionsForUri(documentUri: vscode.Uri, funcName: string | undefined = undefined, funcFilePath: string | undefined = undefined)
+    public static async getAvailableFunctionsForFile(gscFile: GscFile, funcName: string | undefined = undefined, funcFilePath: string | undefined = undefined)
     : Promise<GscFunctionDefinition[] | undefined> 
     {
         const funcDefs: GscFunctionDefinition [] = [];  
         const funcNameId = funcName ? funcName.toLowerCase() : undefined;
 
-        const fileGameRootFolderUri = GscConfig.getGameRootFolderOfFile(documentUri);
+        if (!gscFile.workspaceFolder) {
+            return undefined; // This file is not part of workspace
+        }
 
         // Its external function call
         if (funcFilePath && funcFilePath.length > 0) 
         {
-            // Define all possible locations where the file can be found (globally included workspace folders)
-            const includedWorkspaceFolders = GscConfig.getIncludedWorkspaceFolders(documentUri);
-            // Convert them to WorkspaceFolder objects
-            const includedWorkspaceFoldersUris = includedWorkspaceFolders
-                .map(folderName => vscode.workspace.workspaceFolders?.find(f => f.name === folderName))
-                .filter(f => f !== undefined);
-            // Sort them by workspace indexes
-            includedWorkspaceFoldersUris.sort((a, b) => {
-                return a.index - b.index;
-            });
-            // Get the game root folder for each workspace
-            const includedWorkspaceFoldersRoots = includedWorkspaceFoldersUris
-                .map(folderUri => GscConfig.getGameRootFolderOfFile(folderUri.uri))
-                .filter(f => f !== undefined);
-            // Add also this document
-            if (fileGameRootFolderUri !== undefined) {
-                includedWorkspaceFoldersRoots.push(fileGameRootFolderUri);
-            }
-            // Reverse to loop this document first
-            includedWorkspaceFoldersRoots.reverse();
+            const referenceData = GscFiles.getReferencedFileForFile(gscFile, funcFilePath);
+            const referencedGscFile = referenceData.gscFile;
 
-            
-
-            var fileFound = false;
-            for (const root of includedWorkspaceFoldersRoots) {
-                const gscFilePathUri = vscode.Uri.joinPath(root, funcFilePath + ".gsc").toString().toLowerCase();
-                
-                const gscFiles = GscFile.getCachedFiles();
-                gscFiles.forEach((data, uri) => {
-                    if (uri.toLowerCase() === gscFilePathUri) {
-                        fileFound = true;
-                        data.functions.forEach(f => {
-                            if (!funcNameId || f.nameId === funcNameId) {
-                                const reason = (root === includedWorkspaceFoldersRoots[0] ? /*"External function"*/"" : "Included via workspace folder settings");
-                                funcDefs.push({func: f, uri: uri, reason: reason});
-                            }
-                        });
-                    }
-                });
-
-                // Do not search in other workspace folders
-                if (fileFound) {
-                    break;
-                }
-            }
-            
-            if (fileFound === false) {
+            if (referencedGscFile === undefined) {
                 return undefined;
             }
 
+            referencedGscFile.data.functions.forEach(f => {
+                if (!funcNameId || f.nameId === funcNameId) {
+                    const reason = referenceData.referenceState === GscFileReferenceState.IncludedWorkspaceFolder ? "Included via workspace folder settings" : "";
+                    funcDefs.push({func: f, uri: referencedGscFile.uri.toString(), reason: reason});
+                }
+            });
         } 
 
         // Its local function or included function
         else {
-            if (!fileGameRootFolderUri) {
-                return funcDefs;
-            }
 
             // TODO look into additional global include list
 
             // Find function in this file
-            const gscData = await GscFile.getFile(documentUri);
-            gscData.functions.forEach(f => {
+            gscFile.data.functions.forEach(f => {
                 if (!funcNameId || f.nameId === funcNameId) {
-                    funcDefs.push({func: f, uri: documentUri.toString(), reason: /*"Local function"*/""});
+                    funcDefs.push({func: f, uri: gscFile.uri.toString(), reason: /*"Local function"*/""});
                 }
             });
 
-            // Find function also in included files
-            gscData.includes.forEach(includedPath => {
-                const gscFilePathUri = vscode.Uri.joinPath(fileGameRootFolderUri, includedPath + ".gsc").toString().toLowerCase();
+            // Loop through all included files
+            for (const includedPath of gscFile.data.includes) {
 
-                // Try to find the file in parsed files
-                const gscFiles = GscFile.getCachedFiles();
-                gscFiles.forEach((data, uri) => {
-                    if (uri.toLowerCase() === gscFilePathUri) {
-                        data.functions.forEach(f => {
-                            if (!funcNameId || f.nameId === funcNameId) {
-                                funcDefs.push({func: f, uri: uri, reason: "Included via '#include'"});
-                            }
-                        });
+                const referencedFile = GscFiles.getReferencedFileForFile(gscFile, includedPath).gscFile;
+
+                if (referencedFile === undefined) {
+                    continue; // File not found
+                }
+                
+                referencedFile.data.functions.forEach(f => {
+                    if (!funcNameId || f.nameId === funcNameId) {
+                        funcDefs.push({func: f, uri: referencedFile.uri.toString(), reason: "Included via '#include'"});
                     }
-                });          
-            });
+                });
+            }
+
         }
         
         return funcDefs;

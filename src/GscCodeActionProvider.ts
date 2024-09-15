@@ -209,12 +209,12 @@ export class GscCodeActionProvider implements vscode.CodeActionProvider {
                     // Ignore iterated file if its from different workspace folder
                     if (fileWorkspaceFolder.uri.fsPath !== workspaceFolder.uri.fsPath) {
                         
-                        const rootFolder = GscConfig.getGameRootFolderOfFile(iteratedFileUri);
+                        const rootFolder = GscConfig.getGameRootFolder(iteratedFileUri);
                         if (!rootFolder) {
                             continue;
                         }
 
-                        const expectedFilePath = vscode.Uri.file(path.join(rootFolder.fsPath, filePathWithExtension)).toString();
+                        const expectedFilePath = vscode.Uri.joinPath(rootFolder.uri, filePathWithExtension).toString();
 
                         // This file was found exactly in game root folder
                         if (expectedFilePath.toLowerCase() === iteratedFileUriString.toLowerCase()) {

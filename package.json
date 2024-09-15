@@ -2,7 +2,7 @@
   "name": "cod-gsc",
   "displayName": "CoD GSC",
   "description": "GSC language support for Call of Duty (CoD1, CoD2, CoD3, CoD4, CoD5:WaW, CoD6:MW2, COD7:BO)",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "publisher": "eyza",
   "icon": "logo.png",
   "license": "LGPL-3.0-or-later",
@@ -61,6 +61,14 @@
       {
         "command": "gsc.debugItemBeforeCursor",
         "title": "GSC: Print GSC item before cursor"
+      },
+      {
+        "command": "gsc.debugParsedUris",
+        "title": "GSC: Print parsed URIs into console"
+      },
+      {
+        "command": "gsc.debugCachedFiles",
+        "title": "GSC: Debug cached files in window"
       },
       {
         "command": "gsc.refreshDiagnosticsCollection",
@@ -128,7 +136,7 @@
           "items": {
             "type": "string"
           },
-          "description": "An array of workspace folder names (in multi-root workspace) that will be included for GSC file references. Useful if your mod contains only part of the files and other files are in different folder. You have to add these folders into your workspace setup to be able to include the folders. If empty, each workspace folder is isolated from each other.",
+          "description": "An array of workspace folder names (in multi-root workspace) that will be included for GSC file references. Useful when your mod contains only part of the files and other files are in different folder (most common folder would be a 'raw' folder that contains the original game files). You have to add these folders into your workspace setup to be able to include the folders. If empty, each workspace folder is isolated from each other.",
           "scope": "resource"
         }
       }

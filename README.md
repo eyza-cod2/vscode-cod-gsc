@@ -30,6 +30,8 @@ Syntax highlighting
 
 ![Syntax highlight](images/vscode-syntax-highlight-1.png)
 
+
+
 Completion items (local functions)
 
 ![Completion](images/vscode-completion-4.png)
@@ -50,9 +52,21 @@ Completion items (variables with recognized variable type)
 
 ![Completion](images/vscode-completion-1.png)
 
+Completion items (variables from included workspace folders)
+
+![Completion](images/vscode-completion-6.png)
+
+
+
 Diagnostics
 
 ![Completion](images/vscode-diagnostics-1.png)
+
+Diagnostics - invalid file for #include
+
+![Completion](images/vscode-diagnostics-include.png)
+
+
 
 Function definition
 
@@ -61,7 +75,12 @@ Function definition
 Function hover info
 
 ![Function hover](images/vscode-function-hover.gif)
+
+Function hover info over CoD2 MP function spawn:
+
 ![Function hover](images/vscode-function-hover-spawn.png)
+
+
 
 Code actions (include folder for file references)
 
@@ -71,9 +90,21 @@ Code actions (ignore missing files)
 
 ![Function hover](images/vscode-quick-fix.png)
 
+
+
+Workspace folders
+
+![Function hover](images/vscode-workspace-order.png)
+
+
+
+
 Status bar
 
 ![Function hover](images/vscode-statusbar-game.png)
+
+
+
 
 
 

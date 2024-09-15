@@ -1,9 +1,11 @@
 import * as vscode from 'vscode';
-import { GscFile } from './GscFile';
+import { GscFile, GscFiles } from './GscFiles';
 import { GroupType, GscData, GscGroup } from './GscFileParser';
 import { CodFunctions } from './CodFunctions';
-import { ConfigErrorDiagnostics, GscConfig, GscGame } from './GscConfig';
+import { ConfigErrorDiagnostics, GscConfig, GscGame, GscGameRootFolder } from './GscConfig';
 import { GscFunctions, GscFunctionState } from './GscFunctions';
+import { assert } from 'console';
+import { LoggerOutput } from './LoggerOutput';
 
 export class GscDiagnosticsCollection {
     private static diagnosticCollection: vscode.DiagnosticCollection | undefined;
@@ -28,10 +30,9 @@ export class GscDiagnosticsCollection {
         // Settings changed, handle it...
         vscode.workspace.onDidChangeConfiguration((e) => this.onDidChangeConfiguration(e), null, context.subscriptions);
 
-
-        GscFile.onDidParseAllDocuments((files) => this.updateDiagnosticsAll(files));
-        GscFile.onDidParseDocument(e => this.updateDiagnostics(e.uri, e.data));
-        GscFile.onDidDeleteDocument(uri => this.deleteDiagnostics(uri));
+        GscFiles.onDidParseAllDocuments((files) => this.updateDiagnosticsAll("all files parsed"));
+        GscFiles.onDidParseDocument(data => this.generateDiagnostics(data));
+        GscFiles.onDidDeleteDocument(uri => this.deleteDiagnostics(uri));
     }
 
 
@@ -40,9 +41,22 @@ export class GscDiagnosticsCollection {
     /**
      * Update diagnostics for all parsed files. Since its computation intensive, its handled in async manner.
      */
-    static async updateDiagnosticsAll(files: Map<string, GscData>) {
+    static async updateDiagnosticsAll(debugText: string) {
 
-        console.log("Creating diagnostics for all files...");
+        LoggerOutput.log("[GscDiagnosticsCollection] Creating diagnostics for all files because: " + debugText);
+
+        // Get cached files for workspaces that have diagnostics enabled
+        const workspaceFolders = vscode.workspace.workspaceFolders;
+        if (workspaceFolders === undefined) {
+            return;
+        }
+        const workspaceFoldersWithEnabledErrors = workspaceFolders.filter(f => GscConfig.getErrorDiagnostics(f.uri) !== ConfigErrorDiagnostics.Disable);
+
+        // Get cached files for workspaces that have diagnostics enabled
+        const files = GscFiles.getCachedFiles(workspaceFoldersWithEnabledErrors.map(f => f.uri));
+
+        LoggerOutput.log("[GscDiagnosticsCollection]   files: " + files.length + ", workspaceFolders: " + workspaceFoldersWithEnabledErrors.map(f => f.name).join(", "));
+
 
         // Cancel the previous operation if it's still running
         if (this.currentCancellationTokenSource) {
@@ -54,6 +68,7 @@ export class GscDiagnosticsCollection {
         const token = this.currentCancellationTokenSource.token;
 
         let i = 0;
+        let count = 0;
         let lastUpdateTime = Date.now();
         const updateInterval = 100; // Time in milliseconds to wait before updating the UI
 
@@ -64,17 +79,17 @@ export class GscDiagnosticsCollection {
         try {
             this.diagnosticCollection?.clear();
 
-            for (const [uri, data] of files) {
+            for (const data of files) {
                 if (token.isCancellationRequested) {
                     return; // Exit if the operation has been canceled
                 }
 
                 if (this.statusBarItem) {
-                    this.statusBarItem.text = `$(sync~spin) Diagnosing GSC file ${i + 1}/${files.size}...`;
-                    this.statusBarItem.tooltip = uri;
+                    this.statusBarItem.text = `$(sync~spin) Diagnosing GSC file ${i + 1}/${files.length}...`;
+                    this.statusBarItem.tooltip = data.uri.toString();
                 }
 
-                await this.updateDiagnostics(vscode.Uri.parse(uri), data);
+                count += await this.generateDiagnostics(data);
 
                 // Check if it's time to pause for UI update
                 const now = Date.now();
@@ -99,8 +114,8 @@ export class GscDiagnosticsCollection {
             this.currentCancellationTokenSource = null;
         }
 
+        LoggerOutput.log("[GscDiagnosticsCollection] Done, diagnostics created: " + count);
     }
-
 
 
     
@@ -111,36 +126,39 @@ export class GscDiagnosticsCollection {
      *  - missing ;
      *  - unexpected tokens (bad syntax)
      */
-    static async updateDiagnostics(uri: vscode.Uri, gscData: GscData) {
+    static async generateDiagnostics(gscFile: GscFile): Promise<number> {
         //console.log("[DiagnosticsProvider]", "Document changed, creating diagnostics...");
-
-        // Check if the URI is part of the workspace
-        const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
-        if (!workspaceFolder) {
-            return; // Exit if the URI is not part of the workspace
-        }
-
-        if (GscConfig.getErrorDiagnostics(uri) === ConfigErrorDiagnostics.Disable) {
-            return; // Exit if the error diagnostics are disabled
-        }
+        const uri = gscFile.uri;
 
         const diagnostics: vscode.Diagnostic[] = [];
 
+        // Return empty diagnostics if diagnostics are disabled
+        if (gscFile.errorDiagnostics === ConfigErrorDiagnostics.Disable) {
+            this.diagnosticCollection?.set(uri, diagnostics);
+            return 0;
+        }
+
         // Load ignored function names
-        const ignoredFunctionNames: string[] = GscConfig.getIgnoredFunctionNames(uri);
-        const ignoredFilePaths = GscConfig.getIgnoredFilePaths(uri);
-        const currentGame = GscConfig.getSelectedGame(uri);
-        const isUniversalGame = GscConfig.isUniversalGame(currentGame);
+        const isUniversalGame = GscConfig.isUniversalGame(gscFile.currentGame);
     
         const groupFunctionNames: {group: GscGroup, uri: vscode.Uri}[] = [];
+        const groupIncludedPaths: {group: GscGroup, uri: vscode.Uri}[] = [];
 
         // Process the file
-        walkGroupItems(gscData.root, gscData.root.items);
+        walkGroupItems(gscFile.data.root, gscFile.data.root.items);
 
 
         // Create diagnostic for function names
         for (const d of groupFunctionNames) {
-            const diag = await GscDiagnosticsCollection.createDiagnosticsForFunctionName(d.group, d.uri, ignoredFunctionNames, ignoredFilePaths, currentGame);
+            const diag = await GscDiagnosticsCollection.createDiagnosticsForFunctionName(d.group, gscFile);
+            if (diag) {
+                diagnostics.push(diag);
+            }
+        }
+
+        // Create diagnostic for included files
+        for (const d of groupIncludedPaths) {
+            const diag = GscDiagnosticsCollection.createDiagnosticsForIncludedPaths(d.group, gscFile);
             if (diag) {
                 diagnostics.push(diag);
             }
@@ -178,13 +196,18 @@ export class GscDiagnosticsCollection {
                     } else {
                         switch (group.type as GroupType) {
 
+                            // Function path or #include path
+                            case GroupType.Path:
+                                groupIncludedPaths.push({group, uri});
+                                break;
+
                             case GroupType.FunctionName:
                                 groupFunctionNames.push({group, uri});
                                 break;
 
                             case GroupType.DataTypeKeyword:
-                                if (!isUniversalGame && currentGame !== GscGame.CoD1) {
-                                    return new vscode.Diagnostic(group.getRange(), "Casting to data type is not supported for " + currentGame, vscode.DiagnosticSeverity.Error);
+                                if (!isUniversalGame && gscFile.currentGame !== GscGame.CoD1) {
+                                    return new vscode.Diagnostic(group.getRange(), "Casting to data type is not supported for " + gscFile.currentGame, vscode.DiagnosticSeverity.Error);
                                 }
                                 break;
 
@@ -198,6 +221,8 @@ export class GscDiagnosticsCollection {
         }
 
         //console.log("[DiagnosticsProvider]", "Diagnostics done");
+
+        return diagnostics.length;
     }
     
 
@@ -231,7 +256,43 @@ export class GscDiagnosticsCollection {
         }
     }
 
-    static async createDiagnosticsForFunctionName(group: GscGroup, uri: vscode.Uri, ignoredFunctionNames: string[], ignoredFilePaths: string[], currentGame: GscGame) {
+
+    static createDiagnosticsForIncludedPaths(group: GscGroup, gscFile: GscFile): vscode.Diagnostic | undefined {
+        assert(group.type === GroupType.Path);
+
+        const tokensAsPath = group.getTokensAsString();
+
+        const referenceData = GscFiles.getReferencedFileForFile(gscFile, tokensAsPath);
+     
+
+        // #include
+        if (group.parent?.type === GroupType.PreprocessorStatement && group.parent.items.at(0)?.isReservedKeywordOfName("#include") === true) {
+
+            if (referenceData.gscFile === undefined) {
+
+                // This file path is ignored by configuration
+                if (gscFile.ignoredFilePaths.some(ignoredPath => tokensAsPath.toLowerCase().startsWith(ignoredPath.toLowerCase()))) {
+                    return;
+                }
+                const d = new vscode.Diagnostic(
+                    group.getRange(), 
+                    `File '${tokensAsPath}.gsc' was not found in workspace folder ${gscFile.referenceableGameRootFolders.map(f => "'" + f.relativePath + "'").join(", ")}`, 
+                    vscode.DiagnosticSeverity.Error);        
+                d.code = "unknown_file_path_" + tokensAsPath;
+                return d;
+            }
+
+        // function path
+        } else {
+            // Handled in function that handles function names
+        }
+
+
+    }
+
+
+    static async createDiagnosticsForFunctionName(
+        group: GscGroup, gscFile: GscFile) {
 
         // Function declaration
         if (group.parent?.type === GroupType.FunctionDeclaration) {
@@ -240,7 +301,7 @@ export class GscDiagnosticsCollection {
             const funcName = group.getFirstToken().name;
 
             // This function is overwriting the build-in function
-            if (CodFunctions.isPredefinedFunction(funcName, currentGame)) {
+            if (CodFunctions.isPredefinedFunction(funcName, gscFile.currentGame)) {
                 return new vscode.Diagnostic(group.getRange(), `Function '${funcName}' is overwriting build-in function`, vscode.DiagnosticSeverity.Information);
             }
             
@@ -251,7 +312,7 @@ export class GscDiagnosticsCollection {
             const funcInfo = group.getFunctionReferenceInfo();
             if (funcInfo !== undefined) {
                 
-                const res = await GscFunctions.getFunctionReferenceState({name: funcInfo.name, path: funcInfo.path}, uri, ignoredFunctionNames, ignoredFilePaths, currentGame);
+                const res = await GscFunctions.getFunctionReferenceState({name: funcInfo.name, path: funcInfo.path}, gscFile);
     
                 switch (res.state as GscFunctionState) {      
                     case GscFunctionState.NameIgnored:
@@ -280,7 +341,7 @@ export class GscDiagnosticsCollection {
                     // This function is predefined function
                     case GscFunctionState.FoundInPredefined:
                         // Find in predefined functions
-                        const preDefFunc = CodFunctions.getByName(funcInfo.name, funcInfo.callOn !== undefined, currentGame);
+                        const preDefFunc = CodFunctions.getByName(funcInfo.name, funcInfo.callOn !== undefined, gscFile.currentGame);
 
                         // Predefined function was not found because the callon mismatch
                         if (preDefFunc === undefined) {
@@ -309,26 +370,17 @@ export class GscDiagnosticsCollection {
 
 
                     case GscFunctionState.NotFoundFile:
+
                         // This file path is ignored by configuration
-                        for (const ignoredPath of ignoredFilePaths) {
-                            if (funcInfo.path.toLowerCase().startsWith(ignoredPath.toLowerCase())) {
-                                return;
-                            }
+                        if (gscFile.ignoredFilePaths.some(ignoredPath => funcInfo.path.toLowerCase().startsWith(ignoredPath.toLowerCase()))) {
+                            return;
                         }
-                                        
-                        var r = group.getRange();
-                        if (funcInfo.pathGroup) {
-                            r = funcInfo.pathGroup.getRange();
-                        }
-                        const workspaceFolder = vscode.Uri.joinPath(vscode.workspace.getWorkspaceFolder(uri)?.uri ?? uri, "../");
-                        const gameFolder = GscConfig.getGameRootFolderOfFile(uri)?.toString().replace(workspaceFolder.toString(), "");
-                        const d = new vscode.Diagnostic(r, `File '${funcInfo.path}.gsc' was not found in workspace folder '${gameFolder}'`, vscode.DiagnosticSeverity.Error);
-                        
+                        var r = (funcInfo.pathGroup) ? funcInfo.pathGroup.getRange() : group.getRange()
+                        const folders = gscFile.referenceableGameRootFolders.map(f => "'" + f.relativePath + "'").join(", ");
+                        const d = new vscode.Diagnostic(r, `File '${funcInfo.path}.gsc' was not found in workspace folder ${folders}`, vscode.DiagnosticSeverity.Error);               
                         d.code = "unknown_file_path_" + funcInfo.path;
 
                         return d;
-
-
 
                     case GscFunctionState.NotFoundFileButIgnored:
                         break;
@@ -344,7 +396,7 @@ export class GscDiagnosticsCollection {
 
 
                     case GscFunctionState.NotFoundFunctionLocal:
-                        if (currentGame !== GscGame.UniversalGame) {
+                        if (gscFile.currentGame !== GscGame.UniversalGame) {
                             const d = new vscode.Diagnostic(group.getRange(), `Function '${funcInfo.name}' is not defined!`, vscode.DiagnosticSeverity.Error);
                             if (funcInfo.path === "") {
                                 d.code = "unknown_function_" + funcInfo.name; // Special constant to create a CodeAction to add function name into ignored list
@@ -361,14 +413,13 @@ export class GscDiagnosticsCollection {
 
 
     static async onDidChangeConfiguration(e: vscode.ConfigurationChangeEvent) {
-        //vscode.window.showInformationMessage("Config changed, updating diagnostics...");
-        const files = GscFile.getCachedFiles();
-        await this.updateDiagnosticsAll(files);
+        if (e.affectsConfiguration('gsc')) {
+            await this.updateDiagnosticsAll("config changed");
+        }
     }
 
     static async refreshDiagnosticsCollection() {
-        const files = GscFile.getCachedFiles();
-        await this.updateDiagnosticsAll(files);
+        await this.updateDiagnosticsAll("manual refresh");
     }
 
 }

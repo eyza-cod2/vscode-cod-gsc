@@ -35,6 +35,12 @@
 		{
 			"name": "GscCompletionItemProvider",
 			"path": "GscCompletionItemProvider"
+		},
+		{
+			"path": "GscCompletionItemProvider.IncludedFolder"
+		},
+		{
+			"path": "GscCompletionItemProvider.NonIncludedFolder"
 		}
 	]
 }

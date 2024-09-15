@@ -16,7 +16,7 @@ suite('GscDiagnosticsCollection.CoD2MP', () => {
     });
 
     test('GscDiagnosticsCollection.CoD2MP.casting', async () => {
-        const [gsc, diagnostics, fileUri] = await tests.loadGscFile(['GscDiagnosticsCollection.CoD2MP', 'casting.gsc']);
+        const [gsc, diagnostics] = await tests.loadGscFile(['GscDiagnosticsCollection.CoD2MP', 'casting.gsc']);
         
         tests.checkDiagnostic(diagnostics, 0, "Casting to data type is not supported for CoD2 MP", vscode.DiagnosticSeverity.Error);
         assert.ok(diagnostics.length === 1);
@@ -24,7 +24,7 @@ suite('GscDiagnosticsCollection.CoD2MP', () => {
 
 
     test('GscDiagnosticsCollection.CoD2MP.functionOverwriting', async () => {
-        const [gsc, diagnostics, fileUri] = await tests.loadGscFile(['GscDiagnosticsCollection.CoD2MP', 'functionOverwriting.gsc']);
+        const [gsc, diagnostics] = await tests.loadGscFile(['GscDiagnosticsCollection.CoD2MP', 'functionOverwriting.gsc']);
 
         tests.checkDiagnostic(diagnostics, 0, "Function 'spawn' is overwriting build-in function", vscode.DiagnosticSeverity.Information);
         tests.checkDiagnostic(diagnostics, 1, "Function 'hide' is overwriting build-in function", vscode.DiagnosticSeverity.Information);
@@ -33,7 +33,7 @@ suite('GscDiagnosticsCollection.CoD2MP', () => {
 
 
     test('GscDiagnosticsCollection.CoD2MP.functionParameters', async () => {
-        const [gsc, diagnostics, fileUri] = await tests.loadGscFile(['GscDiagnosticsCollection.CoD2MP', 'functionParameters.gsc']);
+        const [gsc, diagnostics] = await tests.loadGscFile(['GscDiagnosticsCollection.CoD2MP', 'functionParameters.gsc']);
 
         tests.checkDiagnostic(diagnostics, 0, "Function 'spawn' expect min 2 parameters, got 0", vscode.DiagnosticSeverity.Error);
         tests.checkDiagnostic(diagnostics, 1, "Function 'spawn' expect min 2 parameters, got 0", vscode.DiagnosticSeverity.Error);
@@ -51,7 +51,7 @@ suite('GscDiagnosticsCollection.CoD2MP', () => {
 
 
     test('GscDiagnosticsCollection.CoD2MP.functionParametersLocal', async () => {
-        const [gsc, diagnostics, fileUri] = await tests.loadGscFile(['GscDiagnosticsCollection.CoD2MP', 'functionParametersLocal.gsc']);
+        const [gsc, diagnostics] = await tests.loadGscFile(['GscDiagnosticsCollection.CoD2MP', 'functionParametersLocal.gsc']);
 
         tests.checkDiagnostic(diagnostics, 0, "Function 'p0' does not expect any parameters, got 1", vscode.DiagnosticSeverity.Error);
         tests.checkDiagnostic(diagnostics, 1, "Function 'p0' does not expect any parameters, got 2", vscode.DiagnosticSeverity.Error);
@@ -63,7 +63,7 @@ suite('GscDiagnosticsCollection.CoD2MP', () => {
 
 
     test('GscDiagnosticsCollection.CoD2MP.functionUndefined', async () => {
-        const [gsc, diagnostics, fileUri] = await tests.loadGscFile(['GscDiagnosticsCollection.CoD2MP', 'functionUndefined.gsc']);
+        const [gsc, diagnostics] = await tests.loadGscFile(['GscDiagnosticsCollection.CoD2MP', 'functionUndefined.gsc']);
 
         tests.checkDiagnostic(diagnostics, 0, "Function 'unknownLocalFunction' is not defined!", vscode.DiagnosticSeverity.Error);
         tests.checkDiagnostic(diagnostics, 1, "Function 'func2' is not defined in 'functionUndefinedFuncs.gsc'!", vscode.DiagnosticSeverity.Error);
@@ -72,7 +72,7 @@ suite('GscDiagnosticsCollection.CoD2MP', () => {
 
 
     test('GscDiagnosticsCollection.CoD2MP.invalidFile', async () => {
-        const [gsc, diagnostics, fileUri] = await tests.loadGscFile(['GscDiagnosticsCollection.CoD2MP', 'invalidFile.gsc']);
+        const [gsc, diagnostics] = await tests.loadGscFile(['GscDiagnosticsCollection.CoD2MP', 'invalidFile.gsc']);
 
         tests.checkDiagnostic(diagnostics, 0, "File 'unknown_path\\script.gsc' was not found in workspace folder 'GscDiagnosticsCollection.CoD2MP'", vscode.DiagnosticSeverity.Error);
         assert.ok(diagnostics.length === 1);
@@ -91,27 +91,27 @@ suite('GscDiagnosticsCollection.UniversalGame', () => {
     });
 
     test('GscDiagnosticsCollection.UniversalGame.casting', async () => {
-        const [gsc, diagnostics, fileUri] = await tests.loadGscFile(['GscDiagnosticsCollection.UniversalGame', 'casting.gsc']);
+        const [gsc, diagnostics] = await tests.loadGscFile(['GscDiagnosticsCollection.UniversalGame', 'casting.gsc']);
 
         assert.ok(diagnostics.length === 0);
     });
 
     test('GscDiagnosticsCollection.UniversalGame.functionOverwriting', async () => {
-        const [gsc, diagnostics, fileUri] = await tests.loadGscFile(['GscDiagnosticsCollection.UniversalGame', 'functionOverwriting.gsc']);
+        const [gsc, diagnostics] = await tests.loadGscFile(['GscDiagnosticsCollection.UniversalGame', 'functionOverwriting.gsc']);
 
         assert.ok(diagnostics.length === 0);
     });
 
 
     test('GscDiagnosticsCollection.UniversalGame.functionParameters', async () => {
-        const [gsc, diagnostics, fileUri] = await tests.loadGscFile(['GscDiagnosticsCollection.UniversalGame', 'functionParameters.gsc']);
+        const [gsc, diagnostics] = await tests.loadGscFile(['GscDiagnosticsCollection.UniversalGame', 'functionParameters.gsc']);
 
         assert.ok(diagnostics.length === 0);
     });
 
 
     test('GscDiagnosticsCollection.CoD2MP.functionParametersLocal', async () => {
-        const [gsc, diagnostics, fileUri] = await tests.loadGscFile(['GscDiagnosticsCollection.UniversalGame', 'functionParametersLocal.gsc']);
+        const [gsc, diagnostics] = await tests.loadGscFile(['GscDiagnosticsCollection.UniversalGame', 'functionParametersLocal.gsc']);
 
         tests.checkDiagnostic(diagnostics, 0, "Function 'p0' does not expect any parameters, got 1", vscode.DiagnosticSeverity.Error);
         tests.checkDiagnostic(diagnostics, 1, "Function 'p0' does not expect any parameters, got 2", vscode.DiagnosticSeverity.Error);
@@ -123,7 +123,7 @@ suite('GscDiagnosticsCollection.UniversalGame', () => {
 
 
     test('GscDiagnosticsCollection.UniversalGame.functionUndefined', async () => {
-        const [gsc, diagnostics, fileUri] = await tests.loadGscFile(['GscDiagnosticsCollection.UniversalGame', 'functionUndefined.gsc']);
+        const [gsc, diagnostics] = await tests.loadGscFile(['GscDiagnosticsCollection.UniversalGame', 'functionUndefined.gsc']);
 
         tests.checkDiagnostic(diagnostics, 0, "Function 'func2' is not defined in 'functionUndefinedFuncs.gsc'!", vscode.DiagnosticSeverity.Error);
         assert.ok(diagnostics.length === 1);
@@ -131,7 +131,7 @@ suite('GscDiagnosticsCollection.UniversalGame', () => {
 
 
     test('GscDiagnosticsCollection.UniversalGame.invalidFile', async () => {
-        const [gsc, diagnostics, fileUri] = await tests.loadGscFile(['GscDiagnosticsCollection.UniversalGame', 'invalidFile.gsc']);
+        const [gsc, diagnostics] = await tests.loadGscFile(['GscDiagnosticsCollection.UniversalGame', 'invalidFile.gsc']);
 
         tests.checkDiagnostic(diagnostics, 0, "File 'unknown_path\\script.gsc' was not found in workspace folder 'GscDiagnosticsCollection.UniversalGame'", vscode.DiagnosticSeverity.Error);
         assert.ok(diagnostics.length === 1);

@@ -1,2 +1,5 @@
 {
+    "gsc.includedWorkspaceFolders": [
+        "GscCompletionItemProvider.IncludedFolder"
+    ]
 }

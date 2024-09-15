@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { GscFile } from './GscFile';
+import { GscFiles } from './GscFiles';
 import { GscCompletionItemProvider } from './GscCompletionItemProvider'; 
 import { GscSemanticTokensProvider } from './GscSemanticTokensProvider';
 import { GscDiagnosticsCollection } from './GscDiagnosticsCollection';
@@ -21,13 +21,21 @@ export class Gsc {
         // Register events
         await GscConfig.activate(context);
         await GscStatusBar.activate(context);
-        await GscFile.activate(context);
+        await GscFiles.activate(context);
         await GscDiagnosticsCollection.activate(context);
         await GscCodeActionProvider.activate(context);
         await GscSemanticTokensProvider.activate(context);
         await GscCompletionItemProvider.activate(context);
         await GscDefinitionProvider.activate(context);
         await GscHoverProvider.activate(context);
+    }
+
+    static deactivate() {
+        console.log("------------------------------------------------------------");
+        console.log("- GSC extension deactivated -");
+        console.log("------------------------------------------------------------");
+
+        GscFiles.deactivate();
     }
 
 }

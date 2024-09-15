@@ -38,7 +38,7 @@ export class Issues {
         // Handle uncaught exceptions
         process.on('uncaughtException', (error) => {
             if (Issues.isDisposed) {
-                console.log("Extension has been disposed, ignoring unhandled rejection.");
+                console.log("Extension has been disposed, ignoring unhandled exception. ", error.message);
                 return; // Ignore the error since the extension is disposed
             }
             
@@ -50,7 +50,7 @@ export class Issues {
         // Handle unhandled promise rejections
         process.on('unhandledRejection', (reason: any) => {
             if (Issues.isDisposed) {
-                console.log("Extension has been disposed, ignoring unhandled rejection.");
+                console.log("Extension has been disposed, ignoring unhandled rejection.", reason.message);
                 return; // Ignore the error since the extension is disposed
             }
             

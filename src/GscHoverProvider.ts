@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { GscFile } from './GscFile';
+import { GscFile, GscFiles } from './GscFiles';
 import { GroupType, GscData } from './GscFileParser';
 import { CodFunctions } from './CodFunctions';
 import { ConfigErrorDiagnostics, GscConfig } from './GscConfig';
@@ -18,16 +18,19 @@ export class GscHoverProvider implements vscode.HoverProvider {
     ): Promise<vscode.Hover | undefined> 
     {
         // Get parsed file
-        const gscData = await GscFile.getFile(document.uri);
+        const gscData = await GscFiles.getFileData(document.uri);
 
-        const hover = await GscHoverProvider.getHover(gscData, position, document.uri);
+        const hover = await GscHoverProvider.getHover(gscData, position);
 
         return hover;
     }
 
-    public static async getHover(gscData: GscData, position: vscode.Position, uri: vscode.Uri): Promise<vscode.Hover> {
+    public static async getHover(gscFile: GscFile, position: vscode.Position): Promise<vscode.Hover> {
         let markdown = new vscode.MarkdownString();
         markdown.isTrusted = true; // enable HTML tags
+
+        const gscData = gscFile.data;
+        const uri = gscFile.uri;
 
         // Get group before cursor
         var groupAtCursor = gscData.root.findGroupOnLeftAtPosition(position);
@@ -36,13 +39,10 @@ export class GscHoverProvider implements vscode.HoverProvider {
             const funcInfo = groupAtCursor.getFunctionReferenceInfo();
             if (funcInfo !== undefined) {
 
-                const currentGame = GscConfig.getSelectedGame(uri);
-                const isUniversalGame = GscConfig.isUniversalGame(currentGame);
-                const ignoredFunctionNames: string[] = GscConfig.getIgnoredFunctionNames(uri);
-                const ignoredFilePaths = GscConfig.getIgnoredFilePaths(uri);
-                const errorDiagnosticsDisabled = GscConfig.getErrorDiagnostics(uri) === ConfigErrorDiagnostics.Disable;
+                const isUniversalGame = GscConfig.isUniversalGame(gscFile.currentGame);
+                const errorDiagnosticsDisabled = gscFile.errorDiagnostics === ConfigErrorDiagnostics.Disable;
 
-                const res = await GscFunctions.getFunctionReferenceState({name: funcInfo.name, path: funcInfo.path}, uri, ignoredFunctionNames, ignoredFilePaths, currentGame);
+                const res = await GscFunctions.getFunctionReferenceState({name: funcInfo.name, path: funcInfo.path}, gscFile);
     
                 switch (res.state as GscFunctionState) {
                     case GscFunctionState.NameIgnored:
@@ -72,10 +72,10 @@ export class GscHoverProvider implements vscode.HoverProvider {
 
                     case GscFunctionState.FoundInPredefined:
                         // Find in predefined functions
-                        var preDefFunc = CodFunctions.getByName(funcInfo.name, funcInfo.callOn !== undefined, currentGame);
+                        var preDefFunc = CodFunctions.getByName(funcInfo.name, funcInfo.callOn !== undefined, gscFile.currentGame);
 
                         if (preDefFunc === undefined) {
-                            preDefFunc = CodFunctions.getByName(funcInfo.name, undefined, currentGame)!;
+                            preDefFunc = CodFunctions.getByName(funcInfo.name, undefined, gscFile.currentGame)!;
                         }
 
                         markdown.appendMarkdown(preDefFunc.generateMarkdownDescription().value);

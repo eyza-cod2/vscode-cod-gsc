@@ -38,6 +38,14 @@
             margin-top: 80px;
         }
 
+        .welcome {
+            padding: 10px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            background-color: lightgreen;
+            border-radius: 8px;
+        }
+
         .warning {
             padding: 10px;
             margin-top: 20px;
@@ -67,6 +75,11 @@
 <body>
     <h1>COD GSC Extension ${fromVersionToVersion}</h1>
 
+    <div class="welcome">
+        <b>Thank you for using this extension!</b> <br>
+        Below you can find the list of changes and improvements for each version.
+    </div>
+
     <div class="warning">
         ⚠️ This extension is still in development. If you encounter any issues, please report them
         <ul>
@@ -74,6 +87,41 @@
             <li><a href="${DISCORD_URL}" target="_blank">Discord Server</a></li>
             <li><a href="${EMAIL}">Email</a></li>
         </ul>
+    </div>
+
+    <div ${VERSION_0.1.7}>
+        <h2>Version [0.1.7] - 2024-09-14</h2>
+
+        <h3>Validation of #include paths</h3>
+        <p>
+            Added error diagnostics for invalid file path in '#include' directive.
+        </p>
+        <img src="../images/vscode-diagnostics-include.png">
+        
+        <h3>Auto-suggestion for variables 'level' and 'game' from included workspace folders</h3>
+        <p>
+            Variables from included workspace folders are now available in auto-suggestion.
+        </p>
+        <img src="../images/vscode-completion-6.png">
+        
+        <h3>Order of the workspace folders</h3>
+        <p>
+            When other workspace folders are included for file references,
+            the order of how files are being searched is now determined by how the workspace folder appears in explorer tab. 
+            The last folder is searched first.
+        </p>
+        <img src="../images/vscode-workspace-order.png">
+
+    
+        <h3>All changes:</h3>
+        <p class="lines">
+            - Auto-suggestion for variables 'level' and 'game' now take included workspace folder into account
+            - Improved caching of parsed files
+            - Changed the order of how files are being searched in workspace when they get referenced - its sorted by how the workspace folder appears in explorer tab, the last folder is searched first
+            - Added error diagnostic for #include
+            - Added new debugging window to inspect the files
+            - Added log window into Output Channels
+        </p>
     </div>
 
     <div ${VERSION_0.1.6}>

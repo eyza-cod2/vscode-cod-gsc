@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { GscFile } from './GscFile';
+import { GscFiles } from './GscFiles';
 import { GroupType, GscGroup} from './GscFileParser';
 
 
@@ -53,7 +53,7 @@ export class GscSemanticTokensProvider implements vscode.DocumentSemanticTokensP
         const builder = new vscode.SemanticTokensBuilder(GscSemanticTokensProvider.legend);
 
         // Get the parsed file
-        var gsc = await GscFile.parseAndCacheFile(document.uri);
+        var gscFile = await GscFiles.getFileData(document.uri);
         
 
         function walkGroupItems(parentGroup: GscGroup, items: GscGroup[], action: (parentGroup: GscGroup, group: GscGroup) => void) {
@@ -66,7 +66,7 @@ export class GscSemanticTokensProvider implements vscode.DocumentSemanticTokensP
         }
 
 
-        walkGroupItems(gsc.root, gsc.root.items, (parentGroup, group) => {
+        walkGroupItems(gscFile.data.root, gscFile.data.root.items, (parentGroup, group) => {
 
             /*          
                 'class',        // (blue-green) For identifiers that declare or reference a class type.

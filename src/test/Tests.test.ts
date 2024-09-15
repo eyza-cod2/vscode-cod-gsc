@@ -6,7 +6,7 @@ import { GscData, GscVariableDefinitionType } from '../GscFileParser';
 import { GscHoverProvider } from '../GscHoverProvider';
 import { GscDefinitionProvider } from '../GscDefinitionProvider';
 import { EXTENSION_ID } from '../extension';
-import { GscFile } from '../GscFile';
+import { GscFile, GscFiles } from '../GscFiles';
 import { GscCompletionItemProvider } from '../GscCompletionItemProvider';
 import { GscCodeActionProvider } from '../GscCodeActionProvider';
 import { GscFunction } from '../GscFunctions';
@@ -34,7 +34,7 @@ export function sleep(ms: number): Promise<void> {
 
 
 
-export async function loadGscFile(paths: string[], doWaitForDiagnosticsUpdate: boolean = true): Promise<[data: GscData, diagnostics: vscode.Diagnostic[], fileUri: vscode.Uri]> {
+export async function loadGscFile(paths: string[], doWaitForDiagnosticsUpdate: boolean = true): Promise<[gscFile: GscFile, diagnostics: vscode.Diagnostic[]]> {
 
     const filePath = path.join(testWorkspaceDir, ...paths);
     const fileUri = vscode.Uri.file(filePath);
@@ -42,14 +42,14 @@ export async function loadGscFile(paths: string[], doWaitForDiagnosticsUpdate: b
     if (doWaitForDiagnosticsUpdate) {
         const diagnosticsPromise = waitForDiagnosticsUpdate(fileUri);
 
-        var gsc = await GscFile.parseAndCacheFile(fileUri);
+        var gscFile = await GscFiles.getFileData(fileUri);
         
         const diagnostics = await diagnosticsPromise;
         
-        return [gsc, diagnostics, fileUri];
+        return [gscFile, diagnostics];
     } else {
-        var gsc = await GscFile.parseAndCacheFile(fileUri);
-        return [gsc, [], fileUri];
+        var gscFile = await GscFiles.getFileData(fileUri);
+        return [gscFile, []];
     }
     
 }
@@ -103,11 +103,11 @@ export function checkHover(hover: vscode.Hover, expected: string) {
     assert.ok(hover !== undefined);
     assert.ok(hover.contents.length === 1);
     assert.ok(hover.contents[0] instanceof vscode.MarkdownString);
-    assert.deepStrictEqual(hover.contents[0].value, expected, "Not equal:\n\n'" + hover.contents[0].value + "'\n\n'" + expected + "'");
+    assert.deepStrictEqual(hover.contents[0].value, expected, "Not equal:\n\nCurrent:\n'" + hover.contents[0].value + "'\n\nExpected:\n'" + expected + "'\n\n");
 }
 
-export async function checkHoverExternalFunc(fileUri: vscode.Uri, gsc: GscData, pos: vscode.Position, name: string, parameters: {name: string, commentBefore?: string}[], pathUri: string, reason: string) {
-    const hover = await GscHoverProvider.getHover(gsc, pos, fileUri);
+export async function checkHoverExternalFunc(gscFile: GscFile, pos: vscode.Position, name: string, parameters: {name: string, commentBefore?: string}[], pathUri: string, reason: string) {
+    const hover = await GscHoverProvider.getHover(gscFile, pos);
     checkHover(hover, GscFunction.generateMarkdownDescription({name: name, parameters: parameters}, false, filePathToUri(pathUri).toString(), reason).value);
 }
 
@@ -123,8 +123,8 @@ export function checkDefinition(locations: vscode.Location[], expectedFileEnd: s
     assert.ok(locations[0].uri.path.endsWith(expectedFileEnd), "Expected file end: " + expectedFileEnd + ". Actual: " + locations[0].uri.path);
 }
 
-export async function checkDefinitionFunc(fileUri: vscode.Uri, gsc: GscData, pos: vscode.Position, pathUri: string) {
-    const locations = await GscDefinitionProvider.getFunctionDefinitionLocations(gsc, pos, fileUri);
+export async function checkDefinitionFunc(gscFile: GscFile, pos: vscode.Position, pathUri: string) {
+    const locations = await GscDefinitionProvider.getFunctionDefinitionLocations(gscFile, pos);
     checkDefinition(locations, pathUri);
 }
 
@@ -132,14 +132,14 @@ export async function checkDefinitionFunc(fileUri: vscode.Uri, gsc: GscData, pos
 
 
 
-export function checkCompletions(gscData: GscData, items: vscode.CompletionItem[], index: number, labelName: string, 
+export function checkCompletions(gscFile: GscFile, items: vscode.CompletionItem[], index: number, labelName: string, 
     kind: vscode.CompletionItemKind, types: GscVariableDefinitionType[],
-    documentation: string
+    documentation?: string
 ) 
 {
 
     function message(message: string, current: string, expected: string) {
-        var debugText = gscData.content + "\n\n";
+        var debugText = gscFile.data.content + "\n\n";
         debugText += printCompletionItems(items); 
         return message + ". Current: '" + current + "'. Expected: '" + expected + "'. At: " + index + ")\n\n" + debugText + "\n\n";
     }
@@ -150,15 +150,15 @@ export function checkCompletions(gscData: GscData, items: vscode.CompletionItem[
             debugText += "index: " + index + "   " + 
             "label: " + (item.label as vscode.CompletionItemLabel).label + "    " +
             "kind: " + (item.kind === undefined ? "undefined" : vscode.CompletionItemKind[item.kind]) + "    " +
-            "desc: " + (item.label as vscode.CompletionItemLabel).description + 
-            "documentation: " + (item.documentation as vscode.MarkdownString).value + 
+            "desc: " + (item.label as vscode.CompletionItemLabel).description + "    " +
+            "documentation: " + (item.documentation === undefined ? "undefined" : (item.documentation as vscode.MarkdownString).value) + 
             "\n";
         });
         return debugText;
     }
 
     var item = items.at(index);
-    assert.ok(item !== undefined, message("Undefined", typeof item, "undefined"));
+    assert.ok(item !== undefined, message("Undefined", "undefined", "CompletionItem"));
     
     const label = (item.label as vscode.CompletionItemLabel);
     assert.ok(label.label === labelName, message("Unexpected label name", label.label, labelName));
@@ -167,8 +167,13 @@ export function checkCompletions(gscData: GscData, items: vscode.CompletionItem[
     const description = GscCompletionItemProvider.getItemDescriptionFromTypes(types);
     assert.deepStrictEqual(label.description, description, message("Unexpected description", label.description ?? "undefined", description));
     
-    const doc = (item.documentation as vscode.MarkdownString).value;
-    assert.deepStrictEqual(doc, documentation, message("Unexpected doc", doc ?? "undefined", documentation));
+    if (documentation !== undefined) {
+        const doc = (item.documentation as vscode.MarkdownString).value;
+        assert.ok(item.documentation !== undefined, message("Undefined item.documentation", "undefined", "string | MarkdownString"));
+        assert.deepStrictEqual(doc, documentation, message("Unexpected doc", doc ?? "undefined", documentation));
+    } else {
+        assert.strictEqual(item.documentation, undefined);
+    }
 }
 
 
