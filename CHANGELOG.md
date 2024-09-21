@@ -4,6 +4,17 @@ All notable changes to the "gsc" extension will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
+## [0.1.9] - 2024-09-21
+
+- Fixed errors for file references on Linux systems
+- Fixed unnecessary file parsing
+- Improved exceptions handling
+- Improved logging data into 'Output' tab
+- Improved internal notifying of GscFiles
+- Improved internal storage of diagnostics for files
+- Updated README with list of all CoD games and their support status
+
+
 ## [0.1.8] - 2024-09-15
 
 - Fixed file path separator on linux system for GSC file path references
