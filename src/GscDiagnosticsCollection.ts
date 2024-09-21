@@ -8,9 +8,15 @@ import { assert } from 'console';
 import { LoggerOutput } from './LoggerOutput';
 import { Issues } from './Issues';
 
+type DiagnosticsUpdateHandler = (gscFile: GscFile) => Promise<void> | void;
+
 export class GscDiagnosticsCollection {
     public static diagnosticCollection: vscode.DiagnosticCollection | undefined;
     private static statusBarItem: vscode.StatusBarItem | undefined;
+    private static currentCancellationTokenSource: vscode.CancellationTokenSource | null = null;
+
+    private static diagnosticsUpdateSubscribers: DiagnosticsUpdateHandler[] = [];
+
 
     static async activate(context: vscode.ExtensionContext) {
         
@@ -33,7 +39,34 @@ export class GscDiagnosticsCollection {
     }
 
 
-    private static currentCancellationTokenSource: vscode.CancellationTokenSource | null = null;
+    /**
+	 * Subscribe to diagnostics collection updates. 
+     * The handler will be called whenever the diagnostics collection for any files is updated. 
+     * Subscribers are called in the order they were added and they are not awaited.
+	 * @param handler 
+	 */
+    public static onDidDiagnosticsChange(handler: DiagnosticsUpdateHandler): vscode.Disposable {
+        this.diagnosticsUpdateSubscribers.push(handler);
+        return vscode.Disposable.from({
+            dispose: () => {
+                const index = this.diagnosticsUpdateSubscribers.indexOf(handler);
+                if (index > -1) {
+                    this.diagnosticsUpdateSubscribers.splice(index, 1);
+                }
+            }
+        });
+    }
+
+    private static notifyDiagnosticsUpdateSubscribers(gscFile: GscFile) {
+        for (const handler of this.diagnosticsUpdateSubscribers) {
+            try {
+                void handler(gscFile);
+            } catch (error) {
+                Issues.handleError(error);
+            }
+        }
+    }
+
 
     /**
      * Update diagnostics for all parsed files. Since its computation intensive, its handled in async manner.
@@ -133,6 +166,8 @@ export class GscDiagnosticsCollection {
             // Return empty diagnostics if diagnostics are disabled
             if (gscFile.errorDiagnostics === ConfigErrorDiagnostics.Disable) {
                 this.diagnosticCollection?.set(uri, gscFile.diagnostics);
+                // Notify subscribers
+                this.notifyDiagnosticsUpdateSubscribers(gscFile);
                 LoggerOutput.log("[GscDiagnosticsCollection] Done for file, diagnostics is disabled", vscode.workspace.asRelativePath(gscFile.uri));
                 return 0;
             }
@@ -218,6 +253,11 @@ export class GscDiagnosticsCollection {
                     }
                 }
             }
+
+
+            // Notify subscribers
+			this.notifyDiagnosticsUpdateSubscribers(gscFile);
+
 
             LoggerOutput.log("[GscDiagnosticsCollection] Done for file, diagnostics created: " + gscFile.diagnostics.length, vscode.workspace.asRelativePath(gscFile.uri));
 

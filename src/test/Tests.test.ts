@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as os from 'os';
+import * as fs from 'fs';
 import assert from 'assert';
 import { GscData, GscVariableDefinitionType } from '../GscFileParser';
 import { GscHoverProvider } from '../GscHoverProvider';
@@ -11,7 +12,7 @@ import { GscCompletionItemProvider } from '../GscCompletionItemProvider';
 import { GscCodeActionProvider } from '../GscCodeActionProvider';
 import { GscFunction } from '../GscFunctions';
 import { LoggerOutput } from '../LoggerOutput';
-
+import { GscDiagnosticsCollection } from '../GscDiagnosticsCollection';
 
 export const testWorkspaceDir = path.join(os.tmpdir(), 'vscode-test-workspace');
 
@@ -27,7 +28,7 @@ export async function activateExtension() {
     assert.ok(extension!.isActive, "Extension should be activated");
 
     // Clear all editors
-    vscode.commands.executeCommand('workbench.action.closeAllEditors');
+    void vscode.commands.executeCommand('workbench.action.closeAllEditors');
 }
 
 
@@ -177,4 +178,167 @@ export function filePathToUri(relativePath: string): vscode.Uri {
     const filePath = path.join(testWorkspaceDir, relativePath);
     const fileUri = vscode.Uri.file(filePath);
     return fileUri;
+}
+
+
+
+
+
+export function waitForDiagnosticsChange(uri: vscode.Uri, debugText: string = ""): Promise<vscode.Diagnostic[]> {
+    //console.log("waitForDiagnosticsChange: " + vscode.workspace.asRelativePath(uri));
+    return new Promise((resolve, reject) => {
+        const disposable = GscDiagnosticsCollection.onDidDiagnosticsChange((gscFile) => {
+            //console.log("onDidDiagnosticsChange: " + vscode.workspace.asRelativePath(gscFile.uri));
+            if (gscFile.uri.toString() === uri.toString()) {
+                disposable.dispose();  // Clean up the event listener
+                const diagnosticsFile = gscFile.diagnostics;
+                const diagnosticsVsCode = vscode.languages.getDiagnostics(uri);
+
+                assert.deepStrictEqual(diagnosticsFile, diagnosticsVsCode);
+
+                resolve(diagnosticsFile);
+            }
+        });
+
+        // Optionally, add a timeout in case diagnostics don't update within a reasonable time
+        setTimeout(() => {
+            disposable.dispose();
+            reject(new Error('Timeout waiting for diagnostics update. Uri: ' + vscode.workspace.asRelativePath(uri) + ". " + debugText));
+        }, 5000);  // Adjust the timeout as needed
+    });
+}
+
+
+
+
+
+
+/**
+ * Normalizes any unknown error into an Error object.
+ * @param error - The unknown error to normalize.
+ * @returns An Error object with a standardized message.
+ */
+export function normalizeError(error: unknown): Error {
+    if (error instanceof Error) {
+        return error;
+    } else if (typeof error === 'string') {
+        return new Error(error);
+    } else if (typeof error === 'object' && error !== null) {
+        // The error is an object, attempt to stringify it
+        try {
+            const errorString = JSON.stringify(error, Object.getOwnPropertyNames(error));
+            return new Error(errorString);
+        } catch (stringifyError) {
+            return new Error('An unknown error occurred');
+        }
+    } else {
+        // The error is of an unknown type (number, boolean, null, undefined, etc.)
+        return new Error(String(error) || 'An unknown error occurred');
+    }
+}
+
+/**
+ * Extracts the file path, line number, and column number from the error stack,
+ * then reads the file and returns the content of the corresponding line.
+ *
+ * @param error The error object containing the stack trace.
+ * @returns The content of the line where the error occurred or null if it can't be retrieved.
+ */
+export function printDebugInfoForError(err: unknown) {
+
+    console.error(` `);
+    console.error(` `);
+    console.error(`Debug info for failed test:`);
+    console.error(`-----------------------------------------------------------------`);
+    
+    const error = normalizeError(err);
+
+    if (!error.stack) {
+        console.error('No stack trace available');
+        return null;
+    }
+
+    //console.error(`Error: ${error.message}`);
+    //console.error(` `);
+
+    const stackLines = error.stack.split('\n');
+
+    // Filter out irrelevant stack lines (e.g., Node.js internals or external dependencies)
+    const relevantLine = stackLines.find((line) => {
+        // Ensure the line includes a reference to a file path, avoiding Node.js internals
+        return line.includes(path.sep) && line.match(/:\d+:\d+/); // Check for "file:line:column" pattern
+    });
+
+    if (!relevantLine) {
+        console.error('Could not find a relevant line in stack trace');
+        return;
+    }
+
+    // Regex to extract the file path, line number, and column number from the stack trace
+    const match = relevantLine.match(/\(([^)]+):(\d+):(\d+)\)/) || relevantLine.match(/at ([^ ]+):(\d+):(\d+)/);
+    if (!match) {
+        console.error('Failed to parse the stack trace');
+        return;
+    }
+
+    const filePath = match[1];            // Extract the file path
+    const lineNumber = parseInt(match[2], 10); // Extract the line number (1-based)
+    const columnNumber = parseInt(match[3], 10); // Extract the column number (optional)
+
+    // Ensure the file path exists before attempting to read it
+    if (!fs.existsSync(filePath)) {
+        console.error(`File does not exist: ${filePath}`);
+        return;
+    }
+
+    // Read the file content and retrieve the specific line
+    try {
+        const fileContent = fs.readFileSync(filePath, 'utf-8');
+        const fileLines = fileContent.split('\n');
+        
+        // Check if the line number is valid within the file's content
+        if (lineNumber < 1 || lineNumber > fileLines.length) {
+            console.error(`Line number ${lineNumber} is out of bounds in file: ${filePath}`);
+            return null;
+        }
+
+        const errorLine = fileLines[lineNumber - 1].trim(); // Line numbers are 1-based
+
+        // Return the line content along with the error's location in the file
+        console.log(`${filePath}:${lineNumber}:${columnNumber}`);
+        console.error(`-----------------------------------------------------------------`);
+
+        // Print 5 lines before and after the error line
+        const start = Math.max(0, lineNumber - 5);
+        const end = Math.min(fileLines.length, lineNumber + 5);
+
+        for (let i = start; i < end; i++) {
+            const line = fileLines.at(i);
+            if (!line) {
+                continue;
+            }
+            const lineNum = i + 1;
+            const lineMarker = lineNum === lineNumber ? ' ->' : '   ';
+            console.log(  `${lineNum}${lineMarker} ${line}`);
+        }
+
+        console.error(`-----------------------------------------------------------------`);
+
+
+    } catch (err) {
+        console.error(`Failed to read the file: ${filePath}. Error: ${(err as Error).message}`);
+    }
+
+    const log = LoggerOutput.getLogs().join("\n");
+
+    console.error(` `);
+    console.error(` `);
+    console.error(`Logs:`);
+    console.error(log);
+    console.error(`-----------------------------------------------------------------`);
+    console.error(` `);
+    console.error(` `);
+
+    
+    throw error;
 }

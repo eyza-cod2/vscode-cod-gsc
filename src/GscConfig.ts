@@ -40,12 +40,23 @@ export class GscConfig {
 
 
 	/**
-	 * Handle vscode configuration change event
+	 * Handle vscode configuration change event. 
+	 * Emit a configuration change event. This will call all subscribers in the order they were added.
 	 */
 	private static async onDidChangeConfiguration(e: vscode.ConfigurationChangeEvent) {
 		if (e.affectsConfiguration('gsc')) {
 			LoggerOutput.log("[GscConfig] GSC configuration changed.");
-			await GscConfig.emitConfigChange();
+			
+			for (const handler of this.configChangeSubscribers) {
+				try {
+					const result = handler();
+					if (result instanceof Promise) {
+						await result;
+					}
+				} catch (error) {
+					Issues.handleError(error);
+				}
+			}
 		}
 	}
 
@@ -54,27 +65,18 @@ export class GscConfig {
 	 * Subscribe to configuration changes. The handler will be called whenever the configuration changes. Subscribers are called in the order they were added.
 	 * @param handler 
 	 */
-    public static onDidConfigChange(handler: ConfigChangeHandler): void {
+    public static onDidConfigChange(handler: ConfigChangeHandler): vscode.Disposable {
         this.configChangeSubscribers.push(handler);
-    }
-
-
-
-	/**
-	 * Emit a configuration change event. This will call all subscribers in the order they were added.
-	 */
-    private static async emitConfigChange(): Promise<void> {
-        for (const handler of this.configChangeSubscribers) {
-            try {
-                const result = handler();
-                if (result instanceof Promise) {
-                    await result;
+        return vscode.Disposable.from({
+            dispose: () => {
+                const index = this.configChangeSubscribers.indexOf(handler);
+                if (index > -1) {
+                    this.configChangeSubscribers.splice(index, 1);
                 }
-            } catch (error) {
-                Issues.handleError(error);
             }
-        }
+        });
     }
+
 
 
 
