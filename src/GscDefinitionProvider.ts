@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { GscFile, GscFiles } from './GscFiles';
 import { GroupType, GscData, GscFileParser } from './GscFileParser';
 import { GscFunctions } from './GscFunctions';
+import { Issues } from './Issues';
 
 export class GscDefinitionProvider implements vscode.DefinitionProvider {
 
@@ -15,12 +16,17 @@ export class GscDefinitionProvider implements vscode.DefinitionProvider {
         token: vscode.CancellationToken
     ): Promise<vscode.Location[] | null> 
     {
-        // Get parsed file
-        const gscFile = await GscFiles.getFileData(document.uri);
+        try {
+            // Get parsed file
+            const gscFile = await GscFiles.getFileData(document.uri);
 
-        const locations = await GscDefinitionProvider.getFunctionDefinitionLocations(gscFile, position);
+            const locations = await GscDefinitionProvider.getFunctionDefinitionLocations(gscFile, position);
 
-        return locations;
+            return locations;
+        } catch (error) {
+            Issues.handleError(error);
+            return null;
+        }
     }
 
 

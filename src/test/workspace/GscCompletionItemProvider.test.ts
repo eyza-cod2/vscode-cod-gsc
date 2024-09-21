@@ -39,10 +39,10 @@ suite('GscCompletionItemProvider', () => {
 
     // Check if local functions appears in completion list
     test(`Local functions`, async () => {
-        const [gsc, diagnostics] = await tests.loadGscFile(['GscCompletionItemProvider', 'localFunctions.gsc']);
+        const gsc = await tests.loadGscFile(['GscCompletionItemProvider', 'localFunctions.gsc']);
         
         // There should be no error - everything is case insensitive
-        assert.ok(diagnostics.length === 0);
+        assert.ok(gsc.diagnostics.length === 0);
 
         const completions = await GscCompletionItemProvider.getCompletionItems(gsc, new vscode.Position(1, 0), GscGame.UniversalGame, cfgFunctionsOnly);
         const doc = tests.getFunctionDescription;
@@ -58,10 +58,10 @@ suite('GscCompletionItemProvider', () => {
 
     // Check if included functions appears in completion list
     test(`Included functions`, async () => {
-        const [gsc, diagnostics] = await tests.loadGscFile(['GscCompletionItemProvider', 'include.gsc']);
+        const gsc = await tests.loadGscFile(['GscCompletionItemProvider', 'include.gsc']);
         
         // There should be no error - everything is case insensitive
-        assert.ok(diagnostics.length === 0);
+        assert.ok(gsc.diagnostics.length === 0);
 
         const completions = await GscCompletionItemProvider.getCompletionItems(gsc, new vscode.Position(3, 0), GscGame.UniversalGame, cfgFunctionsOnly);
         const doc = tests.getFunctionDescription;
@@ -76,10 +76,10 @@ suite('GscCompletionItemProvider', () => {
 
     // Check if included functions appears in completion list
     test(`Included functions from included workspace folder`, async () => {
-        const [gsc, diagnostics] = await tests.loadGscFile(['GscCompletionItemProvider', 'includeWorkspaceFolder.gsc']);
+        const gsc = await tests.loadGscFile(['GscCompletionItemProvider', 'includeWorkspaceFolder.gsc']);
         
         // There should be no error - everything is case insensitive
-        assert.ok(diagnostics.length === 0);
+        assert.ok(gsc.diagnostics.length === 0);
 
         const completions = await GscCompletionItemProvider.getCompletionItems(gsc, new vscode.Position(3, 0), GscGame.UniversalGame, cfgFunctionsOnly);
         const doc = tests.getFunctionDescription;
@@ -95,12 +95,12 @@ suite('GscCompletionItemProvider', () => {
 
     // Check if level. variable appears in completion list
     test(`Variables level.`, async () => {
-        const [gsc, diagnostics] = await tests.loadGscFile(['GscCompletionItemProvider', 'variablesLevel.gsc']);
+        const gsc = await tests.loadGscFile(['GscCompletionItemProvider', 'variablesLevel.gsc']);
         
         // 
-        tests.checkDiagnostic(diagnostics, 0, "Unexpected token level", vscode.DiagnosticSeverity.Error);
-        tests.checkDiagnostic(diagnostics, 1, "Unexpected token", vscode.DiagnosticSeverity.Error);
-        assert.ok(diagnostics.length === 2);
+        tests.checkDiagnostic(gsc.diagnostics, 0, "Unexpected token level", vscode.DiagnosticSeverity.Error);
+        tests.checkDiagnostic(gsc.diagnostics, 1, "Unexpected token", vscode.DiagnosticSeverity.Error);
+        assert.ok(gsc.diagnostics.length === 2);
 
         const completions = await GscCompletionItemProvider.getCompletionItems(gsc, new vscode.Position(3, 10), GscGame.UniversalGame, cfgVariablesOnly, gsc.uri);
 

@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { ConfigErrorDiagnostics, GscConfig, GscGame, GscGameRootFolder } from './GscConfig';
 import { LoggerOutput } from './LoggerOutput';
+import { GscDiagnosticsCollection } from './GscDiagnosticsCollection';
 
 /**
  * On startup scan every .gsc file, parse it, and save the result into memory.
@@ -14,9 +15,6 @@ export class GscFiles {
 
     private static cachedFilesPerWorkspace: Map<string, GscWorkspaceFileData> = new Map();
 
-    private static _onDidParseDocument: vscode.EventEmitter<GscFile> = new vscode.EventEmitter<GscFile>();
-    private static _onDidParseAllDocuments: vscode.EventEmitter<GscFile[]> = new vscode.EventEmitter<GscFile[]>();
-    private static _onDidDeleteDocument: vscode.EventEmitter<vscode.Uri> = new vscode.EventEmitter<vscode.Uri>();
     private static parseAllFiles = false;
 
     private static statusBarItem: vscode.StatusBarItem | undefined;
@@ -35,9 +33,8 @@ export class GscFiles {
 
         context.subscriptions.push(vscode.workspace.onDidCreateFiles(this.onCreateFiles));
         context.subscriptions.push(vscode.workspace.onDidDeleteFiles(this.onDeleteFiles));
-        context.subscriptions.push(vscode.workspace.onDidRenameFiles(this.onRenameFiles));
-        context.subscriptions.push(vscode.workspace.onDidChangeWorkspaceFolders(e => this.onChangeWorkspaceFolders(e)));  
-        context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e => this.onDidChangeConfiguration(e)));
+        context.subscriptions.push(vscode.workspace.onDidRenameFiles(e => this.onRenameFiles));
+        context.subscriptions.push(vscode.workspace.onDidChangeWorkspaceFolders(e => this.onChangeWorkspaceFolders(e)));
         context.subscriptions.push(vscode.window.onDidChangeTextEditorSelection(e => this.onChangeEditorSelection(e)));
 
         context.subscriptions.push(vscode.commands.registerCommand('gsc.debugParsedGscFile', this.debugParsedGscFile));
@@ -46,9 +43,8 @@ export class GscFiles {
         context.subscriptions.push(vscode.commands.registerCommand('gsc.debugParsedUris', this.debugParsedUris));        
         context.subscriptions.push(vscode.commands.registerCommand('gsc.debugCachedFiles', () => this.showDebugWindow(context)));    
         context.subscriptions.push(vscode.commands.registerCommand('gsc.parseAll', () => setTimeout(() => this.initialParse(), 1)));
-        
-        // Close debug window if it was open and workspace folders changed (activate is called again in this case without deactivate)
-        //this.closeDebugWindow();
+
+        GscConfig.onDidConfigChange(async () => { await this.onDidConfigChange(); });
 
         // Restore the debug window if it was open in the last session
         if (context.globalState.get('debugWindowOpen')) {
@@ -66,22 +62,34 @@ export class GscFiles {
 
 
     /**
-     * Get parsed file from cache, opened document or file on disk. If the file is part of workspace, file is cached for later use.
-     * @param fileUri Uri of the file to get. If the URI is not part of workspace, file is just parsed and not cached.
-     * @param workspaceUri Workspace URI can be specified to speed up the process (then its trusted that file is part of workspace and will be cached).
+     * Get parsed file data from cache, opened document or file on disk.
+     * If the file is in cache memory, the cached data is returned unless forceParsing is true.
+     * If the file is not cached or forceParsing is true, the file is parsed and saved into cache.
+     * If the file is not part of workspace, it is just parsed and not cached.
+     * @param fileUri Uri of the file to get.
+     * @param forceParsing If true, the file is parsed even if it is already in cache.
+     * @param doParseNotify
      * @returns 
      */
-    public static async getFileData(fileUri: vscode.Uri, ignoreNotify: boolean = false): Promise<GscFile>  {
+    public static async getFileData(fileUri: vscode.Uri, forceParsing: boolean = false, doParseNotify: boolean = true): Promise<GscFile>  {
         
+        const doLog = doParseNotify;
+
+        if (doLog) {
+            LoggerOutput.log("[GscFiles] Getting file data", vscode.workspace.asRelativePath(fileUri));
+        }
+
         // This file is part of workspace, save it into cache; otherwise ignore it
         const workspaceFolder = vscode.workspace.getWorkspaceFolder(fileUri);
         
-        // Parse file
-        var gsc = await this.parseFile(fileUri);
-
         // This file is not part of workspace, return it and do not cache it
         if (workspaceFolder === undefined) {
-            return new GscFile(gsc, fileUri, workspaceFolder);
+            const gsc = await this.parseFile(fileUri);
+            const gscFile = new GscFile(gsc, fileUri, workspaceFolder);
+            if (doLog) {
+                LoggerOutput.log("[GscFiles] Done (not part of workspace)", fileUri.toString());
+            }
+            return gscFile;
         }
 
         // Get data of workspace that contains cached files
@@ -93,34 +101,53 @@ export class GscFiles {
 
         // Try to get cached file
         let fileData = dataOfWorkspace.getParsedFile(fileUri);
+        let bParsed = false;
+        
+        // If file is not found in cache
         if (fileData === undefined) {
-            fileData = new GscFile(gsc, fileUri, workspaceFolder); // Create new cached file
+            // Parse the file and save it into cache
+            const gsc = await this.parseFile(fileUri);
+            fileData = new GscFile(gsc, fileUri, workspaceFolder);
             dataOfWorkspace.addParsedFile(fileData);
+            bParsed = true;
+        
+        // If cached file was found
         } else {
-            fileData.updateData(gsc); // Update data of existing cached file
+            // If its forced to parse (so cache is ignored)
+            if (forceParsing) {
+                // Parse the file and update the cache file data
+                const gsc = await this.parseFile(fileUri);       
+                fileData.updateData(gsc);
+                bParsed = true;
+            } else {
+                doParseNotify = false; // Do not notify because the files was not parsed
+            }
         }
 
         // If opened, update debug window
         this.updateDebugCachedFilesWindow();
 
-    
-        // Run initial scan of all files
-        if (this.parseAllFiles) {    
-            this.parseAllFiles = false;  
-            
-            await this.initialParse();
 
-            this._onDidParseDocument.fire(fileData);
-
-            return fileData;
+        // When all files are being parsed, ignoreNotify is true
+        if (doParseNotify) {
+            await GscDiagnosticsCollection.generateDiagnostics(fileData);
         }
-        else if (ignoreNotify === false) {
-            // Notify all subscribers that the document has been parsed
-            this._onDidParseDocument.fire(fileData);
+
+        if (doLog) {
+            LoggerOutput.log("[GscFiles] Done, " + (bParsed ? "was parsed" : "loaded from cache"), vscode.workspace.asRelativePath(fileUri));
+        }
+
+        // Run initial scan of all files
+        if (this.parseAllFiles) {          
+            this.parseAllFiles = false;  
+            await this.initialParse();
         }
 
         return fileData;
     }
+
+
+
 
 
     public static async initialParse() {
@@ -131,25 +158,24 @@ export class GscFiles {
         this.removeAllCachedFiles();
 
         // Parse all
-        await GscFiles.parseAndCacheAllFiles(true); // true = ignore notify
+        await GscFiles.parseAndCacheAllFiles();
 
-
-        // Notify subscribers that all files has been parsed
-        const files = this.getCachedFiles();
-        this._onDidParseAllDocuments.fire(files);
 
         if (GscFiles.statusBarItem) {
             GscFiles.statusBarItem.hide();
             GscFiles.statusBarItem.dispose();
             GscFiles.statusBarItem = undefined;
         } 
+
+        // Update diagnostics for all files
+        await GscDiagnosticsCollection.updateDiagnosticsAll("all files parsed");
     }
 
     /**
      * Load all .gsc files opened in editor or found in workspace file system, parse them and save them into memory
      */
-    public static async parseAndCacheAllFiles(ignoreNotify: boolean = false) {
-        LoggerOutput.log("[GscFile] Parsing all GSC files...");
+    public static async parseAndCacheAllFiles() {
+        LoggerOutput.log("[GscFiles] Parsing all GSC files...");
         const start = performance.now();
 
         // Find all GSC files in repository
@@ -159,7 +185,7 @@ export class GscFiles {
         let i = 0;
         
         const parseFile = async (file: vscode.Uri, index: number) => {
-            const gsc = await this.getFileData(file, ignoreNotify);
+            const gsc = await this.getFileData(file, true, false);
             if (GscFiles.statusBarItem) {
                 GscFiles.statusBarItem.text = `$(sync~spin) Parsing GSC file ${index + 1}/${files.length}...`;
                 GscFiles.statusBarItem.tooltip = file.fsPath;
@@ -182,7 +208,7 @@ export class GscFiles {
         //this.debugParsedFiles(true);
         //console.log(this, "Files:", this.parsedFiles.size, "Total time:", elapsed, "Errors:", errors);
 
-        LoggerOutput.log("[GscFile] All GSC files parsed, files: " + this.getCachedFiles().length + ", time: " + elapsed + "ms");
+        LoggerOutput.log("[GscFiles] All GSC files parsed, files: " + this.getCachedFiles().length + ", time: " + elapsed + "ms");
     }
 
 
@@ -404,20 +430,7 @@ export class GscFiles {
 
 
 
-    /**
-     * Get referenced file in specified file. It first tries to find the file in the same workspace folder, then in included workspace folders.
-     */
-    public static get onDidParseDocument(): vscode.Event<GscFile> {
-        return this._onDidParseDocument.event;
-    }
 
-    public static get onDidParseAllDocuments(): vscode.Event<GscFile[]> {
-        return this._onDidParseAllDocuments.event;
-    }
-
-    public static get onDidDeleteDocument(): vscode.Event<vscode.Uri> {
-        return this._onDidDeleteDocument.event;
-    }
 
 
     static isValidGscFile(filePath: string): boolean {
@@ -431,36 +444,34 @@ export class GscFiles {
                 continue;
             }
             void GscFiles.getFileData(file);
-            LoggerOutput.log("[GscFile] Added " + vscode.workspace.asRelativePath(file) + " for parsing, because new file is created");
+            LoggerOutput.log("[GscFiles] Added " + vscode.workspace.asRelativePath(file) + " for parsing, because new file is created");
         }
     }
     static onDeleteFiles(e: vscode.FileDeleteEvent) {
         // Refresh all to ensure correct validation
-        LoggerOutput.log("[GscFile] Re-parsing all because some file was deleted");
+        LoggerOutput.log("[GscFiles] Re-parsing all because some file was deleted");
         void GscFiles.initialParse();
     }
 
     // Called when file or folder is renamed or moved
     static onRenameFiles(e: vscode.FileRenameEvent) {
         // Refresh all to ensure correct validation
-        LoggerOutput.log("[GscFile] Re-parsing all because some file was renamed");
+        LoggerOutput.log("[GscFiles] Re-parsing all because some file was renamed");
         void GscFiles.initialParse();
     }
 
     static onChangeWorkspaceFolders(e: vscode.WorkspaceFoldersChangeEvent) {
         // Refresh all to ensure correct validation
-        LoggerOutput.log("[GscFile] Re-parsing all because workspace folders changed");
+        LoggerOutput.log("[GscFiles] Re-parsing all because workspace folders changed");
         void GscFiles.initialParse();
     }
 
-    static onDidChangeConfiguration(e: vscode.ConfigurationChangeEvent) {
-        if (e.affectsConfiguration('gsc')) {
-            LoggerOutput.log("[GscFile] Configuration changed, updating cached files configuration.");
-            // Update configuration for GscFile before DiagnosticCollection is called
-			for (const [uriKey, workspaceData] of this.cachedFilesPerWorkspace) {
-				workspaceData.updateConfiguration();
-			}
-		}
+    private static async onDidConfigChange() {
+        LoggerOutput.log("[GscFiles] Configuration changed, updating cached files configuration.");
+        // Update configuration for GscFile before DiagnosticCollection is called
+        for (const [uriKey, workspaceData] of this.cachedFilesPerWorkspace) {
+            workspaceData.updateConfiguration();
+        }	
     }
 
     static onChangeEditorSelection(e: vscode.TextEditorSelectionChangeEvent) {
@@ -585,6 +596,7 @@ export class GscFiles {
             // If it is still defined, it means it was closed by user, otherwise it was closed by code
             if (this.debugWindow) {
                 void context.globalState.update('debugWindowOpen', false);
+                this.debugWindow = undefined;
             }
 
         }, null, context.subscriptions);
@@ -602,8 +614,8 @@ export class GscFiles {
     }
 
     private static updateDebugCachedFilesWindow() {
-        if (this.debugWindow) {
-            this.debugWindow.webview.html = this.getWebviewContent();
+        if (GscFiles.debugWindow) {
+            GscFiles.debugWindow.webview.html = this.getWebviewContent();
         }
     }
 
@@ -629,6 +641,9 @@ export class GscFiles {
             if (gscFile === undefined) {
                 html += "<p>File is not part of workspace: " + uri.fsPath + "</p>";
             } else {
+
+
+
                 // Get group before cursor
                 var groupAtCursor = gscFile.data.root.findGroupOnLeftAtPosition(cursor);
 
@@ -692,6 +707,10 @@ export class GscFile {
     ignoredFunctionNames: string[];
     currentGame: GscGame;
     errorDiagnostics: ConfigErrorDiagnostics;
+
+
+    diagnostics: vscode.Diagnostic[] = [];
+
 
     constructor(
         /** Parsed data */

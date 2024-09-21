@@ -10,6 +10,7 @@ import { GscFile, GscFiles } from '../GscFiles';
 import { GscCompletionItemProvider } from '../GscCompletionItemProvider';
 import { GscCodeActionProvider } from '../GscCodeActionProvider';
 import { GscFunction } from '../GscFunctions';
+import { LoggerOutput } from '../LoggerOutput';
 
 
 export const testWorkspaceDir = path.join(os.tmpdir(), 'vscode-test-workspace');
@@ -24,6 +25,9 @@ export async function activateExtension() {
     await extension!.activate();
 
     assert.ok(extension!.isActive, "Extension should be activated");
+
+    // Clear all editors
+    vscode.commands.executeCommand('workbench.action.closeAllEditors');
 }
 
 
@@ -34,34 +38,25 @@ export function sleep(ms: number): Promise<void> {
 
 
 
-export async function loadGscFile(paths: string[], doWaitForDiagnosticsUpdate: boolean = true): Promise<[gscFile: GscFile, diagnostics: vscode.Diagnostic[]]> {
+export async function loadGscFile(paths: string[]): Promise<GscFile> {
 
     const filePath = path.join(testWorkspaceDir, ...paths);
     const fileUri = vscode.Uri.file(filePath);
-
-    if (doWaitForDiagnosticsUpdate) {
-        const diagnosticsPromise = waitForDiagnosticsUpdate(fileUri);
-
-        var gscFile = await GscFiles.getFileData(fileUri);
-        
-        const diagnostics = await diagnosticsPromise;
-        
-        return [gscFile, diagnostics];
-    } else {
-        var gscFile = await GscFiles.getFileData(fileUri);
-        return [gscFile, []];
-    }
     
+    LoggerOutput.log("[Tests] loadGscFile() " + vscode.workspace.asRelativePath(fileUri));
+    
+    var gscFile = await GscFiles.getFileData(fileUri);
+    return gscFile;
 }
 
 
 
 
-export function checkDiagnostic(diagnosticItems: vscode.Diagnostic[], index: number, errorText: string, severity: vscode.DiagnosticSeverity) {
+export function checkDiagnostic(diagnosticItems: readonly vscode.Diagnostic[], index: number, errorText: string, severity: vscode.DiagnosticSeverity) {
 
     function message(message: string, current: string, expected: string) {
         var debugText = diagnosticItems.map((diagnostic, i) => "  " + i + ": " + diagnostic.message + "   [" + vscode.DiagnosticSeverity[diagnostic.severity] + "]").join('\n');
-        return message + "\n\ndiagnostics[" + index + "] = \n'" + current + "'. \n\nExpected: \n'" + expected + "'. \n\nErrors:\n" + debugText;
+        return message + "\n\ndiagnostics[" + index + "] = \n'" + current + "'. \n\nExpected: \n'" + expected + "'. \n\nErrors:\n" + debugText + "\n\n" + LoggerOutput.getLogs().join('\n');
     }
 
     var item = diagnosticItems.at(index);
@@ -84,7 +79,7 @@ export function checkQuickFix(codeActions: vscode.CodeAction[], index: number, e
 
     function message(message: string, current: string, expected: string) {
         var debugText = codeActions.map((diagnostic, i) => "  " + i + ": " + diagnostic.title + "   [" + diagnostic.kind?.value + "]").join('\n');
-        return "diagnostics[" + index + "] = \n'" + current + "'. \n\nExpected: \n'" + expected + "'. \n\nMessage: " + message + ")\n\nErrors:\n" + debugText;
+        return "diagnostics[" + index + "] = \n'" + current + "'. \n\nExpected: \n'" + expected + "'. \n\nMessage: " + message + ")\n\nErrors:\n" + debugText + "\n\n" + LoggerOutput.getLogs().join('\n');
     }
 
     var item = codeActions.at(index);
@@ -99,7 +94,7 @@ export function checkQuickFix(codeActions: vscode.CodeAction[], index: number, e
 
 
 
-export function checkHover(hover: vscode.Hover, expected: string) {
+export function checkHover(hover: vscode.Hover | undefined, expected: string) {
     assert.ok(hover !== undefined);
     assert.ok(hover.contents.length === 1);
     assert.ok(hover.contents[0] instanceof vscode.MarkdownString);
@@ -141,7 +136,7 @@ export function checkCompletions(gscFile: GscFile, items: vscode.CompletionItem[
     function message(message: string, current: string, expected: string) {
         var debugText = gscFile.data.content + "\n\n";
         debugText += printCompletionItems(items); 
-        return message + ". Current: '" + current + "'. Expected: '" + expected + "'. At: " + index + ")\n\n" + debugText + "\n\n";
+        return message + ". Current: '" + current + "'. Expected: '" + expected + "'. At: " + index + ")\n\n" + debugText + "\n\n" + LoggerOutput.getLogs().join('\n') + "\n\n";
     }
 
     function printCompletionItems(items: vscode.CompletionItem[]) {
@@ -177,32 +172,6 @@ export function checkCompletions(gscFile: GscFile, items: vscode.CompletionItem[
 }
 
 
-
-
-
-
-
-
-
-
-export function waitForDiagnosticsUpdate(uri: vscode.Uri): Promise<vscode.Diagnostic[]> {
-    return new Promise((resolve, reject) => {
-        const disposable = vscode.languages.onDidChangeDiagnostics((e) => {
-            //console.log("onDidChangeDiagnostics event fired");
-            if (e.uris.some(changedUri => changedUri.toString() === uri.toString())) {
-                const diagnostics = vscode.languages.getDiagnostics(uri);
-                disposable.dispose();  // Clean up the event listener
-                resolve(diagnostics);
-            }
-        });
-
-        // Optionally, add a timeout in case diagnostics don't update within a reasonable time
-        setTimeout(() => {
-            disposable.dispose();
-            reject(new Error('Timeout waiting for diagnostics update'));
-        }, 5000);  // Adjust the timeout as needed
-    });
-}
 
 export function filePathToUri(relativePath: string): vscode.Uri {
     const filePath = path.join(testWorkspaceDir, relativePath);

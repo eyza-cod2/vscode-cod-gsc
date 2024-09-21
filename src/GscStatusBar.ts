@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { GscConfig } from './GscConfig';
 import { EXTENSION_ID } from './extension';
 import { LoggerOutput } from './LoggerOutput';
+import { GscFiles } from './GscFiles';
 
 export class GscStatusBar {
 
@@ -56,11 +57,11 @@ export class GscStatusBar {
 						return;
 					}
 
-					const selectedGame = GscConfig.getSelectedGame(activeEditor.document.uri);
+					const gscFile = await GscFiles.getFileData(activeEditor.document.uri);
 
-					LoggerOutput.log(`[GscFile] Updating status bar with game: ${selectedGame} because of: ${debugText}`);
+					LoggerOutput.log(`[GscStatusBar] Updating status bar with game: "${gscFile.currentGame}"`, `because: ${debugText}`);
 
-					gameBarItem.text = "$(notebook-open-as-text) " + (selectedGame);
+					gameBarItem.text = "$(notebook-open-as-text) " + (gscFile.currentGame);
 					
 					gameBarItem.show();
 					settingsBarItem.show();	
@@ -75,11 +76,9 @@ export class GscStatusBar {
 		//vscode.workspace.onDidOpenTextDocument(updateStatusBar, null, context.subscriptions);
 		//vscode.workspace.onDidCloseTextDocument(updateStatusBar, null, context.subscriptions);
 		
-		vscode.workspace.onDidChangeConfiguration(async (e) => {
-			if (e.affectsConfiguration('gsc')) {
-                await updateStatusBar("configChanged");
-			}
-		}, null, context.subscriptions);
+		GscConfig.onDidConfigChange(async () => {
+			await updateStatusBar("configChanged");
+		});
 
 		// Initial update of the status bar visibility
 		await updateStatusBar("init");

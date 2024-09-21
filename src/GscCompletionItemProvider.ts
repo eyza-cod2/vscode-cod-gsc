@@ -5,6 +5,7 @@ import { CodFunctions } from './CodFunctions';
 import { GscConfig, GscGame } from './GscConfig';
 import { GscFunctions, GscVariableDefinition } from './GscFunctions';
 import { LoggerOutput } from './LoggerOutput';
+import { Issues } from './Issues';
 
 export interface CompletionConfig {
     variableItems: boolean;
@@ -23,17 +24,21 @@ export class GscCompletionItemProvider implements vscode.CompletionItemProvider 
     async provideCompletionItems( document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken
     ): Promise<vscode.CompletionItem[] | vscode.CompletionList | undefined> 
     {
-        // This function is called when user types a character or presses ctrl+space
+        try {
+            // This function is called when user types a character or presses ctrl+space
 
+            // Get parsed file
+            const gscFile = await GscFiles.getFileData(document.uri);
 
-        // Get parsed file
-        const gscFile = await GscFiles.getFileData(document.uri);
+            const currentGame = GscConfig.getSelectedGame(document.uri);
 
-        const currentGame = GscConfig.getSelectedGame(document.uri);
+            const items = await GscCompletionItemProvider.getCompletionItems(gscFile, position, currentGame, undefined, document.uri);
 
-        const items = await GscCompletionItemProvider.getCompletionItems(gscFile, position, currentGame, undefined, document.uri);
-
-        return items;
+            return items;
+        } catch (error) {
+            Issues.handleError(error);
+            return undefined;
+        }
     }
 
     

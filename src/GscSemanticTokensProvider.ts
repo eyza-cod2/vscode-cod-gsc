@@ -1,6 +1,8 @@
 import * as vscode from 'vscode';
 import { GscFiles } from './GscFiles';
 import { GroupType, GscGroup} from './GscFileParser';
+import { error } from 'console';
+import { Issues } from './Issues';
 
 
 export class GscSemanticTokensProvider implements vscode.DocumentSemanticTokensProvider {
@@ -42,7 +44,16 @@ export class GscSemanticTokensProvider implements vscode.DocumentSemanticTokensP
     async provideDocumentSemanticTokens(
 	  document: vscode.TextDocument
 	): Promise<vscode.SemanticTokens | undefined> {
-        
+        try {
+            return await this.getDocumentSemanticTokens(document);
+        } catch (error) {
+            Issues.handleError(error);
+        }
+    }
+
+    async getDocumentSemanticTokens(
+        document: vscode.TextDocument
+      ): Promise<vscode.SemanticTokens | undefined> {
         // This function is called when 
         //  - when the document's content has changed, or 
         //  - when the document is first opened, or 
@@ -53,7 +64,7 @@ export class GscSemanticTokensProvider implements vscode.DocumentSemanticTokensP
         const builder = new vscode.SemanticTokensBuilder(GscSemanticTokensProvider.legend);
 
         // Get the parsed file
-        var gscFile = await GscFiles.getFileData(document.uri);
+        var gscFile = await GscFiles.getFileData(document.uri, true);
         
 
         function walkGroupItems(parentGroup: GscGroup, items: GscGroup[], action: (parentGroup: GscGroup, group: GscGroup) => void) {

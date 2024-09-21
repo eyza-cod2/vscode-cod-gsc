@@ -1,6 +1,8 @@
 import * as vscode from 'vscode';
 import assert from 'assert';
 import * as tests from '../Tests.test';
+import { GscDiagnosticsCollection } from '../../GscDiagnosticsCollection';
+import { LoggerOutput } from '../../LoggerOutput';
 
 
 
@@ -14,10 +16,10 @@ suite('GscQuickFix', () => {
 
 
     test('func references', async () => {
-        const [gsc, diagnostics] = await tests.loadGscFile(['GscQuickFix', 'includedFolders.gsc']);
+        const gsc = await tests.loadGscFile(['GscQuickFix', 'includedFolders.gsc']);
         
         // There should be no error
-        assert.ok(diagnostics.length === 0);
+        assert.ok(gsc.diagnostics.length === 0);
 
         // file1::func1();
         const pos1 = new vscode.Position(2, 14);
@@ -47,14 +49,14 @@ suite('GscQuickFix', () => {
 
 
     test('command "add workspace folder" + "game root" + "ignore folder" + "ignore errors"', async () => {
-        const [gsc, diagnostics] = await tests.loadGscFile(['GscQuickFix', 'includedFoldersCommand.gsc']);
+        const gsc = await tests.loadGscFile(['GscQuickFix', 'includedFoldersCommand.gsc']);
         
-        tests.checkDiagnostic(diagnostics, 0, "File 'quickFix\\quickFixFile1.gsc' was not found in workspace folder 'GscQuickFix.3', 'GscQuickFix.2/subfolder', 'GscQuickFix.1', 'GscQuickFix'", vscode.DiagnosticSeverity.Error);
-        tests.checkDiagnostic(diagnostics, 1, "File 'quickFixFile2.gsc' was not found in workspace folder 'GscQuickFix.3', 'GscQuickFix.2/subfolder', 'GscQuickFix.1', 'GscQuickFix'", vscode.DiagnosticSeverity.Error);
-        tests.checkDiagnostic(diagnostics, 2, "File 'quickFix\\quickFixFile2.gsc' was not found in workspace folder 'GscQuickFix.3', 'GscQuickFix.2/subfolder', 'GscQuickFix.1', 'GscQuickFix'", vscode.DiagnosticSeverity.Error);
-        assert.strictEqual(diagnostics.length, 3);
+        tests.checkDiagnostic(gsc.diagnostics, 0, "File 'quickFix\\quickFixFile1.gsc' was not found in workspace folder 'GscQuickFix.3', 'GscQuickFix.2/subfolder', 'GscQuickFix.1', 'GscQuickFix'", vscode.DiagnosticSeverity.Error);
+        tests.checkDiagnostic(gsc.diagnostics, 1, "File 'quickFixFile2.gsc' was not found in workspace folder 'GscQuickFix.3', 'GscQuickFix.2/subfolder', 'GscQuickFix.1', 'GscQuickFix'", vscode.DiagnosticSeverity.Error);
+        tests.checkDiagnostic(gsc.diagnostics, 2, "File 'quickFix\\quickFixFile2.gsc' was not found in workspace folder 'GscQuickFix.3', 'GscQuickFix.2/subfolder', 'GscQuickFix.1', 'GscQuickFix'", vscode.DiagnosticSeverity.Error);
+        assert.strictEqual(gsc.diagnostics.length, 3);
 
-        const fixes1 = await tests.getQuickFixesForDiagnostic(diagnostics, 0, gsc.uri);
+        const fixes1 = await tests.getQuickFixesForDiagnostic(gsc.diagnostics, 0, gsc.uri);
         tests.checkQuickFix(fixes1, 0, "Add workspace folder \"GscQuickFix.4\" for file references (workspace settings)");
         tests.checkQuickFix(fixes1, 1, "Choose folder for file references...");
         tests.checkQuickFix(fixes1, 2, "Ignore file \"quickFix\\quickFixFile1\" (workspace settings)");
@@ -63,7 +65,7 @@ suite('GscQuickFix', () => {
         tests.checkQuickFix(fixes1, 5, 'Disable all error diagnostics for workspace folder "GscQuickFix" (workspace settings)');
         assert.strictEqual(fixes1.length, 6);
 
-        const fixes2 = await tests.getQuickFixesForDiagnostic(diagnostics, 1, gsc.uri);
+        const fixes2 = await tests.getQuickFixesForDiagnostic(gsc.diagnostics, 1, gsc.uri);
         tests.checkQuickFix(fixes2, 0, 'Add workspace folder "GscQuickFix.4" for file references and change game root folder to "quickfix" (workspace settings)');
         tests.checkQuickFix(fixes2, 1, 'Add workspace folder "GscQuickFix.4" for file references and change game root folder to "subfolder/quickfix" (workspace settings)');
         tests.checkQuickFix(fixes2, 2, "Choose folder for file references...");
@@ -72,7 +74,7 @@ suite('GscQuickFix', () => {
         tests.checkQuickFix(fixes2, 5, 'Disable all error diagnostics for workspace folder "GscQuickFix" (workspace settings)');
         assert.strictEqual(fixes2.length, 6);
 
-        const fixes3 = await tests.getQuickFixesForDiagnostic(diagnostics, 2, gsc.uri);
+        const fixes3 = await tests.getQuickFixesForDiagnostic(gsc.diagnostics, 2, gsc.uri);
         tests.checkQuickFix(fixes3, 0, 'Add workspace folder "GscQuickFix.4" for file references (workspace settings)');
         tests.checkQuickFix(fixes3, 1, 'Add workspace folder "GscQuickFix.4" for file references and change game root folder to "subfolder" (workspace settings)');
         tests.checkQuickFix(fixes2, 2, "Choose folder for file references...");
@@ -87,15 +89,18 @@ suite('GscQuickFix', () => {
 
         // Execute: Add workspace folder \"GscQuickFix.4\" for file references (workspace settings)
         await vscode.commands.executeCommand(fixes1[0].command!.command, ...fixes1[0].command?.arguments || []);
+        LoggerOutput.log("1. Executed command: " + fixes1[0].command?.command);
         await tests.sleep(100);
         ////////////////////////
 
-        const [gsc2, diagnostics2] = await tests.loadGscFile(['GscQuickFix', 'includedFoldersCommand.gsc']);
-        
-        tests.checkDiagnostic(diagnostics2, 0, "File 'quickFixFile2.gsc' was not found in workspace folder 'GscQuickFix.4', 'GscQuickFix.3', 'GscQuickFix.2/subfolder', 'GscQuickFix.1', 'GscQuickFix'", vscode.DiagnosticSeverity.Error);
-        assert.strictEqual(diagnostics2.length, 1);
 
-        const fixes1_2 = await tests.getQuickFixesForDiagnostic(diagnostics2, 0, gsc2.uri);
+        const gsc2 = await tests.loadGscFile(['GscQuickFix', 'includedFoldersCommand.gsc']);
+
+        
+        tests.checkDiagnostic(gsc2.diagnostics, 0, "File 'quickFixFile2.gsc' was not found in workspace folder 'GscQuickFix.4', 'GscQuickFix.3', 'GscQuickFix.2/subfolder', 'GscQuickFix.1', 'GscQuickFix'", vscode.DiagnosticSeverity.Error);
+        assert.strictEqual(gsc2.diagnostics.length, 1);
+
+        const fixes1_2 = await tests.getQuickFixesForDiagnostic(gsc2.diagnostics, 0, gsc2.uri);
         tests.checkQuickFix(fixes1_2, 0, 'Change game root folder to "quickfix" for workspace folder "GscQuickFix.4" (workspace settings)');
         tests.checkQuickFix(fixes1_2, 1, 'Change game root folder to "subfolder/quickfix" for workspace folder "GscQuickFix.4" (workspace settings)');
         tests.checkQuickFix(fixes1_2, 2, "Choose folder for file references...");
@@ -110,14 +115,15 @@ suite('GscQuickFix', () => {
 
         // Execute: Add workspace folder "Change game root folder to "subfolder/quickfix" for workspace folder "GscQuickFix.4" (workspace settings)
         await vscode.commands.executeCommand(fixes1_2[1].command!.command, ...fixes1_2[1].command?.arguments || []);
+        LoggerOutput.log("2. Executed command: " + fixes1_2[1].command?.command);
         await tests.sleep(100);
         ////////////////////////
 
-        const [gsc3, diagnostics3] = await tests.loadGscFile(['GscQuickFix', 'includedFoldersCommand.gsc']);
+        const gsc3 = await tests.loadGscFile(['GscQuickFix', 'includedFoldersCommand.gsc']);
         
-        tests.checkDiagnostic(diagnostics3, 0, "File 'quickFix\\quickFixFile1.gsc' was not found in workspace folder 'GscQuickFix.4/subfolder/quickfix', 'GscQuickFix.3', 'GscQuickFix.2/subfolder', 'GscQuickFix.1', 'GscQuickFix'", vscode.DiagnosticSeverity.Error);
-        tests.checkDiagnostic(diagnostics3, 1, "File 'quickFix\\quickFixFile2.gsc' was not found in workspace folder 'GscQuickFix.4/subfolder/quickfix', 'GscQuickFix.3', 'GscQuickFix.2/subfolder', 'GscQuickFix.1', 'GscQuickFix'", vscode.DiagnosticSeverity.Error);
-        assert.strictEqual(diagnostics3.length, 2);
+        tests.checkDiagnostic(gsc3.diagnostics, 0, "File 'quickFix\\quickFixFile1.gsc' was not found in workspace folder 'GscQuickFix.4/subfolder/quickfix', 'GscQuickFix.3', 'GscQuickFix.2/subfolder', 'GscQuickFix.1', 'GscQuickFix'", vscode.DiagnosticSeverity.Error);
+        tests.checkDiagnostic(gsc3.diagnostics, 1, "File 'quickFix\\quickFixFile2.gsc' was not found in workspace folder 'GscQuickFix.4/subfolder/quickfix', 'GscQuickFix.3', 'GscQuickFix.2/subfolder', 'GscQuickFix.1', 'GscQuickFix'", vscode.DiagnosticSeverity.Error);
+        assert.strictEqual(gsc3.diagnostics.length, 2);
 
 
 
@@ -126,28 +132,37 @@ suite('GscQuickFix', () => {
 
         // Execute: "Ignore file \"quickFix\\quickFixFile1\" (workspace settings)"
         await vscode.commands.executeCommand(fixes1[2].command!.command, ...fixes1[2].command?.arguments || []);
+        LoggerOutput.log("3. Executed command: " + fixes1_2[2].command?.command);
         await tests.sleep(100);
         ////////////////////////
 
-        const [gsc4, diagnostics4] = await tests.loadGscFile(['GscQuickFix', 'includedFoldersCommand.gsc']);
+        const gsc4 = await tests.loadGscFile(['GscQuickFix', 'includedFoldersCommand.gsc']);
         
-        tests.checkDiagnostic(diagnostics4, 0, "File 'quickFix\\quickFixFile2.gsc' was not found in workspace folder 'GscQuickFix.4/subfolder/quickfix', 'GscQuickFix.3', 'GscQuickFix.2/subfolder', 'GscQuickFix.1', 'GscQuickFix'", vscode.DiagnosticSeverity.Error);
-        assert.strictEqual(diagnostics4.length, 1);
+        tests.checkDiagnostic(gsc4.diagnostics, 0, "File 'quickFix\\quickFixFile2.gsc' was not found in workspace folder 'GscQuickFix.4/subfolder/quickfix', 'GscQuickFix.3', 'GscQuickFix.2/subfolder', 'GscQuickFix.1', 'GscQuickFix'", vscode.DiagnosticSeverity.Error);
+        assert.strictEqual(gsc4.diagnostics.length, 1);
         
-
+        // Check also the real diagnostics array
+        const realDiagnostics4 = GscDiagnosticsCollection.diagnosticCollection?.get(gsc4.uri);
+        assert.ok(realDiagnostics4 !== undefined);
+        tests.checkDiagnostic(realDiagnostics4, 0, "File 'quickFix\\quickFixFile2.gsc' was not found in workspace folder 'GscQuickFix.4/subfolder/quickfix', 'GscQuickFix.3', 'GscQuickFix.2/subfolder', 'GscQuickFix.1', 'GscQuickFix'", vscode.DiagnosticSeverity.Error);
+        assert.strictEqual(realDiagnostics4.length, 1);
 
 
         ////////////////////////
 
         // Execute: Disable error diagnostics for workspace folder "GscQuickFix" (workspace settings)
         await vscode.commands.executeCommand(fixes3[6].command!.command, ...fixes3[6].command?.arguments || []);
+        LoggerOutput.log("4. Executed command: " + fixes3[6].command?.command);
         await tests.sleep(100);
         ////////////////////////
 
-        const [gsc5, diagnostics5] = await tests.loadGscFile(['GscQuickFix', 'includedFoldersCommand.gsc'], false);
-        
-        assert.strictEqual(diagnostics5.length, 0);
+        const gsc5 = await tests.loadGscFile(['GscQuickFix', 'includedFoldersCommand.gsc']);
+        assert.strictEqual(gsc5.diagnostics.length, 0);
 
+
+        const realDiagnostics = GscDiagnosticsCollection.diagnosticCollection?.get(gsc5.uri);
+        assert.ok(realDiagnostics !== undefined);
+        assert.strictEqual(realDiagnostics?.length, 0);
 
 
         //await tests.sleep(100000);

@@ -1,85 +1,64 @@
 import * as vscode from 'vscode';
 import * as os from 'os';
 import { DISCORD_URL, EMAIL, EXTENSION_ID, GITHUB_ISSUES_URL } from './extension';
+import { LoggerOutput } from './LoggerOutput';
 
 export class Issues {
 
-    private static isDisposed = false;
-
     static activate(context: vscode.ExtensionContext) {
-        
-        Issues.isDisposed = false;
-        context.subscriptions.push({
-            dispose: () => {
-                Issues.isDisposed = true;
-            }
-        });
-        
-        let disposable = vscode.commands.registerCommand('gsc.showErrorInfo', async (errorDetails: string) => {
-            const panel = vscode.window.createWebviewPanel(
-                'errorInfo', // Identifies the type of the webview
-                'Report an Issue', // Title of the panel
-                vscode.ViewColumn.One, // Editor column to show the new webview panel in
-                {
-                    enableScripts: true, // Allow scripts in the webview
-                } // Webview options
-            );
 
-            // Set the webview's HTML content
-            panel.webview.html = Issues.getWebviewContent(errorDetails);
+        let disposable = vscode.commands.registerCommand('gsc.showErrorInfo', async (errorDetails: string) => {
+            try {
+                const panel = vscode.window.createWebviewPanel(
+                    'errorInfo', // Identifies the type of the webview
+                    'Report an Issue', // Title of the panel
+                    vscode.ViewColumn.One, // Editor column to show the new webview panel in
+                    {
+                        enableScripts: true, // Allow scripts in the webview
+                    } // Webview options
+                );
+    
+                // Set the webview's HTML content
+                panel.webview.html = Issues.getWebviewContent(errorDetails);
+            } catch (error) {
+                console.error(error);
+            }
         });
 
         context.subscriptions.push(disposable);
-
-        // VSCode runs each extension in its own separate process (the extension host)
-        // It isolates the extension from the main VSCode application and other extensions. 
-        // This means that the global error handlers you set up in this extension will not capture errors from other extensions or from VSCode itself.
-
-        // Handle uncaught exceptions
-        process.on('uncaughtException', (error) => {
-            if (Issues.isDisposed) {
-                console.log("Extension has been disposed, ignoring unhandled exception. ", error.message);
-                return; // Ignore the error since the extension is disposed
-            }
-            
-            try {
-                Issues.handleGlobalError(error);
-            } catch (error) { }
-        });
-
-        // Handle unhandled promise rejections
-        process.on('unhandledRejection', (reason: any) => {
-            if (Issues.isDisposed) {
-                console.log("Extension has been disposed, ignoring unhandled rejection.", reason.message);
-                return; // Ignore the error since the extension is disposed
-            }
-            
-            try {
-                Issues.handleGlobalError(reason instanceof Error ? reason : new Error(reason));
-            } catch (error) {}
-        });
     }
 
-    static handleGlobalError(error: Error) {
+    static handleError(err: unknown) {
+
+        const error = Issues.normalizeError(err);
+
         const ver = vscode.extensions.getExtension(EXTENSION_ID)?.packageJSON.version;
 
-        const errorMessage = `Error in CoD GSC Extension v${ver}: ${error.message}`;
-        const errorDetails = `
+        const errorMessage = `Error: ${error.message}`;
+
+
+        void vscode.window.showErrorMessage(errorMessage, 'Report Issue').then((selection) => {
+            if (selection === 'Report Issue') {
+
+                const errorDetails = `
 Extension Version: ${ver}
 VSCode Version: ${vscode.version}
 OS: ${os.type()} ${os.release()}
 
 ${error.stack}
 
-`;
-    
-        void vscode.window.showErrorMessage(errorMessage, 'Report Issue').then((selection) => {
-            if (selection === 'Report Issue') {
+Log (5min):
+${LoggerOutput.getLogs().join('\n')}
+                
+                `;
+
                 void vscode.commands.executeCommand('gsc.showErrorInfo', errorDetails);
             }
         });
-    
-        console.error('Unhandled error:', error);
+
+        console.error(error);
+
+        LoggerOutput.log("[Issues] " + error.message);
     }
 
     static getWebviewContent(errorDetails: string) {
@@ -130,5 +109,30 @@ ${error.stack}
     </body>
     </html>
             `;
+    }
+
+
+    /**
+     * Normalizes any unknown error into an Error object.
+     * @param error - The unknown error to normalize.
+     * @returns An Error object with a standardized message.
+     */
+    public static normalizeError(error: unknown): Error {
+        if (error instanceof Error) {
+            return error;
+        } else if (typeof error === 'string') {
+            return new Error(error);
+        } else if (typeof error === 'object' && error !== null) {
+            // The error is an object, attempt to stringify it
+            try {
+                const errorString = JSON.stringify(error, Object.getOwnPropertyNames(error));
+                return new Error(errorString);
+            } catch (stringifyError) {
+                return new Error('An unknown error occurred');
+            }
+        } else {
+            // The error is of an unknown type (number, boolean, null, undefined, etc.)
+            return new Error(String(error) || 'An unknown error occurred');
+        }
     }
 }

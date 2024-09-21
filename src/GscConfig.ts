@@ -1,4 +1,6 @@
 import * as vscode from 'vscode';
+import { LoggerOutput } from './LoggerOutput';
+import { Issues } from './Issues';
 
 // These must match with package.json settings
 export enum GscGame {
@@ -22,13 +24,58 @@ export type GscGameRootFolder = {
 }
 
 
+type ConfigChangeHandler = () => Promise<void> | void;
+
+
 export class GscConfig {
 
 	public static game: GscGame = GscGame.UniversalGame;
 
+    private static configChangeSubscribers: ConfigChangeHandler[] = [];
+
 
 	static async activate(context: vscode.ExtensionContext) { 
+		vscode.workspace.onDidChangeConfiguration((e) => this.onDidChangeConfiguration(e), null, context.subscriptions);
 	}
+
+
+	/**
+	 * Handle vscode configuration change event
+	 */
+	private static async onDidChangeConfiguration(e: vscode.ConfigurationChangeEvent) {
+		if (e.affectsConfiguration('gsc')) {
+			LoggerOutput.log("[GscConfig] GSC configuration changed.");
+			await GscConfig.emitConfigChange();
+		}
+	}
+
+
+    /**
+	 * Subscribe to configuration changes. The handler will be called whenever the configuration changes. Subscribers are called in the order they were added.
+	 * @param handler 
+	 */
+    public static onDidConfigChange(handler: ConfigChangeHandler): void {
+        this.configChangeSubscribers.push(handler);
+    }
+
+
+
+	/**
+	 * Emit a configuration change event. This will call all subscribers in the order they were added.
+	 */
+    private static async emitConfigChange(): Promise<void> {
+        for (const handler of this.configChangeSubscribers) {
+            try {
+                const result = handler();
+                if (result instanceof Promise) {
+                    await result;
+                }
+            } catch (error) {
+                Issues.handleError(error);
+            }
+        }
+    }
+
 
 
 	/**
@@ -54,6 +101,7 @@ export class GscConfig {
 
 
 	public static changeRootFolder(uri: vscode.Uri, rootFolder: string) {
+		LoggerOutput.log("[GscConfig] Changing game root folder to: " + rootFolder, vscode.workspace.asRelativePath(uri));
 		const config = vscode.workspace.getConfiguration('gsc', uri);
 		return config.update('gameRootFolder', rootFolder, vscode.ConfigurationTarget.WorkspaceFolder);
 	}
@@ -69,6 +117,7 @@ export class GscConfig {
 		return ignoredFunctionNames;
 	}
 	public static addIgnoredFunctionName(uri: vscode.Uri, value: string) {
+		LoggerOutput.log("[GscConfig] Adding ignored function name: " + value, vscode.workspace.asRelativePath(uri));
 		const config = vscode.workspace.getConfiguration('gsc', uri);
 		const ignoredFunctionNames: string[] = config.get('ignoredFunctionNames', []);
 		ignoredFunctionNames.push(value);
@@ -86,6 +135,7 @@ export class GscConfig {
 		return ignoredFunctionNames;
 	}
 	public static addIgnoredFilePath(uri: vscode.Uri, value: string | string[]) {
+		LoggerOutput.log("[GscConfig] Adding ignored file path: " + value, vscode.workspace.asRelativePath(uri));
 		const config = vscode.workspace.getConfiguration('gsc', uri);
 		const ignoredFilePaths: string[] = config.get('ignoredFilePaths', []);
 		if (typeof value === 'string') {
@@ -105,6 +155,7 @@ export class GscConfig {
 		return GscConfig.errorDiagnosticsStringToEnum(selectedOption, ConfigErrorDiagnostics.Enable);
 	}
 	public static async updateErrorDiagnostics(uri: vscode.Uri, value: ConfigErrorDiagnostics) {
+		LoggerOutput.log("[GscConfig] Changing error diagnostics to: " + value, vscode.workspace.asRelativePath(uri));
 		// Load ignored function names
         const config = vscode.workspace.getConfiguration('gsc', uri);
 		await config.update("errorDiagnostics", value, vscode.ConfigurationTarget.WorkspaceFolder);
@@ -131,6 +182,8 @@ export class GscConfig {
 		return includedWorkspaceFolders;
 	}
 	public static addIncludedWorkspaceFolders(uri: vscode.Uri, value: string | string[]) {
+		const valueStr = (typeof value === 'string') ? value : value.join(", ");
+		LoggerOutput.log("[GscConfig] Adding included workspace folder: " + valueStr, vscode.workspace.asRelativePath(uri));
 		const config = vscode.workspace.getConfiguration('gsc', uri);
 		const includedWorkspaceFolders: string[] = config.get('includedWorkspaceFolders', []);
 		if (typeof value === 'string') {
@@ -168,6 +221,7 @@ export class GscConfig {
 	}
 
 	public static async updateSelectedGame(uri: vscode.Uri, game: GscGame) {
+		LoggerOutput.log("[GscConfig] Changing selected game to: " + game, vscode.workspace.asRelativePath(uri));
         // Check if the URI is part of the workspace
         if (!vscode.workspace.getWorkspaceFolder(uri)) {
             throw new Error("The file is not part of the workspace.");

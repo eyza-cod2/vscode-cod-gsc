@@ -19,10 +19,10 @@ suite('GscComplex', () => {
     
     // Check case insensitivity of function calls (file paths, function names)
     test('GscComplex.FunctionReferences -> error + hover + definition', async () => {
-        const [gsc, diagnostics] = await tests.loadGscFile(['GscComplex', 'FunctionReferences.gsc']);
+        const gsc = await tests.loadGscFile(['GscComplex', 'FunctionReferences.gsc']);
         
         // There should be no error - everything is case insensitive
-        assert.ok(diagnostics.length === 0);
+        assert.ok(gsc.diagnostics.length === 0);
 
         // Correct path
         // FunctionReferencesFolder\FunctionReferencesFile::funcName();

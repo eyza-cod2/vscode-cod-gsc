@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { ConfigErrorDiagnostics, GscConfig } from './GscConfig';
 import * as path from 'path';
+import { Issues } from './Issues';
 
 export class GscCodeActionProvider implements vscode.CodeActionProvider {
    
@@ -10,84 +11,117 @@ export class GscCodeActionProvider implements vscode.CodeActionProvider {
         });
 
         context.subscriptions.push(vscode.commands.registerCommand('gsc.addFolderForReferences', async (workspaceUri: vscode.Uri) => {
-            // Prompt the user to select a folder
-            const folderUri = await vscode.window.showOpenDialog({
-                canSelectFolders: true,
-                canSelectFiles: false,
-                canSelectMany: false,
-                openLabel: 'Add selected folder to Workspace'
-            });
+            try {
+                // Prompt the user to select a folder
+                const folderUri = await vscode.window.showOpenDialog({
+                    canSelectFolders: true,
+                    canSelectFiles: false,
+                    canSelectMany: false,
+                    openLabel: 'Add selected folder to Workspace'
+                });
 
-            if (folderUri && folderUri[0]) {
-                const uri = folderUri[0];
+                if (folderUri && folderUri[0]) {
+                    const uri = folderUri[0];
 
-                // Get folder name from the uri
-                const folderName = path.basename(uri.fsPath);
-                await GscConfig.addIncludedWorkspaceFolders(workspaceUri, folderName);
+                    // Get folder name from the uri
+                    const folderName = path.basename(uri.fsPath);
+                    await GscConfig.addIncludedWorkspaceFolders(workspaceUri, folderName);
 
-                // Add the selected folder to the workspace
-                vscode.workspace.updateWorkspaceFolders(
-                    0, //vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders.length : 0,
-                    null,
-                    { uri }
-                );
+                    // Add the selected folder to the workspace
+                    vscode.workspace.updateWorkspaceFolders(
+                        0, //vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders.length : 0,
+                        null,
+                        { uri }
+                    );
 
-                void vscode.window.showInformationMessage(`Added folder to workspace: ${uri.fsPath}`);
+                    void vscode.window.showInformationMessage(`Added folder to workspace: ${uri.fsPath}`);
+                }
+            } catch (error) {
+                Issues.handleError(error);
             }
         }));
 
         context.subscriptions.push(vscode.commands.registerCommand('gsc.disableErrorDiagnostics', async (workspaceUri: vscode.Uri, workspaceFolderName: string) => {
-            await GscConfig.updateErrorDiagnostics(workspaceUri, ConfigErrorDiagnostics.Disable);
-            void vscode.window.showInformationMessage(`Disabled error diagnostic for workspace folder '${workspaceFolderName}'`);
+            try {
+                await GscConfig.updateErrorDiagnostics(workspaceUri, ConfigErrorDiagnostics.Disable);
+                void vscode.window.showInformationMessage(`Disabled error diagnostic for workspace folder '${workspaceFolderName}'`);
+            } catch (error) {
+                Issues.handleError(error);
+            }
         }));
 
         context.subscriptions.push(vscode.commands.registerCommand('gsc.addFunctionNameIntoIgnored', async (workspaceUri: vscode.Uri, functionName: string) => {
-            await GscConfig.addIgnoredFunctionName(workspaceUri, functionName);
-            void vscode.window.showInformationMessage(`Added '${functionName}' to ignored function names.`);
+            try {
+                await GscConfig.addIgnoredFunctionName(workspaceUri, functionName);
+                void vscode.window.showInformationMessage(`Added '${functionName}' to ignored function names.`);
+            } catch (error) {
+                Issues.handleError(error);
+            }
         }));
 
         context.subscriptions.push(vscode.commands.registerCommand('gsc.addFilePathIntoIgnored', async (workspaceUri: vscode.Uri, filePath: string) => {
-            await GscConfig.addIgnoredFilePath(workspaceUri, filePath);
-            void vscode.window.showInformationMessage(`Added '${filePath}' to ignored file paths.`);
+            try {
+                await GscConfig.addIgnoredFilePath(workspaceUri, filePath);
+                void vscode.window.showInformationMessage(`Added '${filePath}' to ignored file paths.`);
+            } catch (error) {
+                Issues.handleError(error);
+            }
         }));
 
         context.subscriptions.push(vscode.commands.registerCommand('gsc.addAllMissingFilePathsIntoIgnored', async (workspaceUri: vscode.Uri) => {
-            const allDiagnostics = vscode.languages.getDiagnostics();
-            const paths = new Set<string>();
-            for (const [uri, diagnostics] of allDiagnostics) {
-                for (const diagnostic of diagnostics) {
-                    if (typeof diagnostic.code !== "string") {
-                        continue;
+            try {
+                const allDiagnostics = vscode.languages.getDiagnostics();
+                const paths = new Set<string>();
+                for (const [uri, diagnostics] of allDiagnostics) {
+                    for (const diagnostic of diagnostics) {
+                        if (typeof diagnostic.code !== "string") {
+                            continue;
+                        }
+                        const code = diagnostic.code.toString();
+                        if (code.startsWith("unknown_file_path_")) {
+                            const filePath = diagnostic.code.substring("unknown_file_path_".length);
+                            paths.add(filePath);
+                        }
                     }
-                    const code = diagnostic.code.toString();
-                    if (code.startsWith("unknown_file_path_")) {
-                        const filePath = diagnostic.code.substring("unknown_file_path_".length);
-                        paths.add(filePath);
-                    }
-                }
-            };
-            await GscConfig.addIgnoredFilePath(workspaceUri, [...paths]);
-            void vscode.window.showInformationMessage(`Added all missing files to ignored file paths.`);
+                };
+                await GscConfig.addIgnoredFilePath(workspaceUri, [...paths]);
+                void vscode.window.showInformationMessage(`Added all missing files to ignored file paths.`);
+            } catch (error) {
+                Issues.handleError(error);
+            }
         }));
 
         context.subscriptions.push(vscode.commands.registerCommand('gsc.changeRootFolder', async (workspaceUri: vscode.Uri, rootFolder: string) => {
-            await GscConfig.changeRootFolder(workspaceUri, rootFolder);
-            void vscode.window.showInformationMessage(`Changed root folder to '${rootFolder}'.`);
+            try {
+                await GscConfig.changeRootFolder(workspaceUri, rootFolder);
+                void vscode.window.showInformationMessage(`Changed root folder to '${rootFolder}'.`);
+            } catch (error) {
+                Issues.handleError(error);
+            }
         }));
 
         context.subscriptions.push(vscode.commands.registerCommand('gsc.addIncludedWorkspaceFolders', async (workspace: vscode.WorkspaceFolder, otherWorkspace: vscode.WorkspaceFolder, rootFolder?: string) => {
-            if (rootFolder) {
-                await GscConfig.changeRootFolder(otherWorkspace.uri, rootFolder);
-                void vscode.window.showInformationMessage(`Changed root folder to '${rootFolder}'.`);
+            try {
+                if (rootFolder) {
+                    await GscConfig.changeRootFolder(otherWorkspace.uri, rootFolder);
+                    void vscode.window.showInformationMessage(`Changed root folder to '${rootFolder}'.`);
+                }
+                await GscConfig.addIncludedWorkspaceFolders(workspace.uri, otherWorkspace.name);
+                void vscode.window.showInformationMessage(`Added workspace folder '${otherWorkspace.name}' for file references.`);
+            } catch (error) {
+                Issues.handleError(error);
             }
-            await GscConfig.addIncludedWorkspaceFolders(workspace.uri, otherWorkspace.name);
-            void vscode.window.showInformationMessage(`Added workspace folder '${otherWorkspace.name}' for file references.`);
         }));
     }
    
    
     async provideCodeActions(document: vscode.TextDocument, range: vscode.Range, context: vscode.CodeActionContext, token: vscode.CancellationToken): Promise<vscode.CodeAction[]> {
-        return GscCodeActionProvider.getCodeActions(document.uri, context.diagnostics);
+        try {
+            return GscCodeActionProvider.getCodeActions(document.uri, context.diagnostics);
+        } catch (error) {
+            Issues.handleError(error);
+            return [];
+        }
     }
 
 

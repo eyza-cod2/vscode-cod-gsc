@@ -4,6 +4,8 @@ import { GroupType, GscData } from './GscFileParser';
 import { CodFunctions } from './CodFunctions';
 import { ConfigErrorDiagnostics, GscConfig } from './GscConfig';
 import { GscFunctions, GscFunctionState } from './GscFunctions';
+import { Issues } from './Issues';
+import { LoggerOutput } from './LoggerOutput';
 
 export class GscHoverProvider implements vscode.HoverProvider {
     
@@ -15,17 +17,25 @@ export class GscHoverProvider implements vscode.HoverProvider {
         document: vscode.TextDocument,
         position: vscode.Position,
         token: vscode.CancellationToken
-    ): Promise<vscode.Hover | undefined> 
-    {
-        // Get parsed file
-        const gscData = await GscFiles.getFileData(document.uri);
+    ): Promise<vscode.Hover | undefined>  {
+        try {
+            LoggerOutput.log("[GscHoverProvider] Provide hover at " + position.line + ":" + position.character, vscode.workspace.asRelativePath(document.uri));
+            
+            // Get parsed file
+            const gscData = await GscFiles.getFileData(document.uri);
 
-        const hover = await GscHoverProvider.getHover(gscData, position);
+            const hover = await GscHoverProvider.getHover(gscData, position);
 
-        return hover;
+            LoggerOutput.log("[GscHoverProvider] Done, hover: " + (hover !== undefined), vscode.workspace.asRelativePath(document.uri));
+
+            return hover;
+        } catch (error) {
+            Issues.handleError(error);
+        }
     }
 
-    public static async getHover(gscFile: GscFile, position: vscode.Position): Promise<vscode.Hover> {
+
+    public static async getHover(gscFile: GscFile, position: vscode.Position): Promise<vscode.Hover | undefined> {
         let markdown = new vscode.MarkdownString();
         markdown.isTrusted = true; // enable HTML tags
 
@@ -132,7 +142,11 @@ export class GscHoverProvider implements vscode.HoverProvider {
             }
         }
 
-        return new vscode.Hover(markdown);
+        if (markdown.value === "") {
+            return undefined;
+        } else {
+            return new vscode.Hover(markdown);
+        }
     }
 
     public static markdownAppendFileWasNotFound(md: vscode.MarkdownString, funcName: string, path: string) {

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { GscFiles } from './GscFiles';
-import { GscCompletionItemProvider } from './GscCompletionItemProvider'; 
+import { GscCompletionItemProvider } from './GscCompletionItemProvider';
 import { GscSemanticTokensProvider } from './GscSemanticTokensProvider';
 import { GscDiagnosticsCollection } from './GscDiagnosticsCollection';
 import { GscDefinitionProvider } from './GscDefinitionProvider';
@@ -8,6 +8,7 @@ import { GscHoverProvider } from './GscHoverProvider';
 import { GscStatusBar } from './GscStatusBar';
 import { GscConfig } from './GscConfig';
 import { GscCodeActionProvider } from './GscCodeActionProvider';
+import { Issues } from './Issues';
 
 
 export class Gsc {
@@ -19,15 +20,19 @@ export class Gsc {
         console.log("------------------------------------------------------------");
 
         // Register events
-        await GscConfig.activate(context);
-        await GscStatusBar.activate(context);
-        await GscFiles.activate(context);
-        await GscDiagnosticsCollection.activate(context);
-        await GscCodeActionProvider.activate(context);
-        await GscSemanticTokensProvider.activate(context);
-        await GscCompletionItemProvider.activate(context);
-        await GscDefinitionProvider.activate(context);
-        await GscHoverProvider.activate(context);
+        try {
+            await GscConfig.activate(context);
+            await GscStatusBar.activate(context);
+            await GscFiles.activate(context);
+            await GscDiagnosticsCollection.activate(context);
+            await GscCodeActionProvider.activate(context);
+            await GscSemanticTokensProvider.activate(context);
+            await GscCompletionItemProvider.activate(context);
+            await GscDefinitionProvider.activate(context);
+            await GscHoverProvider.activate(context);
+        } catch (error) {
+            Issues.handleError(error);
+        }
     }
 
     static deactivate() {

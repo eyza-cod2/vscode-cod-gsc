@@ -6,9 +6,10 @@ import { ConfigErrorDiagnostics, GscConfig, GscGame, GscGameRootFolder } from '.
 import { GscFunctions, GscFunctionState } from './GscFunctions';
 import { assert } from 'console';
 import { LoggerOutput } from './LoggerOutput';
+import { Issues } from './Issues';
 
 export class GscDiagnosticsCollection {
-    private static diagnosticCollection: vscode.DiagnosticCollection | undefined;
+    public static diagnosticCollection: vscode.DiagnosticCollection | undefined;
     private static statusBarItem: vscode.StatusBarItem | undefined;
 
     static async activate(context: vscode.ExtensionContext) {
@@ -28,11 +29,7 @@ export class GscDiagnosticsCollection {
         context.subscriptions.push(vscode.commands.registerCommand('gsc.refreshDiagnosticsCollection', () => this.refreshDiagnosticsCollection()));   
 		
         // Settings changed, handle it...
-        vscode.workspace.onDidChangeConfiguration((e) => this.onDidChangeConfiguration(e), null, context.subscriptions);
-
-        GscFiles.onDidParseAllDocuments((files) => this.updateDiagnosticsAll("all files parsed"));
-        GscFiles.onDidParseDocument(data => this.generateDiagnostics(data));
-        GscFiles.onDidDeleteDocument(uri => this.deleteDiagnostics(uri));
+        GscConfig.onDidConfigChange(async () => await this.onDidConfigChange());
     }
 
 
@@ -43,19 +40,18 @@ export class GscDiagnosticsCollection {
      */
     static async updateDiagnosticsAll(debugText: string) {
 
-        LoggerOutput.log("[GscDiagnosticsCollection] Creating diagnostics for all files because: " + debugText);
+        LoggerOutput.log("[GscDiagnosticsCollection] Creating diagnostics for all files", "because: " + debugText);
 
         // Get cached files for workspaces that have diagnostics enabled
         const workspaceFolders = vscode.workspace.workspaceFolders;
         if (workspaceFolders === undefined) {
             return;
         }
-        const workspaceFoldersWithEnabledErrors = workspaceFolders.filter(f => GscConfig.getErrorDiagnostics(f.uri) !== ConfigErrorDiagnostics.Disable);
 
         // Get cached files for workspaces that have diagnostics enabled
-        const files = GscFiles.getCachedFiles(workspaceFoldersWithEnabledErrors.map(f => f.uri));
+        const files = GscFiles.getCachedFiles();
 
-        LoggerOutput.log("[GscDiagnosticsCollection]   files: " + files.length + ", workspaceFolders: " + workspaceFoldersWithEnabledErrors.map(f => f.name).join(", "));
+        LoggerOutput.log("[GscDiagnosticsCollection]   files: " + files.length + ", workspaceFolders: " + workspaceFolders.map(f => f.name).join(", "));
 
 
         // Cancel the previous operation if it's still running
@@ -114,115 +110,124 @@ export class GscDiagnosticsCollection {
             this.currentCancellationTokenSource = null;
         }
 
-        LoggerOutput.log("[GscDiagnosticsCollection] Done, diagnostics created: " + count);
+        LoggerOutput.log("[GscDiagnosticsCollection] Done all, diagnostics created: " + count);
     }
 
 
     
 
     /**
-     * This function is called when some gsc file is parsed. 
-     * The parsed gsc file will be analyzed for commons errors like:
-     *  - missing ;
-     *  - unexpected tokens (bad syntax)
+     * Generate diagnostics for the given GSC file. This function is called when the file is parsed.
+     * @param gscFile The GSC file to generate diagnostics for.
+     * @returns The number of diagnostics created.
      */
     static async generateDiagnostics(gscFile: GscFile): Promise<number> {
-        //console.log("[DiagnosticsProvider]", "Document changed, creating diagnostics...");
-        const uri = gscFile.uri;
+        try {
+            LoggerOutput.log("[GscDiagnosticsCollection] Creating diagnostics for file", vscode.workspace.asRelativePath(gscFile.uri));
+            
+            const uri = gscFile.uri;
 
-        const diagnostics: vscode.Diagnostic[] = [];
+            // Clear array
+            gscFile.diagnostics.length = 0;
 
-        // Return empty diagnostics if diagnostics are disabled
-        if (gscFile.errorDiagnostics === ConfigErrorDiagnostics.Disable) {
-            this.diagnosticCollection?.set(uri, diagnostics);
+            // Return empty diagnostics if diagnostics are disabled
+            if (gscFile.errorDiagnostics === ConfigErrorDiagnostics.Disable) {
+                this.diagnosticCollection?.set(uri, gscFile.diagnostics);
+                LoggerOutput.log("[GscDiagnosticsCollection] Done for file, diagnostics is disabled", vscode.workspace.asRelativePath(gscFile.uri));
+                return 0;
+            }
+
+            // Load ignored function names
+            const isUniversalGame = GscConfig.isUniversalGame(gscFile.currentGame);
+        
+            const groupFunctionNames: {group: GscGroup, uri: vscode.Uri}[] = [];
+            const groupIncludedPaths: {group: GscGroup, uri: vscode.Uri}[] = [];
+
+            // Process the file
+            walkGroupItems(gscFile.data.root, gscFile.data.root.items);
+
+
+            // Create diagnostic for function names
+            for (const d of groupFunctionNames) {
+                const diag = await GscDiagnosticsCollection.createDiagnosticsForFunctionName(d.group, gscFile);
+                if (diag) {
+                    gscFile.diagnostics.push(diag);
+                }
+            }
+
+            // Create diagnostic for included files
+            for (const d of groupIncludedPaths) {
+                const diag = GscDiagnosticsCollection.createDiagnosticsForIncludedPaths(d.group, gscFile);
+                if (diag) {
+                    gscFile.diagnostics.push(diag);
+                }
+            }
+
+            // TODO check where this file is referenced to update particular files
+            // It will be crusual for #include files
+
+            this.diagnosticCollection?.set(uri, gscFile.diagnostics);
+
+            // ------------------------------------------------------------------------------------------------------------------------------------------
+            // ------------------------------------------------------------------------------------------------------------------------------------------
+
+            function walkGroupItems(parentGroup: GscGroup, items: GscGroup[]) {
+                // This object have child items, process them first
+                for (var i = 0; i < items.length; i++) {
+                    const innerGroup = items[i];
+                    const nextGroup = items.at(i + 1);
+
+                    const diagnostic = action(parentGroup, innerGroup);
+                    if (diagnostic === undefined) {
+                        walkGroupItems(innerGroup, innerGroup.items);
+                    } else {
+                        gscFile.diagnostics.push(diagnostic);
+                    }
+
+                    function action(parentGroup: GscGroup, group: GscGroup): vscode.Diagnostic | undefined
+                    {
+                        if (group.type === GroupType.Unknown) {
+                            return new vscode.Diagnostic(group.getRange(), "Unexpected token", vscode.DiagnosticSeverity.Error);
+                        }
+                        else if (group.solved === false) {
+                            return GscDiagnosticsCollection.createDiagnosticsForUnsolved(group, parentGroup, nextGroup);
+    
+                        } else {
+                            switch (group.type as GroupType) {
+
+                                // Function path or #include path
+                                case GroupType.Path:
+                                    groupIncludedPaths.push({group, uri});
+                                    break;
+
+                                case GroupType.FunctionName:
+                                    groupFunctionNames.push({group, uri});
+                                    break;
+
+                                case GroupType.DataTypeKeyword:
+                                    if (!isUniversalGame && gscFile.currentGame !== GscGame.CoD1) {
+                                        return new vscode.Diagnostic(group.getRange(), "Casting to data type is not supported for " + gscFile.currentGame, vscode.DiagnosticSeverity.Error);
+                                    }
+                                    break;
+
+                                case GroupType.ExtraTerminator:
+                                    return new vscode.Diagnostic(group.getRange(), "Terminator ; is not needed", vscode.DiagnosticSeverity.Information);
+                            }
+                        }
+                        return undefined;
+                    }
+                }
+            }
+
+            LoggerOutput.log("[GscDiagnosticsCollection] Done for file, diagnostics created: " + gscFile.diagnostics.length, vscode.workspace.asRelativePath(gscFile.uri));
+
+
+            return gscFile.diagnostics.length;
+        }
+        catch (error) {
+            Issues.handleError(error);
             return 0;
         }
-
-        // Load ignored function names
-        const isUniversalGame = GscConfig.isUniversalGame(gscFile.currentGame);
-    
-        const groupFunctionNames: {group: GscGroup, uri: vscode.Uri}[] = [];
-        const groupIncludedPaths: {group: GscGroup, uri: vscode.Uri}[] = [];
-
-        // Process the file
-        walkGroupItems(gscFile.data.root, gscFile.data.root.items);
-
-
-        // Create diagnostic for function names
-        for (const d of groupFunctionNames) {
-            const diag = await GscDiagnosticsCollection.createDiagnosticsForFunctionName(d.group, gscFile);
-            if (diag) {
-                diagnostics.push(diag);
-            }
-        }
-
-        // Create diagnostic for included files
-        for (const d of groupIncludedPaths) {
-            const diag = GscDiagnosticsCollection.createDiagnosticsForIncludedPaths(d.group, gscFile);
-            if (diag) {
-                diagnostics.push(diag);
-            }
-        }
-
-        // TODO check where this file is referenced to update particular files
-        // It will be crusual for #include files
-
-        this.diagnosticCollection?.set(uri, diagnostics);
-
-        // ------------------------------------------------------------------------------------------------------------------------------------------
-        // ------------------------------------------------------------------------------------------------------------------------------------------
-
-        function walkGroupItems(parentGroup: GscGroup, items: GscGroup[]) {
-            // This object have child items, process them first
-            for (var i = 0; i < items.length; i++) {
-                const innerGroup = items[i];
-                const nextGroup = items.at(i + 1);
-
-                const diagnostic = action(parentGroup, innerGroup);
-                if (diagnostic === undefined) {
-                    walkGroupItems(innerGroup, innerGroup.items);
-                } else {
-                    diagnostics.push(diagnostic);
-                }
-
-                function action(parentGroup: GscGroup, group: GscGroup): vscode.Diagnostic | undefined
-                {
-                    if (group.type === GroupType.Unknown) {
-                        return new vscode.Diagnostic(group.getRange(), "Unexpected token", vscode.DiagnosticSeverity.Error);
-                    }
-                    else if (group.solved === false) {
-                        return GscDiagnosticsCollection.createDiagnosticsForUnsolved(group, parentGroup, nextGroup);
- 
-                    } else {
-                        switch (group.type as GroupType) {
-
-                            // Function path or #include path
-                            case GroupType.Path:
-                                groupIncludedPaths.push({group, uri});
-                                break;
-
-                            case GroupType.FunctionName:
-                                groupFunctionNames.push({group, uri});
-                                break;
-
-                            case GroupType.DataTypeKeyword:
-                                if (!isUniversalGame && gscFile.currentGame !== GscGame.CoD1) {
-                                    return new vscode.Diagnostic(group.getRange(), "Casting to data type is not supported for " + gscFile.currentGame, vscode.DiagnosticSeverity.Error);
-                                }
-                                break;
-
-                            case GroupType.ExtraTerminator:
-                                return new vscode.Diagnostic(group.getRange(), "Terminator ; is not needed", vscode.DiagnosticSeverity.Information);
-                        }
-                    }
-                    return undefined;
-                }
-            }
-        }
-
-        //console.log("[DiagnosticsProvider]", "Diagnostics done");
-
-        return diagnostics.length;
     }
     
 
@@ -412,13 +417,11 @@ export class GscDiagnosticsCollection {
     }
 
 
-    static async onDidChangeConfiguration(e: vscode.ConfigurationChangeEvent) {
-        if (e.affectsConfiguration('gsc')) {
-            await this.updateDiagnosticsAll("config changed");
-        }
+    private static async onDidConfigChange() {
+        await this.updateDiagnosticsAll("config changed");
     }
 
-    static async refreshDiagnosticsCollection() {
+    private static async refreshDiagnosticsCollection() {
         await this.updateDiagnosticsAll("manual refresh");
     }
 
