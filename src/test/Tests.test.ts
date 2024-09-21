@@ -57,7 +57,7 @@ export function checkDiagnostic(diagnosticItems: readonly vscode.Diagnostic[], i
 
     function message(message: string, current: string, expected: string) {
         var debugText = diagnosticItems.map((diagnostic, i) => "  " + i + ": " + diagnostic.message + "   [" + vscode.DiagnosticSeverity[diagnostic.severity] + "]").join('\n');
-        return message + "\n\ndiagnostics[" + index + "] = \n'" + current + "'. \n\nExpected: \n'" + expected + "'. \n\nErrors:\n" + debugText + "\n\n" + LoggerOutput.getLogs().join('\n');
+        return message + "\n\ndiagnostics[" + index + "] = \n'" + current + "'. \n\nExpected: \n'" + expected + "'. \n\nErrors:\n" + debugText + "\n\n";
     }
 
     var item = diagnosticItems.at(index);
@@ -80,7 +80,7 @@ export function checkQuickFix(codeActions: vscode.CodeAction[], index: number, e
 
     function message(message: string, current: string, expected: string) {
         var debugText = codeActions.map((diagnostic, i) => "  " + i + ": " + diagnostic.title + "   [" + diagnostic.kind?.value + "]").join('\n');
-        return "diagnostics[" + index + "] = \n'" + current + "'. \n\nExpected: \n'" + expected + "'. \n\nMessage: " + message + ")\n\nErrors:\n" + debugText + "\n\n" + LoggerOutput.getLogs().join('\n');
+        return "diagnostics[" + index + "] = \n'" + current + "'. \n\nExpected: \n'" + expected + "'. \n\nMessage: " + message + ")\n\nErrors:\n" + debugText + "\n\n";
     }
 
     var item = codeActions.at(index);
@@ -137,7 +137,7 @@ export function checkCompletions(gscFile: GscFile, items: vscode.CompletionItem[
     function message(message: string, current: string, expected: string) {
         var debugText = gscFile.data.content + "\n\n";
         debugText += printCompletionItems(items); 
-        return message + ". Current: '" + current + "'. Expected: '" + expected + "'. At: " + index + ")\n\n" + debugText + "\n\n" + LoggerOutput.getLogs().join('\n') + "\n\n";
+        return message + ". Current: '" + current + "'. Expected: '" + expected + "'. At: " + index + ")\n\n" + debugText + "\n\n";
     }
 
     function printCompletionItems(items: vscode.CompletionItem[]) {
@@ -245,100 +245,104 @@ export function normalizeError(error: unknown): Error {
  * @returns The content of the line where the error occurred or null if it can't be retrieved.
  */
 export function printDebugInfoForError(err: unknown) {
+    // Local anonymous function to handle buffering
+    const buildOutputBuffer = () => {
+        let buffer = '';
 
-    console.error(` `);
-    console.error(` `);
-    console.error(`Debug info for failed test:`);
-    console.error(`-----------------------------------------------------------------`);
-    
-    const error = normalizeError(err);
+        const appendToBuffer = (text: string) => {
+            buffer += text + '\n';
+        };
 
-    if (!error.stack) {
-        console.error('No stack trace available');
-        return null;
-    }
+        appendToBuffer(` `);
+        appendToBuffer(` `);
+        appendToBuffer(`Debug info for failed test:`);
+        appendToBuffer(`-----------------------------------------------------------------`);
 
-    //console.error(`Error: ${error.message}`);
-    //console.error(` `);
+        const error = normalizeError(err);
 
-    const stackLines = error.stack.split('\n');
-
-    // Filter out irrelevant stack lines (e.g., Node.js internals or external dependencies)
-    const relevantLine = stackLines.find((line) => {
-        // Ensure the line includes a reference to a file path, avoiding Node.js internals
-        return line.includes(path.sep) && line.match(/:\d+:\d+/); // Check for "file:line:column" pattern
-    });
-
-    if (!relevantLine) {
-        console.error('Could not find a relevant line in stack trace');
-        return;
-    }
-
-    // Regex to extract the file path, line number, and column number from the stack trace
-    const match = relevantLine.match(/\(([^)]+):(\d+):(\d+)\)/) || relevantLine.match(/at ([^ ]+):(\d+):(\d+)/);
-    if (!match) {
-        console.error('Failed to parse the stack trace');
-        return;
-    }
-
-    const filePath = match[1];            // Extract the file path
-    const lineNumber = parseInt(match[2], 10); // Extract the line number (1-based)
-    const columnNumber = parseInt(match[3], 10); // Extract the column number (optional)
-
-    // Ensure the file path exists before attempting to read it
-    if (!fs.existsSync(filePath)) {
-        console.error(`File does not exist: ${filePath}`);
-        return;
-    }
-
-    // Read the file content and retrieve the specific line
-    try {
-        const fileContent = fs.readFileSync(filePath, 'utf-8');
-        const fileLines = fileContent.split('\n');
-        
-        // Check if the line number is valid within the file's content
-        if (lineNumber < 1 || lineNumber > fileLines.length) {
-            console.error(`Line number ${lineNumber} is out of bounds in file: ${filePath}`);
-            return null;
+        if (!error.stack) {
+            appendToBuffer('No stack trace available');
+            return buffer; // Return buffer early if no stack
         }
 
-        const errorLine = fileLines[lineNumber - 1].trim(); // Line numbers are 1-based
+        const stackLines = error.stack.split('\n');
 
-        // Return the line content along with the error's location in the file
-        console.log(`${filePath}:${lineNumber}:${columnNumber}`);
-        console.error(`-----------------------------------------------------------------`);
+        // Collect all relevant lines in reverse order
+        const relevantLines = stackLines
+            .filter(line => line.includes(path.sep) && line.match(/:\d+:\d+/))
+            .reverse();
 
-        // Print 5 lines before and after the error line
-        const start = Math.max(0, lineNumber - 5);
-        const end = Math.min(fileLines.length, lineNumber + 5);
+        if (relevantLines.length === 0) {
+            appendToBuffer('Could not find any relevant lines in stack trace');
+            return buffer; // Return buffer early if no relevant lines
+        }
 
-        for (let i = start; i < end; i++) {
-            const line = fileLines.at(i);
-            if (!line) {
+        // Iterate over each relevant stack line in reverse order
+        for (const relevantLine of relevantLines) {
+            const match = relevantLine.match(/\(([^)]+):(\d+):(\d+)\)/) || relevantLine.match(/at ([^ ]+):(\d+):(\d+)/);
+            if (!match) {
+                appendToBuffer('Failed to parse the stack trace');
                 continue;
             }
-            const lineNum = i + 1;
-            const lineMarker = lineNum === lineNumber ? ' ->' : '   ';
-            console.log(  `${lineNum}${lineMarker} ${line}`);
+
+            const filePath = match[1];
+            const lineNumber = parseInt(match[2], 10);
+            const columnNumber = parseInt(match[3], 10);
+
+            if (!fs.existsSync(filePath)) {
+                appendToBuffer(`File does not exist: ${filePath}`);
+                continue;
+            }
+
+            try {
+                const fileContent = fs.readFileSync(filePath, 'utf-8');
+                const fileLines = fileContent.split('\n');
+
+                if (lineNumber < 1 || lineNumber > fileLines.length) {
+                    appendToBuffer(`Line number ${lineNumber} is out of bounds in file: ${filePath}`);
+                    continue;
+                }
+
+                appendToBuffer(`${filePath}:${lineNumber}:${columnNumber}`);
+                appendToBuffer(`-----------------------------------------------------------------`);
+
+                const start = Math.max(0, lineNumber - 5);
+                const end = Math.min(fileLines.length, lineNumber + 5);
+
+                for (let i = start; i < end; i++) {
+                    const line = fileLines.at(i);
+                    if (!line) {
+                        continue;
+                    }
+                    const lineNum = i + 1;
+                    const lineMarker = lineNum === lineNumber ? ' ->' : '   ';
+                    appendToBuffer(`${lineNum}${lineMarker} ${line}`);
+                }
+
+                appendToBuffer(` `);
+                appendToBuffer(`-----------------------------------------------------------------`);
+            } catch (err) {
+                appendToBuffer(`Failed to read the file: ${filePath}. Error: ${(err as Error).message}`);
+            }
         }
 
-        console.error(`-----------------------------------------------------------------`);
+        const log = LoggerOutput.getLogs().join("\n");
 
+        appendToBuffer(` `);
+        appendToBuffer(` `);
+        appendToBuffer(`Logs:`);
+        appendToBuffer(log);
+        appendToBuffer(`-----------------------------------------------------------------`);
+        appendToBuffer(` `);
+        appendToBuffer(` `);
 
-    } catch (err) {
-        console.error(`Failed to read the file: ${filePath}. Error: ${(err as Error).message}`);
-    }
+        return buffer; // Return the accumulated buffer
+    };
 
-    const log = LoggerOutput.getLogs().join("\n");
+    // Print the output buffer in a single line
+    console.log(buildOutputBuffer());
 
-    console.error(` `);
-    console.error(` `);
-    console.error(`Logs:`);
-    console.error(log);
-    console.error(`-----------------------------------------------------------------`);
-    console.error(` `);
-    console.error(` `);
-
-    
-    throw error;
+    // Re-throw the error
+    throw normalizeError(err);
 }
+
