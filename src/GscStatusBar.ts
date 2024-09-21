@@ -50,18 +50,24 @@ export class GscStatusBar {
 			if (activeEditor) {
 				const languageId = activeEditor.document.languageId;
 				if (languageId === 'gsc') {
+
+					const uri = activeEditor.document.uri;
 					
 					// This file is not part of workspace
-					const workspaceFolder = vscode.workspace.getWorkspaceFolder(activeEditor.document.uri);
+					const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
 					if (workspaceFolder === undefined) {
 						return;
 					}
 
-					const gscFile = await GscFiles.getFileData(activeEditor.document.uri);
+					LoggerOutput.log(`[GscStatusBar] Updating status bar because: ${debugText}`, vscode.workspace.asRelativePath(uri));
 
-					LoggerOutput.log(`[GscStatusBar] Updating status bar with game: "${gscFile.currentGame}"`, `because: ${debugText}`);
+					const gscFile = GscFiles.getCachedFile(uri);
+					
+					const currentGame = (gscFile === undefined) ? GscConfig.getSelectedGame(workspaceFolder.uri) : gscFile.currentGame;
+					
+					LoggerOutput.log(`[GscStatusBar] Status bar updated with game: "${currentGame}"`, vscode.workspace.asRelativePath(uri));
 
-					gameBarItem.text = "$(notebook-open-as-text) " + (gscFile.currentGame);
+					gameBarItem.text = "$(notebook-open-as-text) " + (currentGame);
 					
 					gameBarItem.show();
 					settingsBarItem.show();	

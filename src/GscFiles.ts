@@ -73,15 +73,23 @@ export class GscFiles {
      */
     public static async getFileData(fileUri: vscode.Uri, forceParsing: boolean = false, doParseNotify: boolean = true): Promise<GscFile>  {
         
-        const doLog = doParseNotify;
+        // Get workspace folder where the file is located
+        const workspaceFolder = vscode.workspace.getWorkspaceFolder(fileUri);
 
+        // This file is part of workspace
+        if (workspaceFolder !== undefined) {
+            // Run initial scan of all files if it is not done yet
+            if (this.parseAllFiles) {          
+                this.parseAllFiles = false;  
+                await this.initialParse();
+            }
+        }
+
+        const doLog = doParseNotify;
         if (doLog) {
             LoggerOutput.log("[GscFiles] Getting file data", vscode.workspace.asRelativePath(fileUri));
         }
 
-        // This file is part of workspace, save it into cache; otherwise ignore it
-        const workspaceFolder = vscode.workspace.getWorkspaceFolder(fileUri);
-        
         // This file is not part of workspace, return it and do not cache it
         if (workspaceFolder === undefined) {
             const gsc = await this.parseFile(fileUri);
@@ -135,12 +143,6 @@ export class GscFiles {
 
         if (doLog) {
             LoggerOutput.log("[GscFiles] Done, " + (bParsed ? "was parsed" : "loaded from cache"), vscode.workspace.asRelativePath(fileUri));
-        }
-
-        // Run initial scan of all files
-        if (this.parseAllFiles) {          
-            this.parseAllFiles = false;  
-            await this.initialParse();
         }
 
         return fileData;
