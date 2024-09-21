@@ -313,6 +313,10 @@ export class GscDiagnosticsCollection {
         // #include
         if (group.parent?.type === GroupType.PreprocessorStatement && group.parent.items.at(0)?.isReservedKeywordOfName("#include") === true) {
 
+            if (referenceData.gscFile?.uri.toString() === gscFile.uri.toString()) {
+                return new vscode.Diagnostic(group.getRange(), "File is including itself", vscode.DiagnosticSeverity.Error);
+            }
+
             if (referenceData.gscFile === undefined) {
 
                 // This file path is ignored by configuration

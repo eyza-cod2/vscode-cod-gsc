@@ -232,6 +232,10 @@ export class GscFunctions {
                 if (referencedFile === undefined) {
                     continue; // File not found
                 }
+
+                if (referencedFile.uri.toString() === gscFile.uri.toString()) {
+                    continue;
+                }
                 
                 referencedFile.data.functions.forEach(f => {
                     if (!funcNameId || f.nameId === funcNameId) {
