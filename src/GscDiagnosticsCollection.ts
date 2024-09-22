@@ -191,8 +191,9 @@ export class GscDiagnosticsCollection {
             }
 
             // Create diagnostic for included files
+            const includedPaths = groupIncludedPaths.map(g => g.group.getTokensAsString());
             for (const d of groupIncludedPaths) {
-                const diag = GscDiagnosticsCollection.createDiagnosticsForIncludedPaths(d.group, gscFile);
+                const diag = GscDiagnosticsCollection.createDiagnosticsForIncludedPaths(d.group, gscFile, includedPaths);
                 if (diag) {
                     gscFile.diagnostics.push(diag);
                 }
@@ -232,7 +233,10 @@ export class GscDiagnosticsCollection {
 
                                 // Function path or #include path
                                 case GroupType.Path:
-                                    groupIncludedPaths.push({group, uri});
+                                    // Save only #include paths
+                                    if (group.parent?.type === GroupType.PreprocessorStatement && group.parent.items.at(0)?.isReservedKeywordOfName("#include") === true) {
+                                        groupIncludedPaths.push({group, uri});
+                                    }
                                     break;
 
                                 case GroupType.FunctionName:
@@ -302,40 +306,42 @@ export class GscDiagnosticsCollection {
     }
 
 
-    static createDiagnosticsForIncludedPaths(group: GscGroup, gscFile: GscFile): vscode.Diagnostic | undefined {
+    static createDiagnosticsForIncludedPaths(group: GscGroup, gscFile: GscFile, includedPaths: string[]): vscode.Diagnostic | undefined {
         assert(group.type === GroupType.Path);
 
         const tokensAsPath = group.getTokensAsString();
 
         const referenceData = GscFiles.getReferencedFileForFile(gscFile, tokensAsPath);
-     
 
-        // #include
-        if (group.parent?.type === GroupType.PreprocessorStatement && group.parent.items.at(0)?.isReservedKeywordOfName("#include") === true) {
 
-            if (referenceData.gscFile?.uri.toString() === gscFile.uri.toString()) {
-                return new vscode.Diagnostic(group.getRange(), "File is including itself", vscode.DiagnosticSeverity.Error);
-            }
-
-            if (referenceData.gscFile === undefined) {
-
-                // This file path is ignored by configuration
-                if (gscFile.ignoredFilePaths.some(ignoredPath => tokensAsPath.toLowerCase().startsWith(ignoredPath.toLowerCase()))) {
-                    return;
-                }
-                const d = new vscode.Diagnostic(
-                    group.getRange(), 
-                    `File '${tokensAsPath}.gsc' was not found in workspace folder ${gscFile.referenceableGameRootFolders.map(f => "'" + f.relativePath + "'").join(", ")}`, 
-                    vscode.DiagnosticSeverity.Error);        
-                d.code = "unknown_file_path_" + tokensAsPath;
-                return d;
-            }
-
-        // function path
-        } else {
-            // Handled in function that handles function names
+        if (referenceData.gscFile?.uri.toString() === gscFile.uri.toString()) {
+            return new vscode.Diagnostic(group.getRange(), "File is including itself", vscode.DiagnosticSeverity.Error);
         }
 
+        // Find how many times this file is included
+        let count = 0;
+        for (const includedPath of includedPaths) {
+            if (includedPath === tokensAsPath) {
+                count++;
+            }
+            if (count >= 2) {
+                return new vscode.Diagnostic(group.getRange(), "Duplicate #include file path", vscode.DiagnosticSeverity.Error);
+            }
+        }
+
+        if (referenceData.gscFile === undefined) {
+
+            // This file path is ignored by configuration
+            if (gscFile.ignoredFilePaths.some(ignoredPath => tokensAsPath.toLowerCase().startsWith(ignoredPath.toLowerCase()))) {
+                return;
+            }
+            const d = new vscode.Diagnostic(
+                group.getRange(), 
+                `File '${tokensAsPath}.gsc' was not found in workspace folder ${gscFile.referenceableGameRootFolders.map(f => "'" + f.relativePath + "'").join(", ")}`, 
+                vscode.DiagnosticSeverity.Error);        
+            d.code = "unknown_file_path_" + tokensAsPath;
+            return d;
+        }
 
     }
 

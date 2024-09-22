@@ -1915,7 +1915,8 @@ export class GscFileParser {
                         if (parentGroup.type === GroupType.PreprocessorStatement &&
                             parentGroup.getFirstToken().name === "#include") 
                         {
-                            data.includes.push(innerGroup.getTokensAsString());
+                            // Add path to includes - duplicate paths are ignored via Set<>
+                            data.includes.add(innerGroup.getTokensAsString());
                         }
                         break;
 
@@ -2841,7 +2842,8 @@ export class GscData {
     functions: GscFunction[] = [];
     levelVariablesDefinitions: GscVariableDefinition[] = [];
     gameVariablesDefinitions: GscVariableDefinition[] = [];
-    includes: string[] = [];
+    /** Unique set of paths included via #include */
+    includes: Set<string> = new Set();
     content: string;
 
     constructor(structure: GscGroup, content: string) {

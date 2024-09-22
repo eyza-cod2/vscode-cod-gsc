@@ -93,4 +93,36 @@ suite('GscComplex', () => {
         }
     });
 
+
+    // Check case insensitivity of function calls (file paths, function names)
+    test('GscComplex.DuplicateInclude', async () => {
+        try {
+            const gsc = await tests.loadGscFile(['GscComplex', 'scripts', 'DuplicateInclude.gsc']);
+            
+            tests.checkDiagnostic(gsc.diagnostics, 0, "Duplicate #include file path", vscode.DiagnosticSeverity.Error);
+            tests.checkDiagnostic(gsc.diagnostics, 1, "Duplicate #include file path", vscode.DiagnosticSeverity.Error);
+            assert.strictEqual(gsc.diagnostics.length, 2);
+
+        } catch (error) {
+            tests.printDebugInfoForError(error);
+        }
+    });
+
+
+    // Check case insensitivity of function calls (file paths, function names)
+    test('GscComplex.Include', async () => {
+        try {
+            const gsc = await tests.loadGscFile(['GscComplex', 'scripts', 'Include.gsc']);
+            
+            tests.checkDiagnostic(gsc.diagnostics, 0, "Function 'func2' is defined in 2 places!", vscode.DiagnosticSeverity.Error);
+            tests.checkDiagnostic(gsc.diagnostics, 1, "File is including itself", vscode.DiagnosticSeverity.Error);
+            tests.checkDiagnostic(gsc.diagnostics, 2, "Duplicate #include file path", vscode.DiagnosticSeverity.Error);
+            tests.checkDiagnostic(gsc.diagnostics, 3, "Duplicate #include file path", vscode.DiagnosticSeverity.Error);
+            assert.strictEqual(gsc.diagnostics.length, 4);
+
+        } catch (error) {
+            tests.printDebugInfoForError(error);
+        }
+    });
+
 });
