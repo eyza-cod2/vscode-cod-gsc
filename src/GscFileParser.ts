@@ -2623,6 +2623,20 @@ export class GscGroup {
     }
 
 
+    /**
+     * Find parent group of current group that contains given range.
+     */
+    public getParentWithinRange(range: vscode.Range): GscGroup | undefined {
+        var group = this as GscGroup;
+        while (group.parent !== undefined) {
+            if (group.parent.getRange().contains(range)) {
+                return group.parent;
+            }
+            group = group.parent;
+        }
+        return undefined;
+    }
+
 
     /**
      * Select variable tokens like 'level.aaa.bbb' from document

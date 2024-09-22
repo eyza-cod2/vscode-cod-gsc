@@ -623,8 +623,6 @@ export class GscFiles {
 
     private static getWebviewContent(): string {
         const editor = vscode.window.activeTextEditor;
-        const cursor = editor?.selection.active;
-        const uri = editor?.document.uri;
 
         var html = `
             <html>
@@ -632,11 +630,13 @@ export class GscFiles {
                 <h1>Debug Information</h1>
         `;
 
-        if (cursor) {
-            html += `<p>Cursor position: ${cursor?.line}, ${cursor?.character}</p>`;
-        }
+        if (editor) {
+            const cursor = editor.selection.active;
+            const cursorRange = new vscode.Range(editor.selection.start, editor.selection.end);
+            const uri = editor.document.uri;
 
-        if (uri && cursor) {
+            html += `<p>Cursor position: ${cursor.line}, ${cursor.character}      start: ${cursorRange.start.line}, ${cursorRange.start?.character}      end: ${cursorRange.end?.line}, ${cursorRange.end?.character}</p>`;
+
 
             const gscFile = GscFiles.getCachedFile(uri);
 
@@ -644,21 +644,30 @@ export class GscFiles {
                 html += "<p>File is not part of workspace: " + uri.fsPath + "</p>";
             } else {
 
-
-
                 // Get group before cursor
-                var groupAtCursor = gscFile.data.root.findGroupOnLeftAtPosition(cursor);
+                var groupAtCursorStart = gscFile.data.root.findGroupOnLeftAtPosition(cursorRange.start.translate(0, 1));
 
-                if (groupAtCursor === undefined) {
+
+                if (groupAtCursorStart === undefined) {
                     html += "<p>No item found at position.</p>";
                 } else {
 
-                    html += "<pre>" + GscFileParser.debugGroupAsString(gscFile.data.root.tokensAll, undefined, groupAtCursor, 0, true, groupAtCursor) + "</pre>";
-                    html += "<pre>----------------------------------------------------------------------------------------</pre>";
-                    html += "<pre>" + GscFileParser.debugAsString(gscFile.data.root.tokensAll, groupAtCursor.findParentOfType(GroupType.Root)!, true, groupAtCursor) + "</pre>";
+                    if (cursorRange.isEmpty) {
+                        html += "<pre>" + GscFileParser.debugGroupAsString(gscFile.data.root.tokensAll, undefined, groupAtCursorStart, 0, true, groupAtCursorStart) + "</pre>";
+                        html += "<pre>----------------------------------------------------------------------------------------</pre>";
+                        html += "<pre>" + GscFileParser.debugAsString(gscFile.data.root.tokensAll, groupAtCursorStart.findParentOfType(GroupType.Root)!, true, groupAtCursorStart) + "</pre>";
+                    } else {
+                        const parentInRange = groupAtCursorStart.getParentWithinRange(cursorRange);
+                        if (parentInRange === undefined) {
+                            html += "<pre>No group found in selected range</pre>";
+                        } else {
+                            html += "<pre>" + GscFileParser.debugGroupAsString(gscFile.data.root.tokensAll, undefined, parentInRange, 0, true) + "</pre>";
+                        }
+                    }             
+
                     html += "<br>";
 
-                    const funcNameAndPath = groupAtCursor.getFunctionReferenceInfo();
+                    const funcNameAndPath = groupAtCursorStart.getFunctionReferenceInfo();
                     if (funcNameAndPath !== undefined) {
                         html += "<pre>";
                         html += "Function:\n";
