@@ -92,6 +92,27 @@
 
 
 
+    <div ${VERSION_0.1.10}>
+        <h2>Version [0.1.10] - 2024-09-22</h2>
+
+        <h3>Added support for foreach</h3>
+        <p>
+            Foreach syntax is now correctly recognized.
+        </p>
+        <img src="../images/vscode-foreach.png">
+
+
+        <h3>All changes:</h3>
+        <p class="lines">
+            - Added support for "foreach"
+            - Added error diagnostic if a file is included by itself via #include. Now it also does not consider - functions to be duplicated.
+            - Added error diagnostics if file is included twice or more via #include
+            - Improved debugging window of parsed files to show parsed data of selected range of text
+            - Improved tests so a few lines of source code is printed for all files in error stack for tests
+            - Fixed Github Actions .yml file - manual triggering allowed and if conditions wrapped into ${{ }}
+        </p>
+    </div>
+
     <div ${VERSION_0.1.9}>
         <h2>Version [0.1.9] - 2024-09-21</h2>
         <p class="lines">

@@ -4,6 +4,16 @@ All notable changes to the "gsc" extension will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
+## [0.1.10] - 2024-09-22
+
+- Added support for "foreach"
+- Added error diagnostic if a file is included by itself via #include. Now it also does not consider - functions to be duplicated.
+- Added error diagnostics if file is included twice or more via #include
+- Improved debugging window of parsed files to show parsed data of selected range of text
+- Improved tests so a few lines of source code is printed for all files in error stack for tests
+- Fixed Github Actions .yml file - manual triggering allowed and if conditions wrapped into ${{ }}
+
+
 ## [0.1.9] - 2024-09-21
 
 - Fixed errors for file references on Linux systems
