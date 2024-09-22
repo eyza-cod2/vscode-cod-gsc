@@ -3368,7 +3368,7 @@ suite('GscFileParser.parse #2.19 casting', () => {
 
 
 
-suite("GscFileParser.GscGroup #2.20", () => {
+suite("GscFileParser.parse #2.20 groupOnLeft", () => {
     test("#2.20.1 groupOnLeft field", async () => {
         const gsc = `func() { var1.field = 1; }`;
         const tokens = GscFileParser.tokenize(gsc);
@@ -3540,7 +3540,7 @@ suite("GscFileParser.GscGroup #2.20", () => {
 
 
 
-suite("GscFileParser.GscGroup", () => {
+suite("GscFileParser.parse #2.21 variable type", () => {
 
     test("#2.21.1 variable type", async () => {
 
@@ -3608,5 +3608,213 @@ func() {
         //assert.ok(false, GscFileParser.debugAsString(tokens, rootGroup, true) + "\n\n" + GscFileParser.debugAsString(tokens, groupAtCursor!, true));
     });
 
+
+});
+
+
+
+
+
+
+
+
+
+
+suite("GscFileParser.parse #2.22 foreach", () => {
+
+    test("#2.22.1 foreach", async () => {
+        const gsc = `foreach(value in array) { }`;
+        const tokens = GscFileParser.tokenize(gsc);
+        const rootGroup = GscFileParser.group(tokens);
+
+        checkGroup2(rootGroup, rootGroup, GroupType.Root, 0, 7, false, 1);
+        checkGroup2(rootGroup, rootGroup.items[0], GroupType.TerminatedStatement, 0, 7, false, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0], GroupType.ForEachDeclaration, 0, 5, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0], GroupType.ReservedKeyword, 0, 0, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1], GroupType.ForEachExpression, 1, 5, true, 3);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0], GroupType.VariableName, 2, 2, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1], GroupType.ReservedKeyword, 3, 3, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0], GroupType.Identifier, 3, 3, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2], GroupType.Reference, 4, 4, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[0], GroupType.VariableName, 4, 4, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1], GroupType.ForEachScope, 6, 7, true, 0);
+    });
+
+    test("#2.22.2 foreach", async () => {
+        const gsc = `foreach(value, key in array) { }`;
+        const tokens = GscFileParser.tokenize(gsc);
+        const rootGroup = GscFileParser.group(tokens);
+
+        checkGroup2(rootGroup, rootGroup, GroupType.Root, 0, 9, false, 1);
+        checkGroup2(rootGroup, rootGroup.items[0], GroupType.TerminatedStatement, 0, 9, false, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0], GroupType.ForEachDeclaration, 0, 7, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0], GroupType.ReservedKeyword, 0, 0, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1], GroupType.ForEachExpression, 1, 7, true, 5);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0], GroupType.VariableName, 2, 2, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1], GroupType.Token, 3, 3, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2], GroupType.VariableName, 4, 4, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3], GroupType.ReservedKeyword, 5, 5, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3].items[0], GroupType.Identifier, 5, 5, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[4], GroupType.Reference, 6, 6, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[4].items[0], GroupType.VariableName, 6, 6, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1], GroupType.ForEachScope, 8, 9, true, 0);
+    });
+
+    test("#2.22.3 foreach", async () => {
+        const gsc = `foreach(value, key in level.array) { }`;
+        const tokens = GscFileParser.tokenize(gsc);
+        const rootGroup = GscFileParser.group(tokens);
+
+        checkGroup2(rootGroup, rootGroup, GroupType.Root, 0, 11, false, 1);
+        checkGroup2(rootGroup, rootGroup.items[0], GroupType.TerminatedStatement, 0, 11, false, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0], GroupType.ForEachDeclaration, 0, 9, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0], GroupType.ReservedKeyword, 0, 0, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1], GroupType.ForEachExpression, 1, 9, true, 5);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0], GroupType.VariableName, 2, 2, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1], GroupType.Token, 3, 3, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2], GroupType.VariableName, 4, 4, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3], GroupType.ReservedKeyword, 5, 5, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3].items[0], GroupType.Identifier, 5, 5, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[4], GroupType.Reference, 6, 8, true, 3);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[4].items[0], GroupType.Reference, 6, 6, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[4].items[0].items[0], GroupType.VariableName, 6, 6, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[4].items[1], GroupType.Token, 7, 7, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[4].items[2], GroupType.StructureField, 8, 8, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1], GroupType.ForEachScope, 10, 11, true, 0);
+    });
+
+    test("#2.22.4 foreach", async () => {
+        const gsc = `foreach(value, key in level getArray()) { }`;
+        const tokens = GscFileParser.tokenize(gsc);
+        const rootGroup = GscFileParser.group(tokens);
+
+        checkGroup2(rootGroup, rootGroup, GroupType.Root, 0, 12, false, 1);
+        checkGroup2(rootGroup, rootGroup.items[0], GroupType.TerminatedStatement, 0, 12, false, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0], GroupType.ForEachDeclaration, 0, 10, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0], GroupType.ReservedKeyword, 0, 0, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1], GroupType.ForEachExpression, 1, 10, true, 5);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0], GroupType.VariableName, 2, 2, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1], GroupType.Token, 3, 3, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2], GroupType.VariableName, 4, 4, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3], GroupType.ReservedKeyword, 5, 5, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3].items[0], GroupType.Identifier, 5, 5, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[4], GroupType.Reference, 6, 9, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[4].items[0], GroupType.FunctionCallWithObject, 6, 9, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[4].items[0].items[0], GroupType.Reference, 6, 6, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[4].items[0].items[0].items[0], GroupType.VariableName, 6, 6, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[4].items[0].items[1], GroupType.FunctionCall, 7, 9, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[4].items[0].items[1].items[0], GroupType.FunctionName, 7, 7, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[4].items[0].items[1].items[1], GroupType.FunctionParametersExpression, 8, 9, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1], GroupType.ForEachScope, 11, 12, true, 0);
+    });
+
+    test("#2.22.5 foreach", async () => {
+        const gsc = `foreach(value in level.array) { }`;
+        const tokens = GscFileParser.tokenize(gsc);
+        const rootGroup = GscFileParser.group(tokens);
+
+        checkGroup2(rootGroup, rootGroup, GroupType.Root, 0, 9, false, 1);
+        checkGroup2(rootGroup, rootGroup.items[0], GroupType.TerminatedStatement, 0, 9, false, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0], GroupType.ForEachDeclaration, 0, 7, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0], GroupType.ReservedKeyword, 0, 0, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1], GroupType.ForEachExpression, 1, 7, true, 3);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0], GroupType.VariableName, 2, 2, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1], GroupType.ReservedKeyword, 3, 3, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0], GroupType.Identifier, 3, 3, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2], GroupType.Reference, 4, 6, true, 3);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[0], GroupType.Reference, 4, 4, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[0].items[0], GroupType.VariableName, 4, 4, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[1], GroupType.Token, 5, 5, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[2], GroupType.StructureField, 6, 6, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1], GroupType.ForEachScope, 8, 9, true, 0);
+    });
+
+    test("#2.22.6 foreach", async () => {
+        const gsc = `foreach(value in array unknown) { }`;
+        const tokens = GscFileParser.tokenize(gsc);
+        const rootGroup = GscFileParser.group(tokens);
+
+        checkGroup2(rootGroup, rootGroup, GroupType.Root, 0, 8, false, 1);
+        checkGroup2(rootGroup, rootGroup.items[0], GroupType.TerminatedStatement, 0, 8, false, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0], GroupType.ForEachDeclaration, 0, 6, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0], GroupType.ReservedKeyword, 0, 0, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1], GroupType.ForEachExpression, 1, 6, true, 4);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0], GroupType.VariableName, 2, 2, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1], GroupType.ReservedKeyword, 3, 3, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0], GroupType.Identifier, 3, 3, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2], GroupType.Reference, 4, 4, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[0], GroupType.VariableName, 4, 4, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3], GroupType.Identifier, 5, 5, false, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1], GroupType.ForEachScope, 7, 8, true, 0);
+    });
+
+    test("#2.22.7 foreach", async () => {
+        const gsc = `foreach(value, key in array unknown) { }`;
+        const tokens = GscFileParser.tokenize(gsc);
+        const rootGroup = GscFileParser.group(tokens);
+
+        checkGroup2(rootGroup, rootGroup, GroupType.Root, 0, 10, false, 1);
+        checkGroup2(rootGroup, rootGroup.items[0], GroupType.TerminatedStatement, 0, 10, false, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0], GroupType.ForEachDeclaration, 0, 8, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0], GroupType.ReservedKeyword, 0, 0, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1], GroupType.ForEachExpression, 1, 8, true, 6);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0], GroupType.VariableName, 2, 2, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1], GroupType.Token, 3, 3, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2], GroupType.VariableName, 4, 4, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3], GroupType.ReservedKeyword, 5, 5, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3].items[0], GroupType.Identifier, 5, 5, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[4], GroupType.Reference, 6, 6, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[4].items[0], GroupType.VariableName, 6, 6, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[5], GroupType.Identifier, 7, 7, false, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1], GroupType.ForEachScope, 9, 10, true, 0);
+    });
+
+    test("#2.22.8 foreach", async () => {
+        const gsc = `foreach(value in ) { }`;
+        const tokens = GscFileParser.tokenize(gsc);
+        const rootGroup = GscFileParser.group(tokens);
+
+        checkGroup2(rootGroup, rootGroup, GroupType.Root, 0, 6, false, 1);
+        checkGroup2(rootGroup, rootGroup.items[0], GroupType.TerminatedStatement, 0, 6, false, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0], GroupType.ForEachDeclaration, 0, 4, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0], GroupType.ReservedKeyword, 0, 0, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1], GroupType.ForEachExpression, 1, 4, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0], GroupType.VariableName, 2, 2, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1], GroupType.ReservedKeyword, 3, 3, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0], GroupType.Identifier, 3, 3, false, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1], GroupType.ForEachScope, 5, 6, true, 0);
+    });
+
+    test("#2.22.9 foreach", async () => {
+        const gsc = `foreach(value in ) { }`;
+        const tokens = GscFileParser.tokenize(gsc);
+        const rootGroup = GscFileParser.group(tokens);
+
+        checkGroup2(rootGroup, rootGroup, GroupType.Root, 0, 6, false, 1);
+        checkGroup2(rootGroup, rootGroup.items[0], GroupType.TerminatedStatement, 0, 6, false, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0], GroupType.ForEachDeclaration, 0, 4, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0], GroupType.ReservedKeyword, 0, 0, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1], GroupType.ForEachExpression, 1, 4, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0], GroupType.VariableName, 2, 2, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1], GroupType.ReservedKeyword, 3, 3, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0], GroupType.Identifier, 3, 3, false, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1], GroupType.ForEachScope, 5, 6, true, 0);
+    });
+
+    test("#2.22.10 foreach", async () => {
+        const gsc = `foreach(value, key) { }`;
+        const tokens = GscFileParser.tokenize(gsc);
+        const rootGroup = GscFileParser.group(tokens);
+
+        checkGroup2(rootGroup, rootGroup, GroupType.Root, 0, 7, false, 1);
+        checkGroup2(rootGroup, rootGroup.items[0], GroupType.TerminatedStatement, 0, 7, false, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0], GroupType.ForEachDeclaration, 0, 5, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0], GroupType.ReservedKeyword, 0, 0, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1], GroupType.ForEachExpression, 1, 5, true, 3);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0], GroupType.VariableName, 2, 2, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1], GroupType.Token, 3, 3, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2], GroupType.VariableName, 4, 4, false, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1], GroupType.ForEachScope, 6, 7, true, 0);
+    });
 
 });

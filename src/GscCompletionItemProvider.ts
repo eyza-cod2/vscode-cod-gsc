@@ -307,6 +307,7 @@ export class GscCompletionItemProvider implements vscode.CompletionItemProvider 
             completionItems.push(new vscode.CompletionItem({label: "if", description: "", detail: ""}, vscode.CompletionItemKind.Keyword));
             completionItems.push(new vscode.CompletionItem({label: "else", description: "", detail: ""}, vscode.CompletionItemKind.Keyword));
             completionItems.push(new vscode.CompletionItem({label: "for", description: "", detail: ""}, vscode.CompletionItemKind.Keyword));
+            completionItems.push(new vscode.CompletionItem({label: "foreach", description: "", detail: ""}, vscode.CompletionItemKind.Keyword));
             completionItems.push(new vscode.CompletionItem({label: "while", description: "", detail: ""}, vscode.CompletionItemKind.Keyword));
             completionItems.push(new vscode.CompletionItem({label: "switch", description: "", detail: ""}, vscode.CompletionItemKind.Keyword));
             completionItems.push(new vscode.CompletionItem({label: "return", description: "", detail: ""}, vscode.CompletionItemKind.Keyword));
