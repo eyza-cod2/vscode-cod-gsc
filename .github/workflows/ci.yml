@@ -7,6 +7,7 @@ on:
   pull_request:
     branches:
       - master
+  workflow_dispatch:  # Enables manual triggering
 
 jobs:
   build:
@@ -27,9 +28,9 @@ jobs:
         run: npm install
 
       - name: Run Tests (Linux)
-        if: runner.os == 'Linux'
+        if: ${{ runner.os == 'Linux' }}
         run: xvfb-run -a npm test
 
       - name: Run Tests (macOS and Windows)
-        if: runner.os != 'Linux'
+        if: ${{ runner.os != 'Linux' }}
         run: npm test
