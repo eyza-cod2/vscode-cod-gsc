@@ -44,6 +44,8 @@ export enum GroupType {
     Reference,
     /** Name of the variable like level or game or var1 */
     VariableName,
+    /** Name of the global variable defined in root like "CONST_VAR1 = 1" */
+    VariableNameGlobal,
     /** Field of structure variable like level.aaa  */
     StructureField,
 
@@ -1718,6 +1720,21 @@ export class GscFileParser {
                     // In function
                     group.solved = lastFunctionScope !== undefined && lastDeveloperScope === undefined;
                     break;
+
+                case GroupType.Statement:
+                    // If its statement with TokenType.Assignment and it is in Root, its global variable
+                    if ((group.parent?.type === GroupType.Root || (group.parent?.type === GroupType.TerminatedStatement && group.parent?.parent?.type === GroupType.Root)) && 
+                        group.items.length === 3 && group.items[1].getSingleTokenType() === TokenType.Assignment &&
+                        group.items[0].type === GroupType.Reference &&
+                        group.items[0].items.length === 1 && group.items[0].items[0].type === GroupType.VariableName && group.items[0].items[0].items.length === 0)
+                    {
+                        // If this statement is wrapped in terminated statement, change it to solved group
+                        if (group.parent.type === GroupType.TerminatedStatement) {
+                            group.parent.solved = true;
+                        }
+                        // Change variable to global variable
+                        group.items[0].items[0].type = GroupType.VariableNameGlobal;
+                    }
 
                 case GroupType.Scope:
                 case GroupType.TerminatedStatement:
