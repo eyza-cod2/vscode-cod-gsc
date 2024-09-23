@@ -118,7 +118,10 @@ export enum GroupType {
     SwitchDeclaration,
     SwitchScope,
     CaseLabel,
-    CaseScope
+    CaseScope,
+
+    /** Conditional operator like a ? b : c */
+    Ternary
 }
 
 /**
@@ -144,7 +147,8 @@ export class GscFileParser {
         GroupType.Constant, GroupType.Reference, GroupType.Value,
         GroupType.Expression, GroupType.Vector,
         ...GscFileParser.functionCallTypes,
-        GroupType.FunctionPointer, GroupType.FunctionPointerExternal
+        GroupType.FunctionPointer, GroupType.FunctionPointerExternal,
+        GroupType.Ternary
     ];
 
     public static readonly valueTypesWithIdentifier = [...GscFileParser.valueTypes, GroupType.Identifier];
@@ -436,8 +440,12 @@ export class GscFileParser {
                         skip += 1;
                         addToken(TokenType.FunctionPointer, i, i + 2);
                     } else {
-                        addToken(TokenType.Case, i, i + 1);
+                        addToken(TokenType.Colon, i, i + 1);
                     }
+                    continue; // go to next char
+
+                case '?':
+                    addToken(TokenType.QuestionMark, i, i + 1);
                     continue; // go to next char
 
 
@@ -790,7 +798,7 @@ export class GscFileParser {
                 const childGroup1 = i === -1 ? undefined : parentGroup.items[i];
                 if (childGroup1 !== undefined && !childGroup1.isUnsolvedGroupOfOneOfType(GroupType.ReservedKeyword) &&
                     !childGroup1.isUnsolvedSingleTokenOfOneOfType(
-                    TokenType.Operator, TokenType.ParameterSeparator, TokenType.Assignment, TokenType.Assignment2, TokenType.OperatorLeft)) { continue; }
+                    TokenType.Operator, TokenType.ParameterSeparator, TokenType.Assignment, TokenType.Assignment2, TokenType.OperatorLeft, TokenType.Colon, TokenType.QuestionMark)) { continue; }
                 
                 // + - ,
                 const childGroup2 = parentGroup.items[i + 1];
@@ -991,6 +999,38 @@ export class GscFileParser {
                         changeGroupToSolvedAndChangeType(newGroup, childGroup1, finalGroup1Type);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup2, finalGroup2Type);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup3, finalGroup3Type);
+                        i--; continue; // go again to the same index
+                    }
+                } 
+            });
+        }
+
+        function group_ternary() {        
+            walkGroup(rootGroup, (parentGroup) => { 
+                for (var i = 0; i < parentGroup.items.length - 4; i++) {
+                    var childGroup1 = parentGroup.items[i];
+                    if (childGroup1.solved) { continue; }
+                    var childGroup2 = parentGroup.items[i + 1];
+                    if (childGroup2.solved) { continue; }
+                    var childGroup3 = parentGroup.items[i + 2];
+                    if (childGroup3.solved) { continue; }
+                    var childGroup4 = parentGroup.items[i + 3];
+                    if (childGroup4.solved) { continue; }
+                    var childGroup5 = parentGroup.items[i + 4];
+                    if (childGroup5.solved) { continue; }
+
+                    if (typeEqualsToOneOf(childGroup1.type, ...GscFileParser.valueTypesWithIdentifier) &&
+                        childGroup2.isUnknownUnsolvedSingleTokenOfOneOfType(TokenType.QuestionMark) &&
+                        typeEqualsToOneOf(childGroup3.type, ...GscFileParser.valueTypesWithIdentifier) &&
+                        childGroup4.isUnknownUnsolvedSingleTokenOfOneOfType(TokenType.Colon) &&
+                        typeEqualsToOneOf(childGroup5.type, ...GscFileParser.valueTypesWithIdentifier)) 
+                    {
+                        const newGroup = groupItems(parentGroup, i, GroupType.Ternary, 0, 0, [childGroup1, childGroup2, childGroup3, childGroup4, childGroup5]);
+                        changeGroupToSolvedAndChangeType(newGroup, childGroup1, GroupType.Value);
+                        changeGroupToSolvedAndChangeType(newGroup, childGroup2, GroupType.Token);
+                        changeGroupToSolvedAndChangeType(newGroup, childGroup3, GroupType.Value);
+                        changeGroupToSolvedAndChangeType(newGroup, childGroup4, GroupType.Token);
+                        changeGroupToSolvedAndChangeType(newGroup, childGroup5, GroupType.Value);
                         i--; continue; // go again to the same index
                     }
                 } 
@@ -1832,10 +1872,10 @@ export class GscFileParser {
 
 
         // case "aaa":
-        group_byKeywordAndGroupAndToken(["case"], [GroupType.Constant], TokenType.Case, 
+        group_byKeywordAndGroupAndToken(["case"], [GroupType.Constant], TokenType.Colon, 
             GroupType.CaseLabel, GroupType.ReservedKeyword, GroupType.Constant, GroupType.Token);
         // default:
-        group_byKeywordAndToken(["default"], TokenType.Case,
+        group_byKeywordAndToken(["default"], TokenType.Colon,
             GroupType.CaseLabel, GroupType.ReservedKeyword, GroupType.Token);
 
 
@@ -1869,6 +1909,10 @@ export class GscFileParser {
 
         // Change expression with 3 parameters to vector -> (0, 0, 0)
         walkGroup(rootGroup, (group) => { change_expressionToVector(group); }); 
+
+
+        // Terminate expressions like a ? b : c
+        group_ternary();
 
 
 
@@ -2384,7 +2428,9 @@ export enum TokenType {
     /** Char ',' */
     ParameterSeparator,
     /** Char ':' */
-    Case,
+    Colon,
+    /** Char '?' */
+    QuestionMark,
 
     /** Char '=' */
     Assignment,
