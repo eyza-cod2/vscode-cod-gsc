@@ -67,7 +67,7 @@
 			"patterns": [
 				{
 					"name": "keyword.control.gsc",
-					"match": "\\b(break(point)?|case|continue|default|else|for|if|return|switch|thread|waittill|waittillmatch|waittillframeend|while|wait|endon|notify)\\b"
+					"match": "\\b(break(point)?|case|continue|default|else|for|foreach|if|return|switch|thread|waittill|waittillmatch|waittillframeend|while|do|wait|endon|notify)\\b"
 				},
 				{
 					"name": "variable.language",

@@ -117,6 +117,11 @@ export enum GroupType {
     WhileDeclaration,
     WhileScope,
 
+    /** do {} while () */
+    DoDeclaration,
+    DoWhileDeclaration,
+    DoScope,
+
     SwitchDeclaration,
     SwitchScope,
     CaseLabel,
@@ -137,7 +142,7 @@ export enum GroupType {
 export class GscFileParser {
 
     public static readonly scopeTypes: GroupType[] = [
-        GroupType.FunctionScope, GroupType.IfScope, GroupType.ForScope, GroupType.ForEachScope, GroupType.WhileScope, 
+        GroupType.FunctionScope, GroupType.IfScope, GroupType.ForScope, GroupType.ForEachScope, GroupType.WhileScope, GroupType.DoScope,
         GroupType.SwitchScope, GroupType.CaseScope, GroupType.Scope, GroupType.DeveloperBlock, GroupType.DeveloperBlockInner
     ];
 
@@ -730,7 +735,7 @@ export class GscFileParser {
                         break;
 
                     case TokenType.Keyword:
-                        const knownKeywords = ["return", "if", "else", "for", "foreach", "while", "switch", "continue", "break", "case", "default", "thread", "wait", "waittillframeend", "waittill", "waittillmatch", "endon", "notify", "breakpoint"];
+                        const knownKeywords = ["return", "if", "else", "for", "foreach", "while", "do", "switch", "continue", "break", "case", "default", "thread", "wait", "waittillframeend", "waittill", "waittillmatch", "endon", "notify", "breakpoint"];
                         const knownConstants = ["true", "false", "undefined"];
 
                         if (knownConstants.includes(unknownToken.name)) {
@@ -919,7 +924,7 @@ export class GscFileParser {
                 ) || (
                     group.type === GroupType.FunctionCall && (newType === GroupType.FunctionDeclaration)
                 ) || (
-                    group.type === GroupType.Scope && (typeEqualsToOneOf(newType, GroupType.FunctionScope, GroupType.IfScope, GroupType.ForScope, GroupType.ForEachScope, GroupType.WhileScope, GroupType.SwitchScope))
+                    group.type === GroupType.Scope && (typeEqualsToOneOf(newType, GroupType.FunctionScope, GroupType.IfScope, GroupType.ForScope, GroupType.ForEachScope, GroupType.WhileScope, GroupType.DoScope, GroupType.SwitchScope))
                 ) || (
                     newType === GroupType.ForStatement && (typeEqualsToOneOf(group.type, GroupType.TerminatedStatement, GroupType.Terminator))
                 ) || (
@@ -1383,6 +1388,7 @@ export class GscFileParser {
                 [GroupType.IfDeclaration, GroupType.IfScope],
                 [GroupType.ForDeclaration, GroupType.ForScope],
                 [GroupType.ForEachDeclaration, GroupType.ForEachScope],
+                [GroupType.DoDeclaration, GroupType.DoScope],
                 [GroupType.WhileDeclaration, GroupType.WhileScope],
                 [GroupType.SwitchDeclaration, GroupType.SwitchScope]
             ]);      
@@ -1393,10 +1399,15 @@ export class GscFileParser {
                     if (!childGroup1.isUnsolvedGroupOfOneOfType(...map.keys())) { continue; }
                     const childGroup2 = parentGroup.items[i + 1];
 
-                    // Statement may be also in developer block (found in CoD1 raw code)
-                    // According test in CoD2 engine, developer block /##/ act the same as {}
-                    //   if (1) /# a = 1; b = 1;#/  (both a and b get assigned)
-                    if (!childGroup2.isUnsolvedGroupOfOneOfType(GroupType.Scope, GroupType.TerminatedStatement, GroupType.DeveloperBlock)) { continue; }
+                    // Check if the second group is scope, terminated statement or developer block (according to CoD2 engine, developer block /##/ act the same as {} scope) 
+                    const secondIsStatement = childGroup2.isUnsolvedGroupOfOneOfType(GroupType.Scope, GroupType.TerminatedStatement, GroupType.DeveloperBlock);
+
+                    // If its not terminated statement or scope (and its after if, for, do, while or switch), try to create "virtual" statement
+                    // There might be error in the one-line statement and instead of error on declaration show error on statement
+                    if (!secondIsStatement) {
+                        continue; 
+                    }
+
                     // Developer block /##/ is not valid for switch
                     if (childGroup1.type === GroupType.SwitchDeclaration && childGroup2.type === GroupType.DeveloperBlock) { continue; }
                     
@@ -1410,7 +1421,37 @@ export class GscFileParser {
                         changeGroupToSolvedAndChangeType(newGroup, childGroup3, GroupType.ReservedKeyword);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup4, GroupType.IfScope);
                     }
+                    else if (childGroup1.type === GroupType.DoDeclaration && childGroup3?.type === GroupType.WhileDeclaration) {
+
+                        // First wrap into un-terminated statement to correctly catch missing semicolon
+                        const newGroup = groupItems(parentGroup, i, GroupType.Statement, 0, 0, [childGroup1, childGroup2, childGroup3]);
+                        changeGroupToSolvedAndChangeType(newGroup, childGroup1, GroupType.DoDeclaration);
+                        changeGroupToSolvedAndChangeType(newGroup, childGroup2, GroupType.DoScope);
+                        changeGroupToSolvedAndChangeType(newGroup, childGroup3, GroupType.DoWhileDeclaration);
+
+                        // If there is terminator after while(..), wrap it into terminated statement
+                        if (childGroup4?.type === GroupType.Terminator) {
+                            const newGroup2 = groupItems(parentGroup, i, GroupType.TerminatedStatement, 0, 0, [newGroup, childGroup4]);
+                            changeGroupToSolvedAndChangeType(newGroup2, newGroup, GroupType.Statement);
+                            changeGroupToSolvedAndChangeType(newGroup2, childGroup4, GroupType.Terminator);
+                        }
+                    }
+
                     else {
+
+                        // Do must always have WhileDeclaration after scope, if not leave unsolved
+                        if (childGroup1.type === GroupType.DoDeclaration && childGroup3?.type !== GroupType.WhileDeclaration) {
+                            continue; 
+                        }
+
+                        // This while(...) is part of do { } while(...);, don't wrap it 
+                        if (childGroup1.type === GroupType.WhileDeclaration) {
+                            const childGroup0 = parentGroup.items.at(i - 2);
+                            if (childGroup0?.type === GroupType.DoDeclaration) {
+                                continue; 
+                            }
+                        }
+
                         const newGroup = groupItems(parentGroup, i, GroupType.TerminatedStatement, 0, 0, [childGroup1, childGroup2]);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup1, undefined);
                         changeGroupToSolvedAndChangeType(newGroup, childGroup2, map.get(childGroup1.type));    
@@ -1880,12 +1921,14 @@ export class GscFileParser {
         // foreach ()
         group_byKeywordNameAndGroup(["foreach"], [GroupType.Expression], 
             GroupType.ForEachDeclaration, GroupType.ReservedKeyword, GroupType.ForEachExpression);
-        // while ()
+        // while ()    (might be changed to do-while)
         group_byKeywordNameAndGroup(["while"], [GroupType.Expression], 
             GroupType.WhileDeclaration, GroupType.ReservedKeyword, GroupType.Expression);
         // switch ()
         group_byKeywordNameAndGroup(["switch"], [GroupType.Expression], 
             GroupType.SwitchDeclaration, GroupType.ReservedKeyword, GroupType.Expression);
+        // do
+        group_byKeyword(["do"], GroupType.DoDeclaration, GroupType.ReservedKeyword);
 
 
         // case "aaa":
@@ -1967,11 +2010,18 @@ export class GscFileParser {
                 
 
 
-        // statement;
+        // Termination;
+        // keyword;
+        // functionCall();
+        // waittill(...);
+        // level waittill(...);
         const terminationNeededFor = [GroupType.Statement, ...GscFileParser.functionCallTypes,
-            GroupType.KeywordCall, GroupType.KeywordCallWithObject];
+            GroupType.KeywordCall, GroupType.KeywordCallWithObject
+        ];
+
         group_byGroupAndGroup(terminationNeededFor, [GroupType.Terminator], 
             GroupType.TerminatedStatement, GroupType.Statement, GroupType.Terminator);
+
 
         // preprocessor;
         group_byGroupAndGroup([GroupType.PreprocessorStatement], [GroupType.Terminator], 
@@ -1982,8 +2032,11 @@ export class GscFileParser {
         // if() {} else
         // for (...) {}       
         // for (...) var1=1;
+        // switch() {}
+        // while() {}
         // foreach(...) {}
         // foreach(...) var1=1;
+        // do {} while();
         group_declarations();
 
         

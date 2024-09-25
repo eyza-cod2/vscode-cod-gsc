@@ -4100,77 +4100,211 @@ var = (self f1() + self f2()) > 5 ? self f_true() : self f_false(arg1, v ? 1 : 0
 
 
 
-suite("GscFileParser.parse #2.24 global variables", () => {
+suite("GscFileParser.parse #2.25 do while", () => {
 
-    test("#2.24.1 global variables", async () => {
+    test("#2.25.1 do while", async () => {
         const gsc = `
-CONST_AAA = 1;
-main() {}
+do {} while (bPredictMore);
         `;
         const tokens = GscFileParser.tokenize(gsc);
         const rootGroup = GscFileParser.group(tokens);
 
-        checkGroup2(rootGroup, rootGroup, GroupType.Root, 0, 8, false, 2);
-        checkGroup2(rootGroup, rootGroup.items[0], GroupType.TerminatedStatement, 0, 3, true, 2);
-        checkGroup2(rootGroup, rootGroup.items[0].items[0], GroupType.Statement, 0, 2, true, 3);
-        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0], GroupType.Reference, 0, 0, true, 1);
-        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0].items[0], GroupType.VariableNameGlobal, 0, 0, true, 0);
-        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1], GroupType.Token, 1, 1, true, 0);
-        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2], GroupType.Constant, 2, 2, true, 0);
-        checkGroup2(rootGroup, rootGroup.items[0].items[1], GroupType.Terminator, 3, 3, true, 0);
-        checkGroup2(rootGroup, rootGroup.items[1], GroupType.FunctionDefinition, 4, 8, true, 2);
-        checkGroup2(rootGroup, rootGroup.items[1].items[0], GroupType.FunctionDeclaration, 4, 6, true, 2);
-        checkGroup2(rootGroup, rootGroup.items[1].items[0].items[0], GroupType.FunctionName, 4, 4, true, 0);
-        checkGroup2(rootGroup, rootGroup.items[1].items[0].items[1], GroupType.FunctionParametersExpression, 5, 6, true, 0);
-        checkGroup2(rootGroup, rootGroup.items[1].items[1], GroupType.FunctionScope, 7, 8, true, 0);
+        checkGroup2(rootGroup, rootGroup, GroupType.Root, 0, 7, false, 1);
+        checkGroup2(rootGroup, rootGroup.items[0], GroupType.TerminatedStatement, 0, 7, false, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0], GroupType.Statement, 0, 6, true, 3);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0], GroupType.DoDeclaration, 0, 0, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0].items[0], GroupType.ReservedKeyword, 0, 0, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1], GroupType.DoScope, 1, 2, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2], GroupType.DoWhileDeclaration, 3, 6, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2].items[0], GroupType.WhileDeclaration, 3, 6, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2].items[0].items[0], GroupType.ReservedKeyword, 3, 3, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2].items[0].items[1], GroupType.Expression, 4, 6, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2].items[0].items[1].items[0], GroupType.Reference, 5, 5, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2].items[0].items[1].items[0].items[0], GroupType.VariableName, 5, 5, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1], GroupType.Terminator, 7, 7, true, 0);
     });
 
-
-    test("#2.24.2 global variables", async () => {
+    test("#2.25.2 do while without {}", async () => {
         const gsc = `
-CONST_AAA = "";
-CONST_AAA = 1 / 5;
-CONST_AAA = v ? 1 : 2;
-main() {}
+do a(); while(true);
         `;
         const tokens = GscFileParser.tokenize(gsc);
         const rootGroup = GscFileParser.group(tokens);
 
-        checkGroup2(rootGroup, rootGroup, GroupType.Root, 0, 22, false, 4);
-        checkGroup2(rootGroup, rootGroup.items[0], GroupType.TerminatedStatement, 0, 3, true, 2);
-        checkGroup2(rootGroup, rootGroup.items[0].items[0], GroupType.Statement, 0, 2, true, 3);
-        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0], GroupType.Reference, 0, 0, true, 1);
-        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0].items[0], GroupType.VariableNameGlobal, 0, 0, true, 0);
-        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1], GroupType.Token, 1, 1, true, 0);
-        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2], GroupType.Constant, 2, 2, true, 0);
-        checkGroup2(rootGroup, rootGroup.items[0].items[1], GroupType.Terminator, 3, 3, true, 0);
-        checkGroup2(rootGroup, rootGroup.items[1], GroupType.TerminatedStatement, 4, 9, true, 2);
-        checkGroup2(rootGroup, rootGroup.items[1].items[0], GroupType.Statement, 4, 8, true, 3);
-        checkGroup2(rootGroup, rootGroup.items[1].items[0].items[0], GroupType.Reference, 4, 4, true, 1);
-        checkGroup2(rootGroup, rootGroup.items[1].items[0].items[0].items[0], GroupType.VariableNameGlobal, 4, 4, true, 0);
-        checkGroup2(rootGroup, rootGroup.items[1].items[0].items[1], GroupType.Token, 5, 5, true, 0);
-        checkGroup2(rootGroup, rootGroup.items[1].items[0].items[2], GroupType.Value, 6, 8, true, 3);
-        checkGroup2(rootGroup, rootGroup.items[1].items[0].items[2].items[0], GroupType.Constant, 6, 6, true, 0);
-        checkGroup2(rootGroup, rootGroup.items[1].items[0].items[2].items[1], GroupType.Token, 7, 7, true, 0);
-        checkGroup2(rootGroup, rootGroup.items[1].items[0].items[2].items[2], GroupType.Constant, 8, 8, true, 0);
-        checkGroup2(rootGroup, rootGroup.items[1].items[1], GroupType.Terminator, 9, 9, true, 0);
-        checkGroup2(rootGroup, rootGroup.items[2], GroupType.TerminatedStatement, 10, 17, true, 2);
-        checkGroup2(rootGroup, rootGroup.items[2].items[0], GroupType.Statement, 10, 16, true, 3);
-        checkGroup2(rootGroup, rootGroup.items[2].items[0].items[0], GroupType.Reference, 10, 10, true, 1);
-        checkGroup2(rootGroup, rootGroup.items[2].items[0].items[0].items[0], GroupType.VariableNameGlobal, 10, 10, true, 0);
-        checkGroup2(rootGroup, rootGroup.items[2].items[0].items[1], GroupType.Token, 11, 11, true, 0);
-        checkGroup2(rootGroup, rootGroup.items[2].items[0].items[2], GroupType.Ternary, 12, 16, true, 5);
-        checkGroup2(rootGroup, rootGroup.items[2].items[0].items[2].items[0], GroupType.Reference, 12, 12, true, 1);
-        checkGroup2(rootGroup, rootGroup.items[2].items[0].items[2].items[0].items[0], GroupType.VariableName, 12, 12, true, 0);
-        checkGroup2(rootGroup, rootGroup.items[2].items[0].items[2].items[1], GroupType.Token, 13, 13, true, 0);
-        checkGroup2(rootGroup, rootGroup.items[2].items[0].items[2].items[2], GroupType.Constant, 14, 14, true, 0);
-        checkGroup2(rootGroup, rootGroup.items[2].items[0].items[2].items[3], GroupType.Token, 15, 15, true, 0);
-        checkGroup2(rootGroup, rootGroup.items[2].items[0].items[2].items[4], GroupType.Constant, 16, 16, true, 0);
-        checkGroup2(rootGroup, rootGroup.items[2].items[1], GroupType.Terminator, 17, 17, true, 0);
-        checkGroup2(rootGroup, rootGroup.items[3], GroupType.FunctionDefinition, 18, 22, true, 2);
-        checkGroup2(rootGroup, rootGroup.items[3].items[0], GroupType.FunctionDeclaration, 18, 20, true, 2);
-        checkGroup2(rootGroup, rootGroup.items[3].items[0].items[0], GroupType.FunctionName, 18, 18, true, 0);
-        checkGroup2(rootGroup, rootGroup.items[3].items[0].items[1], GroupType.FunctionParametersExpression, 19, 20, true, 0);
-        checkGroup2(rootGroup, rootGroup.items[3].items[1], GroupType.FunctionScope, 21, 22, true, 0);
+        checkGroup2(rootGroup, rootGroup, GroupType.Root, 0, 9, false, 1);
+        checkGroup2(rootGroup, rootGroup.items[0], GroupType.TerminatedStatement, 0, 9, false, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0], GroupType.Statement, 0, 8, true, 3);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0], GroupType.DoDeclaration, 0, 0, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0].items[0], GroupType.ReservedKeyword, 0, 0, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1], GroupType.DoScope, 1, 4, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0], GroupType.TerminatedStatement, 1, 4, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0], GroupType.Statement, 1, 3, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0].items[0], GroupType.FunctionCall, 1, 3, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0].items[0].items[0], GroupType.FunctionName, 1, 1, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0].items[0].items[1], GroupType.FunctionParametersExpression, 2, 3, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[1], GroupType.Terminator, 4, 4, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2], GroupType.DoWhileDeclaration, 5, 8, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2].items[0], GroupType.WhileDeclaration, 5, 8, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2].items[0].items[0], GroupType.ReservedKeyword, 5, 5, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2].items[0].items[1], GroupType.Expression, 6, 8, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2].items[0].items[1].items[0], GroupType.Constant, 7, 7, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1], GroupType.Terminator, 9, 9, true, 0);
     });
+
+    test("#2.25.3 do while inner", async () => {
+        const gsc = `
+    do {
+        do {} while (a);
+    } while (a);
+        `;
+        const tokens = GscFileParser.tokenize(gsc);
+        const rootGroup = GscFileParser.group(tokens);
+
+        checkGroup2(rootGroup, rootGroup, GroupType.Root, 0, 15, false, 1);
+        checkGroup2(rootGroup, rootGroup.items[0], GroupType.TerminatedStatement, 0, 15, false, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0], GroupType.Statement, 0, 14, true, 3);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0], GroupType.DoDeclaration, 0, 0, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0].items[0], GroupType.ReservedKeyword, 0, 0, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1], GroupType.DoScope, 1, 10, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0], GroupType.TerminatedStatement, 2, 9, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0], GroupType.Statement, 2, 8, true, 3);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0].items[0], GroupType.DoDeclaration, 2, 2, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0].items[0].items[0], GroupType.ReservedKeyword, 2, 2, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0].items[1], GroupType.DoScope, 3, 4, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0].items[2], GroupType.DoWhileDeclaration, 5, 8, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0].items[2].items[0], GroupType.WhileDeclaration, 5, 8, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0].items[2].items[0].items[0], GroupType.ReservedKeyword, 5, 5, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0].items[2].items[0].items[1], GroupType.Expression, 6, 8, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0].items[2].items[0].items[1].items[0], GroupType.Reference, 7, 7, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0].items[2].items[0].items[1].items[0].items[0], GroupType.VariableName, 7, 7, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[1], GroupType.Terminator, 9, 9, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2], GroupType.DoWhileDeclaration, 11, 14, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2].items[0], GroupType.WhileDeclaration, 11, 14, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2].items[0].items[0], GroupType.ReservedKeyword, 11, 11, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2].items[0].items[1], GroupType.Expression, 12, 14, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2].items[0].items[1].items[0], GroupType.Reference, 13, 13, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2].items[0].items[1].items[0].items[0], GroupType.VariableName, 13, 13, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1], GroupType.Terminator, 15, 15, true, 0);
+    });
+
+    test("#2.25.4 do while missing ;", async () => {
+        const gsc = `
+do {} while (true)
+        `;
+        const tokens = GscFileParser.tokenize(gsc);
+        const rootGroup = GscFileParser.group(tokens);
+
+        checkGroup2(rootGroup, rootGroup, GroupType.Root, 0, 6, false, 1);
+        checkGroup2(rootGroup, rootGroup.items[0], GroupType.Statement, 0, 6, false, 3);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0], GroupType.DoDeclaration, 0, 0, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0], GroupType.ReservedKeyword, 0, 0, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1], GroupType.DoScope, 1, 2, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[2], GroupType.DoWhileDeclaration, 3, 6, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[2].items[0], GroupType.WhileDeclaration, 3, 6, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[2].items[0].items[0], GroupType.ReservedKeyword, 3, 3, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[2].items[0].items[1], GroupType.Expression, 4, 6, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[2].items[0].items[1].items[0], GroupType.Constant, 5, 5, true, 0);
+    });
+
+
+    test("#2.25.5 do while complex", async () => {
+        const gsc = `
+    do 
+    {
+        thread getNotetrack(notifyName);
+        bPredictMore = self PredictAnim(true);
+        self notify(notifyName); // make notetrack be undefined if no anim notify occurs
+        if (isdefined(notetrack))
+        {
+            if (notetrack == "end")
+                return true;
+        }
+    } while (bPredictMore);
+    
+    aa = 1;
+        `;
+        const tokens = GscFileParser.tokenize(gsc);
+        const rootGroup = GscFileParser.group(tokens);
+
+        checkGroup2(rootGroup, rootGroup, GroupType.Root, 0, 49, false, 2);
+        checkGroup2(rootGroup, rootGroup.items[0], GroupType.TerminatedStatement, 0, 45, false, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0], GroupType.Statement, 0, 44, true, 3);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0], GroupType.DoDeclaration, 0, 0, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0].items[0], GroupType.ReservedKeyword, 0, 0, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1], GroupType.DoScope, 1, 40, true, 4);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0], GroupType.TerminatedStatement, 2, 7, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0], GroupType.Statement, 2, 6, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0].items[0], GroupType.FunctionCallWithThread, 2, 6, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0].items[0].items[0], GroupType.ReservedKeyword, 2, 2, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0].items[0].items[1], GroupType.FunctionCall, 3, 6, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0].items[0].items[1].items[0], GroupType.FunctionName, 3, 3, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0].items[0].items[1].items[1], GroupType.FunctionParametersExpression, 4, 6, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0].items[0].items[1].items[1].items[0], GroupType.FunctionParameterName, 5, 5, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[1], GroupType.Terminator, 7, 7, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1], GroupType.TerminatedStatement, 8, 15, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0], GroupType.Statement, 8, 14, true, 3);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0].items[0], GroupType.Reference, 8, 8, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0].items[0].items[0], GroupType.VariableName, 8, 8, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0].items[1], GroupType.Token, 9, 9, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0].items[2], GroupType.FunctionCallWithObject, 10, 14, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0].items[2].items[0], GroupType.Reference, 10, 10, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0].items[2].items[0].items[0], GroupType.VariableName, 10, 10, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0].items[2].items[1], GroupType.FunctionCall, 11, 14, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0].items[2].items[1].items[0], GroupType.FunctionName, 11, 11, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0].items[2].items[1].items[1], GroupType.FunctionParametersExpression, 12, 14, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0].items[2].items[1].items[1].items[0], GroupType.Constant, 13, 13, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[1], GroupType.Terminator, 15, 15, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2], GroupType.TerminatedStatement, 16, 21, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[0], GroupType.Statement, 16, 20, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[0].items[0], GroupType.KeywordCallWithObject, 16, 20, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[0].items[0].items[0], GroupType.Reference, 16, 16, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[0].items[0].items[0].items[0], GroupType.VariableName, 16, 16, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[0].items[0].items[1], GroupType.KeywordCall, 17, 20, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[0].items[0].items[1].items[0], GroupType.ReservedKeyword, 17, 17, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[0].items[0].items[1].items[1], GroupType.KeywordParametersExpression, 18, 20, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[0].items[0].items[1].items[1].items[0], GroupType.Reference, 19, 19, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[0].items[0].items[1].items[1].items[0].items[0], GroupType.VariableName, 19, 19, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[1], GroupType.Terminator, 21, 21, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3], GroupType.TerminatedStatement, 22, 39, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3].items[0], GroupType.IfDeclaration, 22, 28, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3].items[0].items[0], GroupType.ReservedKeyword, 22, 22, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3].items[0].items[1], GroupType.Expression, 23, 28, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3].items[0].items[1].items[0], GroupType.FunctionCall, 24, 27, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3].items[0].items[1].items[0].items[0], GroupType.FunctionName, 24, 24, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3].items[0].items[1].items[0].items[1], GroupType.FunctionParametersExpression, 25, 27, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3].items[0].items[1].items[0].items[1].items[0], GroupType.FunctionParameterName, 26, 26, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3].items[1], GroupType.IfScope, 29, 39, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3].items[1].items[0], GroupType.TerminatedStatement, 30, 38, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3].items[1].items[0].items[0], GroupType.IfDeclaration, 30, 35, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3].items[1].items[0].items[0].items[0], GroupType.ReservedKeyword, 30, 30, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3].items[1].items[0].items[0].items[1], GroupType.Expression, 31, 35, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3].items[1].items[0].items[0].items[1].items[0], GroupType.Value, 32, 34, true, 3);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3].items[1].items[0].items[0].items[1].items[0].items[0], GroupType.Reference, 32, 32, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3].items[1].items[0].items[0].items[1].items[0].items[0].items[0], GroupType.VariableName, 32, 32, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3].items[1].items[0].items[0].items[1].items[0].items[1], GroupType.Token, 33, 33, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3].items[1].items[0].items[0].items[1].items[0].items[2], GroupType.Constant, 34, 34, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3].items[1].items[0].items[1], GroupType.IfScope, 36, 38, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3].items[1].items[0].items[1].items[0], GroupType.TerminatedStatement, 36, 38, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3].items[1].items[0].items[1].items[0].items[0], GroupType.Statement, 36, 37, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3].items[1].items[0].items[1].items[0].items[0].items[0], GroupType.ReservedKeyword, 36, 36, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3].items[1].items[0].items[1].items[0].items[0].items[1], GroupType.Constant, 37, 37, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[3].items[1].items[0].items[1].items[0].items[1], GroupType.Terminator, 38, 38, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2], GroupType.DoWhileDeclaration, 41, 44, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2].items[0], GroupType.WhileDeclaration, 41, 44, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2].items[0].items[0], GroupType.ReservedKeyword, 41, 41, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2].items[0].items[1], GroupType.Expression, 42, 44, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2].items[0].items[1].items[0], GroupType.Reference, 43, 43, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2].items[0].items[1].items[0].items[0], GroupType.VariableName, 43, 43, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1], GroupType.Terminator, 45, 45, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[1], GroupType.TerminatedStatement, 46, 49, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[1].items[0], GroupType.Statement, 46, 48, true, 3);
+        checkGroup2(rootGroup, rootGroup.items[1].items[0].items[0], GroupType.Reference, 46, 46, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[1].items[0].items[0].items[0], GroupType.VariableNameGlobal, 46, 46, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[1].items[0].items[1], GroupType.Token, 47, 47, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[1].items[0].items[2], GroupType.Constant, 48, 48, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[1].items[1], GroupType.Terminator, 49, 49, true, 0);
+    });
+
+
+
 });
