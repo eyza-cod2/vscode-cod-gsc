@@ -1405,6 +1405,26 @@ export class GscFileParser {
                     // If its not terminated statement or scope (and its after if, for, do, while or switch), try to create "virtual" statement
                     // There might be error in the one-line statement and instead of error on declaration show error on statement
                     if (!secondIsStatement) {
+                        // If its like "if(true);" - leave it as not solved
+                        if (childGroup2.type === GroupType.Terminator) {
+                            continue;
+                        }
+
+                        // If the second group is not statement, loop until terminator or statement is found
+                        let virtualRange: GscGroup[] = [];
+                        for (var j = i + 2; j < parentGroup.items.length; j++) {
+                            const childGroup = parentGroup.items[j];
+                            if (childGroup.isUnsolvedGroupOfOneOfType(GroupType.Terminator, GroupType.TerminatedStatement, ...GscFileParser.scopeTypes)) {
+                                virtualRange = parentGroup.items.slice(i + 1, j + 1);
+                                break;
+                            }
+                        }
+                        // Group the virtual range
+                        if (virtualRange.length > 0) {
+                            const newGroup = groupItems(parentGroup, i + 1, GroupType.TerminatedStatement, 0, 0, virtualRange);
+                            newGroup.solved = false;
+                            i++; continue; // go again to the same index
+                        }
                         continue; 
                     }
 
