@@ -1796,25 +1796,29 @@ export class GscFileParser {
                         // Change variable to global variable
                         group.items[0].items[0].type = GroupType.VariableNameGlobal;
                     }
+                    break;
 
-                case GroupType.Scope:
-                case GroupType.TerminatedStatement:
+
+                // Terminators that are inside scope (except for switch scope) and are after solved item consider as not needed (extra terminator)
                 case GroupType.Terminator:
-                    if (parentGroup !== undefined && (
-                        (parentGroup.typeEqualsToOneOf(...GscFileParser.scopeTypes) && parentGroup.type !== GroupType.SwitchScope))) 
-                    {
-                        if (group.type === GroupType.Terminator) {
-                            if (group.solved === false && (previousItem === undefined || previousItem.solved)) {
-                                group.type = GroupType.ExtraTerminator;
-                                group.solved = true; 
-                            }
-                        } else {
-
+                    if (parentGroup?.typeEqualsToOneOf(...GscFileParser.scopeTypes) && parentGroup.type !== GroupType.SwitchScope) {
+                        // If previous item is solved or this terminator is only item in the group, change it to ExtraTerminator
+                        if (group.solved === false && (previousItem?.solved || parentGroup.items.length === 1)) {
+                            group.type = GroupType.ExtraTerminator;
                             group.solved = true; 
                         }
-
                     }
                     break;
+
+
+                // Scopes and terminated statements that are inside scope (except for switch scope) consider as solved
+                case GroupType.Scope:
+                case GroupType.TerminatedStatement:
+                    if (parentGroup?.typeEqualsToOneOf(...GscFileParser.scopeTypes) && parentGroup.type !== GroupType.SwitchScope)  {
+                        group.solved = true; 
+                    }
+                    break;
+
 
                 case GroupType.Expression:
 
