@@ -612,7 +612,7 @@ export class GscFileParser {
 
         function groupItems(parentGroup: GscGroup, startIndex: number, wrapType: GroupType, trimGroupStartBy: number, trimGroupEndBy: number, groups: GscGroup[]): GscGroup {
             if (groups.length === 0) {
-                throw new Error("No groups");
+                throw new Error("No child items in group \n" + parentGroup.toString() + "\nCode: '" + parentGroup.parent?.getTokensAsString() + "'");
             }
 
             // Don't wrap Value into another Value

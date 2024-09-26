@@ -309,8 +309,8 @@ export class GscFiles {
             //console.log(`  total time: ${(endParsing - start).toFixed(1)}, loading: ${(endLoading - start).toFixed(1)}, parsing: ${(endParsing - endLoading).toFixed(1)}`);
             return gscData;
         } catch (error) {
-            void vscode.window.showErrorMessage("Error while parsing file " + vscode.workspace.asRelativePath(fileUri) + ". " + error);
-            throw error;
+            const errorNew = new Error("Error while parsing file " + vscode.workspace.asRelativePath(fileUri) + ". " + error);
+            throw errorNew;
         }
     }
 
