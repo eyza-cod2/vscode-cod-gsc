@@ -1835,6 +1835,8 @@ suite('GscFileParser.parse #2.9 operators, values', () => {
         checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2].items[0], GroupType.Token, 7, 7, true, 0);
         checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2].items[1], GroupType.Constant, 8, 8, true, 0);
     });
+
+
     test(`#2.9.5 pos neg numbers`, async () => {
         const gsc = `var1 = 1 + -1 + -.1 > -5.1`;
         const tokens = GscFileParser.tokenize(gsc);
@@ -1919,6 +1921,24 @@ suite('GscFileParser.parse #2.9 operators, values', () => {
     });
 
     
+    test(`#2.9.8 double left operator`, async () => {
+        const gsc = `var1 = !!true;`;
+        const tokens = GscFileParser.tokenize(gsc);
+        const rootGroup = GscFileParser.group(tokens);
+
+        checkGroup2(rootGroup, rootGroup, GroupType.Root, 0, 5, false, 1);
+        checkGroup2(rootGroup, rootGroup.items[0], GroupType.TerminatedStatement, 0, 5, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0], GroupType.Statement, 0, 4, true, 3);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0], GroupType.Reference, 0, 0, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0].items[0], GroupType.VariableNameGlobal, 0, 0, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1], GroupType.Token, 1, 1, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2], GroupType.Value, 2, 4, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2].items[0], GroupType.Token, 2, 2, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2].items[1], GroupType.Value, 3, 4, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2].items[1].items[0], GroupType.Token, 3, 3, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[2].items[1].items[1], GroupType.Constant, 4, 4, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1], GroupType.Terminator, 5, 5, true, 0);
+    });
 });
 
 

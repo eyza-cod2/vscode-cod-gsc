@@ -1273,8 +1273,27 @@ export class GscFileParser {
         }
  
 
+        function group_operators_left(rootGroup: GscGroup) {   
+            walkGroup(rootGroup, (parentGroup) => { 
 
-        function group_value_operations(rootGroup: GscGroup) {
+                for (var i = parentGroup.items.length - 2; i >= 0; i--) {
+                    const childGroup1 = parentGroup.items[i];
+                    const typeOfUnknownToken1 = childGroup1.getTypeOfUnknownToken();
+                    if (typeOfUnknownToken1 !== TokenType.OperatorLeft) { continue; }
+
+                    const childGroup2 = parentGroup.items[i + 1];
+                    if (!childGroup2.isUnsolvedGroupOfOneOfType(...GscFileParser.valueTypesWithIdentifier)) { continue; }
+
+                    // !var1   !level.aaa   !(...)      ~var1   
+                    const newGroup = groupItems(parentGroup, i, GroupType.Value, 0, 0, [childGroup1, childGroup2]);
+                    changeGroupToSolvedAndChangeType(newGroup, childGroup1, GroupType.Token);
+                    changeGroupToSolvedAndChangeType(newGroup, childGroup2, GroupType.Value);
+                    i++; continue; // go again to the same index
+                }
+            });
+        }
+
+        function group_operators(rootGroup: GscGroup) {
             walkGroup(rootGroup, (parentGroup) => { 
                 if (parentGroup.items.length === 0) { return; }
                 for (var i = 0; i < parentGroup.items.length; i++) {   
@@ -1286,18 +1305,6 @@ export class GscFileParser {
                     if (childGroup2?.solved) { continue; } 
                     const childGroup3 = parentGroup.items.at(i + 2);
                     const childGroup4 = parentGroup.items.at(i + 3);
-
-                    const typeOfUnknownToken1 = childGroup1.getTypeOfUnknownToken();
-
-                    // !var1   !level.aaa   !(...)      ~var1
-                    if (typeOfUnknownToken1 === TokenType.OperatorLeft &&
-                        childGroup2?.isUnsolvedGroupOfOneOfType(...GscFileParser.valueTypesWithIdentifier))
-                    {
-                        const newGroup = groupItems(parentGroup, i, GroupType.Value, 0, 0, [childGroup1, childGroup2]);
-                        changeGroupToSolvedAndChangeType(newGroup, childGroup1, GroupType.Token);
-                        changeGroupToSolvedAndChangeType(newGroup, childGroup2, GroupType.Value);
-                        i--; continue; // go again to the same index
-                    }
 
                     const typeOfUnknownToken3 = childGroup3?.getTypeOfUnknownToken();
                     const typeOfUnknownToken2 = childGroup2?.getTypeOfUnknownToken();
@@ -2058,10 +2065,16 @@ export class GscFileParser {
 
         // Join (int)1   (int)level.name
         group_casting(rootGroup);
+
+
+        
+        // Join left operators 
+        // !var1   !level.aaa   !(...)   ~var1
+        group_operators_left(rootGroup);
  
         // Join operations
-        // !var1   !level.aaa   !(...)   ~var1   aaa && !var1   aaa && !level.aaa   aaa && !(...)  aaa && bbb  %anim_file_name
-        group_value_operations(rootGroup);
+        // aaa && !var1   aaa && !level.aaa   aaa && !(...)  aaa && bbb  %anim_file_name
+        group_operators(rootGroup);
 
 
 
