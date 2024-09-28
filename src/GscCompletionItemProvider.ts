@@ -103,7 +103,7 @@ export class GscCompletionItemProvider implements vscode.CompletionItemProvider 
             const inWord = variableBeforeCursor === "" || groupAtCursor?.typeEqualsToOneOf(GroupType.VariableName, GroupType.Identifier);
             const inStructureVariable = (groupAtCursor?.type === GroupType.StructureField || (groupAtCursor?.getFirstToken().name === "."));
             const inArrayBrackets = (
-                (groupAtCursor?.type === GroupType.Array && position.character < groupAtCursor.getRange().end.character) || // xxx[...]
+                (groupAtCursor?.type === GroupType.ArrayAccess && position.character < groupAtCursor.getRange().end.character) || // xxx[...]
                 (variableBeforeCursor.at(-1) === "[") // xxx[
             );
 
