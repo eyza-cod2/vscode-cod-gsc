@@ -1168,8 +1168,10 @@ export class GscFileParser {
 
                     const group2_isCall = childGroup2?.isUnsolvedGroupOfOneOfType(GroupType.FunctionCall, GroupType.KeywordCall) ?? false;
 
+                    const isInForeach = parentGroup.type === GroupType.ForEachExpression;
+
                     // var func();   or    var waittill();
-                    if (group1_isVarReference && group2_isCall) {
+                    if (group1_isVarReference && group2_isCall && !isInForeach) {
                         const finalType = childGroup2!.type === GroupType.FunctionCall 
                             ? GroupType.FunctionCallWithObject
                             : GroupType.KeywordCallWithObject;
@@ -1634,29 +1636,34 @@ export class GscFileParser {
                         // foreach (key, value in items)    Identifier Unknown Identifier Identifier Identifier
 
                         // foreach (value in level getMeAnArray())
+                        // foreach (value in getMeAnArray())
                         
                         const isValue = i === 2 && isKeyAndValue;
                         const isInTheIn = (i === 1 && !isKeyAndValue) || (i === 3 && isKeyAndValue);
                         const isArray = (i === 2 && !isKeyAndValue) || (i === 4 && isKeyAndValue);
 
-
+                        // First: might be value or key
                         if (i === 0 && childGroup.type === GroupType.Identifier) {
                             changeGroupToSolvedAndChangeType(group, childGroup, GroupType.VariableName);
                             childGroup.solved = true;
 
+                        // Second: if its comma, it means there is key and value
                         } else if (i === 1 && childGroup.isUnknownUnsolvedSingleTokenOfOneOfType(TokenType.ParameterSeparator)) {
                             changeGroupToSolvedAndChangeType(group, childGroup, GroupType.Token);
                             childGroup.solved = true;
                             isKeyAndValue = true;
 
+                        // Its value -> foreach (key, value in items)
                         } else if (isValue) {
                             changeGroupToSolvedAndChangeType(group, childGroup, GroupType.VariableName);
                             childGroup.solved = true;
 
+                        // Its in keyword
                         } else if (isInTheIn && childGroup.type === GroupType.Identifier && childGroup.getSingleToken()?.name === "in") {
                             changeGroupToSolvedAndChangeType(group, childGroup, GroupType.ReservedKeyword);
                             childGroup.solved = true;
 
+                        // Its array value
                         } else if (isArray && typeEqualsToOneOf(childGroup.type, GroupType.Identifier, GroupType.Reference, ...GscFileParser.functionCallTypes)) {
                             changeGroupToSolvedAndChangeType(group, childGroup, GroupType.Reference);
                             group.solved = true;  

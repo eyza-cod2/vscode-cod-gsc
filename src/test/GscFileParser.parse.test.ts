@@ -3833,6 +3833,26 @@ suite("GscFileParser.parse #2.22 foreach", () => {
         checkGroup2(rootGroup, rootGroup.items[0].items[1], GroupType.ForEachScope, 6, 7, true, 0);
     });
 
+    test("#2.22.11 foreach", async () => {
+        const gsc = `foreach(value in get_players()) { }`;
+        const tokens = GscFileParser.tokenize(gsc);
+        const rootGroup = GscFileParser.group(tokens);
+
+        checkGroup2(rootGroup, rootGroup, GroupType.Root, 0, 9, false, 1);
+        checkGroup2(rootGroup, rootGroup.items[0], GroupType.TerminatedStatement, 0, 9, false, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0], GroupType.ForEachDeclaration, 0, 7, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0], GroupType.ReservedKeyword, 0, 0, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1], GroupType.ForEachExpression, 1, 7, true, 3);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0], GroupType.VariableName, 2, 2, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1], GroupType.ReservedKeyword, 3, 3, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0], GroupType.Identifier, 3, 3, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2], GroupType.Reference, 4, 6, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[0], GroupType.FunctionCall, 4, 6, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[0].items[0], GroupType.FunctionName, 4, 4, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[0].items[1], GroupType.FunctionParametersExpression, 5, 6, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1], GroupType.ForEachScope, 8, 9, true, 0);
+    });
+
 });
 
 
