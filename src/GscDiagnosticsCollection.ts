@@ -326,7 +326,7 @@ export class GscDiagnosticsCollection {
                 return undefined; // ignore this error if next group is also not solved
             }
         }
-        else if (group.typeEqualsToOneOf(GroupType.Expression, GroupType.ForExpression) && group.items.length === 0) {
+        else if (group.typeEqualsToOneOf(GroupType.Expression, GroupType.ForExpression, GroupType.ForEachExpression) && group.items.length === 0) {
             return new vscode.Diagnostic(group.getRange(), "Empty expression", vscode.DiagnosticSeverity.Error);
         }
         else

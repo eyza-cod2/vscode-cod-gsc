@@ -1651,6 +1651,11 @@ export class GscFileParser {
 
                 case GroupType.ForEachExpression:
 
+                    if (group.items.length === 0) {
+                        group.solved = false;
+                        return;
+                    }
+
                     let isKeyAndValue = false;
                     let isCompleted = false;
                     for (var i = 0; i < group.items.length; i++) {
