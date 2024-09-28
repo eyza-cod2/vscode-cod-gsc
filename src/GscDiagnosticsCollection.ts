@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { GscFile, GscFiles } from './GscFiles';
-import { GroupType, GscData, GscGroup } from './GscFileParser';
+import { GroupType, GscData, GscGroup, GscToken } from './GscFileParser';
 import { CodFunctions } from './CodFunctions';
 import { ConfigErrorDiagnostics, GscConfig, GscGame, GscGameRootFolder } from './GscConfig';
 import { GscFunctions, GscFunctionState } from './GscFunctions';
@@ -251,6 +251,35 @@ export class GscDiagnosticsCollection {
 
                                 case GroupType.ExtraTerminator:
                                     return new vscode.Diagnostic(group.getRange(), "Terminator ; is not needed", vscode.DiagnosticSeverity.Information);
+
+
+                                case GroupType.StructureField:
+                                    // level.aaa;
+                                    var tokens = [group.parent?.items.at(0)?.getLastToken(), group.parent?.items.at(1)?.getSingleToken(), group.parent?.items.at(2)?.getFirstToken()];
+                                    if (!GscDiagnosticsCollection.areAllTokensOnSingleLine(tokens)) {
+                                        const range = new vscode.Range(tokens[0]!.range.start, tokens[2]!.range.end);
+                                        return new vscode.Diagnostic(range, "Structure field access should be on single line.", vscode.DiagnosticSeverity.Information);
+                                    }
+                                    break;
+
+
+                                case GroupType.FunctionCallWithObject:
+                                    // level aaa();
+                                    var tokens = [group.items.at(0)?.getLastToken(), group.items.at(1)?.getFirstToken()];
+                                    if (!GscDiagnosticsCollection.areAllTokensOnSingleLine(tokens)) {
+                                        const range = new vscode.Range(tokens[0]!.range.start, tokens[1]!.range.end);
+                                        return new vscode.Diagnostic(range, "Function calls with object should be on single line.", vscode.DiagnosticSeverity.Information);
+                                    }
+                                    break;
+
+                                case GroupType.FunctionCallWithObjectAndThread:
+                                    // level thread aaa();
+                                    var tokens = [group.items.at(0)?.getLastToken(), group.items.at(1)?.getSingleToken(), group.items.at(2)?.getFirstToken()];
+                                    if (!GscDiagnosticsCollection.areAllTokensOnSingleLine(tokens)) {
+                                        const range = new vscode.Range(tokens[0]!.range.start, tokens[2]!.range.end);
+                                        return new vscode.Diagnostic(range, "Function calls with object should be on single line.", vscode.DiagnosticSeverity.Information);
+                                    }
+                                    break;
                             }
                         }
                         return undefined;
@@ -473,6 +502,23 @@ export class GscDiagnosticsCollection {
 
             }
         }
+    }
+
+
+    private static areAllTokensOnSingleLine(tokens: (GscToken | undefined)[]): boolean {
+
+        // Loop through all tokens and check if they are on the same line
+        for (var i = 0; i < tokens.length - 1; i++) {
+            const token = tokens[i];
+            const token2 = tokens[i + 1];
+            if (token === undefined) { continue; }
+            if (token2 === undefined) { continue; }
+            if (token.range.start.line !== token2.range.start.line || !token.range.isSingleLine) {
+                return false;
+            }
+        }
+    
+        return true;
     }
 
 

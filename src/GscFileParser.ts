@@ -2705,6 +2705,10 @@ export class GscGroup {
         return this.tokensAll[this.tokenIndexStart];
     }
 
+    public getLastToken(): GscToken {
+        return this.tokensAll[this.tokenIndexEnd];
+    }
+
     public getTypeOfUnknownToken(): TokenType | undefined {
         return this.getUnknownToken()?.type;
     }

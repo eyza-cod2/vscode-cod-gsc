@@ -8,6 +8,27 @@ These tests depends on pre-created files in ./src/test/workspace
 These files are copied into temp folder (configured in .vscode-test.mjs)
 */
 
+
+
+suite('GscDiagnosticsCollection', () => {
+
+    setup(async () => {
+        await tests.activateExtension();
+    });
+
+    test('GscDiagnosticsCollection.SingleLine', async () => {
+        const gsc = await tests.loadGscFile(['GscDiagnosticsCollection', 'SingleLine.gsc']);
+        
+        tests.checkDiagnostic(gsc.diagnostics, 0, 'Structure field access should be on single line.', vscode.DiagnosticSeverity.Information);
+        tests.checkDiagnostic(gsc.diagnostics, 1, 'Function calls with object should be on single line.', vscode.DiagnosticSeverity.Information);
+        tests.checkDiagnostic(gsc.diagnostics, 2, 'Function calls with object should be on single line.', vscode.DiagnosticSeverity.Information);
+        assert.ok(gsc.diagnostics.length === 3);
+    });
+
+});
+
+
+
 suite('GscDiagnosticsCollection.CoD2MP', () => {
 
     setup(async () => {
