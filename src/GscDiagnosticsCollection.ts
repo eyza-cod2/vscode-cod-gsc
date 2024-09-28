@@ -281,9 +281,18 @@ export class GscDiagnosticsCollection {
 
 
     static createDiagnosticsForUnsolved(group: GscGroup, parentGroup: GscGroup, nextGroup: GscGroup | undefined) {
-        if (group.type === GroupType.Statement && parentGroup.type !== GroupType.TerminatedStatement) {
+        
+        // Not terminated statement
+        if (
+            (group.type === GroupType.Statement && parentGroup.type !== GroupType.TerminatedStatement) || 
+            (group.type === GroupType.PreprocessorStatement && parentGroup.type !== GroupType.TerminatedPreprocessorStatement)) 
+        {
             if (nextGroup === undefined || nextGroup.solved) {
-                return new vscode.Diagnostic(group.getRange(), "Missing ;", vscode.DiagnosticSeverity.Error);
+                // Get the last character from the range where the ; should be
+                const range = group.getRange();
+                const rangeOfMissingSemicolon = new vscode.Range(range.end, range.end);
+
+                return new vscode.Diagnostic(rangeOfMissingSemicolon, "Missing ;", vscode.DiagnosticSeverity.Error);
             } else {
                 return undefined; // ignore this error if next group is also not solved
             }
