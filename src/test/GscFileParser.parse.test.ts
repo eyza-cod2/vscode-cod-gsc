@@ -186,20 +186,22 @@ suite('GscFileParser.parse #2.2 bracket pair', () => {
         const tokens = GscFileParser.tokenize(gsc);
         const rootGroup = GscFileParser.group(tokens);
 
-        checkGroup2(rootGroup, rootGroup, GroupType.Root, 0, 13, false, 3, false);
-        checkGroup2(rootGroup, rootGroup.items[0], GroupType.Unknown, 0, 0, false, 0, false);
-        checkGroup2(rootGroup, rootGroup.items[1], GroupType.Unknown, 1, 1, false, 0, false);
-        checkGroup2(rootGroup, rootGroup.items[2], GroupType.Scope, 2, 13, false, 3, false);
-        checkGroup2(rootGroup, rootGroup.items[2].items[0], GroupType.Unknown, 3, 3, false, 0, false);
-        checkGroup2(rootGroup, rootGroup.items[2].items[1], GroupType.Unknown, 4, 4, false, 0, false);
-        checkGroup2(rootGroup, rootGroup.items[2].items[2], GroupType.Scope, 5, 13, true, 5, false);
-        checkGroup2(rootGroup, rootGroup.items[2].items[2].items[0], GroupType.Unknown, 6, 6, false, 0, false);
-        checkGroup2(rootGroup, rootGroup.items[2].items[2].items[1], GroupType.Unknown, 7, 7, false, 0, false);
-        checkGroup2(rootGroup, rootGroup.items[2].items[2].items[2], GroupType.Scope, 8, 11, true, 2, false);
-        checkGroup2(rootGroup, rootGroup.items[2].items[2].items[2].items[0], GroupType.Unknown, 9, 9, false, 0, false);
-        checkGroup2(rootGroup, rootGroup.items[2].items[2].items[2].items[1], GroupType.Unknown, 10, 10, false, 0, false);
-        checkGroup2(rootGroup, rootGroup.items[2].items[2].items[3], GroupType.Unknown, 12, 12, false, 0, false);
-        checkGroup2(rootGroup, rootGroup.items[2].items[2].items[4], GroupType.Unknown, 13, 13, false, 0, false);
+        checkGroup2(rootGroup, rootGroup, GroupType.Root, 0, 13, false, 3);
+        checkGroup2(rootGroup, rootGroup.items[0], GroupType.Unknown, 0, 0, false, 0);
+        checkGroup2(rootGroup, rootGroup.items[1], GroupType.Unknown, 1, 1, false, 0);
+        checkGroup2(rootGroup, rootGroup.items[2], GroupType.Scope, 2, 13, false, 4);
+        checkGroup2(rootGroup, rootGroup.items[2].items[0], GroupType.Unknown, 2, 2, false, 0);
+        checkGroup2(rootGroup, rootGroup.items[2].items[1], GroupType.Unknown, 3, 3, false, 0);
+        checkGroup2(rootGroup, rootGroup.items[2].items[2], GroupType.Unknown, 4, 4, false, 0);
+        checkGroup2(rootGroup, rootGroup.items[2].items[3], GroupType.Scope, 5, 13, true, 6);
+        checkGroup2(rootGroup, rootGroup.items[2].items[3].items[0], GroupType.Unknown, 5, 5, false, 0);
+        checkGroup2(rootGroup, rootGroup.items[2].items[3].items[1], GroupType.Unknown, 6, 6, false, 0);
+        checkGroup2(rootGroup, rootGroup.items[2].items[3].items[2], GroupType.Unknown, 7, 7, false, 0);
+        checkGroup2(rootGroup, rootGroup.items[2].items[3].items[3], GroupType.Scope, 8, 11, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[2].items[3].items[3].items[0], GroupType.Unknown, 9, 9, false, 0);
+        checkGroup2(rootGroup, rootGroup.items[2].items[3].items[3].items[1], GroupType.Unknown, 10, 10, false, 0);
+        checkGroup2(rootGroup, rootGroup.items[2].items[3].items[4], GroupType.Unknown, 12, 12, false, 0);
+        checkGroup2(rootGroup, rootGroup.items[2].items[3].items[5], GroupType.Unknown, 13, 13, false, 0);
     });
 
     test(`#2.2.10 scope error 4`, async () => {

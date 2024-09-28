@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { GscFile, GscFiles } from './GscFiles';
-import { GroupType, GscData, GscGroup, GscToken } from './GscFileParser';
+import { GroupType, GscData, GscGroup, GscToken, TokenType } from './GscFileParser';
 import { CodFunctions } from './CodFunctions';
 import { ConfigErrorDiagnostics, GscConfig, GscGame, GscGameRootFolder } from './GscConfig';
 import { GscFunctions, GscFunctionState } from './GscFunctions';
@@ -223,7 +223,11 @@ export class GscDiagnosticsCollection {
                     function action(parentGroup: GscGroup, group: GscGroup): vscode.Diagnostic | undefined
                     {
                         if (group.type === GroupType.Unknown) {
-                            return new vscode.Diagnostic(group.getRange(), "Unexpected token", vscode.DiagnosticSeverity.Error);
+                            if (group.getFirstToken().type === TokenType.ScopeStart) {
+                                return new vscode.Diagnostic(group.getRange(), "Unclosed scope", vscode.DiagnosticSeverity.Error);
+                            } else {
+                                return new vscode.Diagnostic(group.getRange(), "Unexpected token", vscode.DiagnosticSeverity.Error);
+                            }
                         }
                         else if (group.solved === false) {
                             return GscDiagnosticsCollection.createDiagnosticsForUnsolved(group, parentGroup, nextGroup);

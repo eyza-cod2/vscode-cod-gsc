@@ -706,7 +706,7 @@ export class GscFileParser {
                         var indexStart = startIndexes.pop();
                         if (indexStart === undefined) { break; }
                         if (indexStart === group.items.length - 1) { continue; } // ignore last open bracket
-                        groupItems(group, indexStart, groupType, 1, 0, group.items.slice(indexStart, group.items.length));
+                        groupItems(group, indexStart, groupType, 0, 0, group.items.slice(indexStart, group.items.length));
                     }
 
                 }
