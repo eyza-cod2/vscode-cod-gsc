@@ -2506,7 +2506,8 @@ suite('GscFileParser.parse #2.13 for', () => {
         checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0].items[2], GroupType.Constant, 4, 4, true, 0);
         checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[1], GroupType.Terminator, 5, 5, true, 0);
         checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1], GroupType.ForStatement, 6, 8, true, 2);
-        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0], GroupType.Expression, 6, 7, false, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0], GroupType.Value, 6, 7, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0].items[0], GroupType.Expression, 6, 7, false, 0);
         checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[1], GroupType.Terminator, 8, 8, true, 0);
         checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2], GroupType.ForStatement, 9, 10, true, 1);
         checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[0], GroupType.Statement, 9, 10, true, 2);
@@ -2676,7 +2677,8 @@ suite('GscFileParser.parse #2.13 for', () => {
         checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[0].items[1].items[0].items[0].items[2], GroupType.Constant, 14, 14, true, 0);
         checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[0].items[1].items[0].items[1], GroupType.Terminator, 15, 15, true, 0);
         checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[0].items[1].items[1], GroupType.ForStatement, 16, 18, true, 2);
-        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[0].items[1].items[1].items[0], GroupType.Expression, 16, 17, false, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[0].items[1].items[1].items[0], GroupType.Value, 16, 17, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[0].items[1].items[1].items[0].items[0], GroupType.Expression, 16, 17, false, 0);
         checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[0].items[1].items[1].items[1], GroupType.Terminator, 18, 18, true, 0);
         checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[0].items[1].items[2], GroupType.ForStatement, 19, 20, true, 1);
         checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0].items[0].items[1].items[2].items[0], GroupType.Statement, 19, 20, true, 2);
@@ -2691,6 +2693,71 @@ suite('GscFileParser.parse #2.13 for', () => {
     });
 
 
+    test(`#2.13.10 for variable`, async () => {
+        const gsc = `for (i = 1; variable; i++) {}`;
+        const tokens = GscFileParser.tokenize(gsc);
+        const rootGroup = GscFileParser.group(tokens);
+
+        checkGroup2(rootGroup, rootGroup, GroupType.Root, 0, 12, false, 1);
+        checkGroup2(rootGroup, rootGroup.items[0], GroupType.TerminatedStatement, 0, 12, false, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0], GroupType.ForDeclaration, 0, 10, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0], GroupType.ReservedKeyword, 0, 0, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1], GroupType.ForExpression, 1, 10, true, 3);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0], GroupType.ForStatement, 2, 5, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0], GroupType.Statement, 2, 4, true, 3);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0].items[0], GroupType.Reference, 2, 2, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0].items[0].items[0], GroupType.VariableName, 2, 2, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0].items[1], GroupType.Token, 3, 3, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0].items[2], GroupType.Constant, 4, 4, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[1], GroupType.Terminator, 5, 5, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1], GroupType.ForStatement, 6, 7, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0], GroupType.Reference, 6, 6, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0].items[0], GroupType.VariableName, 6, 6, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[1], GroupType.Terminator, 7, 7, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2], GroupType.ForStatement, 8, 9, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[0], GroupType.Statement, 8, 9, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[0].items[0], GroupType.Reference, 8, 8, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[0].items[0].items[0], GroupType.VariableName, 8, 8, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[0].items[1], GroupType.Token, 9, 9, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1], GroupType.ForScope, 11, 12, true, 0);
+
+    });
+
+
+
+    test(`#2.13.11 for with function call`, async () => {
+        const gsc = `for (i = 1; level isOk(); i++) {}`;
+        const tokens = GscFileParser.tokenize(gsc);
+        const rootGroup = GscFileParser.group(tokens);
+
+        checkGroup2(rootGroup, rootGroup, GroupType.Root, 0, 15, false, 1);
+        checkGroup2(rootGroup, rootGroup.items[0], GroupType.TerminatedStatement, 0, 15, false, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0], GroupType.ForDeclaration, 0, 13, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0], GroupType.ReservedKeyword, 0, 0, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1], GroupType.ForExpression, 1, 13, true, 3);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0], GroupType.ForStatement, 2, 5, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0], GroupType.Statement, 2, 4, true, 3);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0].items[0], GroupType.Reference, 2, 2, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0].items[0].items[0], GroupType.VariableName, 2, 2, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0].items[1], GroupType.Token, 3, 3, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[0].items[2], GroupType.Constant, 4, 4, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0].items[1], GroupType.Terminator, 5, 5, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1], GroupType.ForStatement, 6, 10, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0], GroupType.Statement, 6, 9, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0].items[0], GroupType.FunctionCallWithObject, 6, 9, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0].items[0].items[0], GroupType.Reference, 6, 6, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0].items[0].items[0].items[0], GroupType.VariableName, 6, 6, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0].items[0].items[1], GroupType.FunctionCall, 7, 9, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0].items[0].items[1].items[0], GroupType.FunctionName, 7, 7, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0].items[0].items[1].items[1], GroupType.FunctionParametersExpression, 8, 9, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[1], GroupType.Terminator, 10, 10, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2], GroupType.ForStatement, 11, 12, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[0], GroupType.Statement, 11, 12, true, 2);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[0].items[0], GroupType.Reference, 11, 11, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[0].items[0].items[0], GroupType.VariableName, 11, 11, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[0].items[1], GroupType.Token, 12, 12, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1], GroupType.ForScope, 14, 15, true, 0);
+    });
     
 /*
 

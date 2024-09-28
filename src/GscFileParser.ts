@@ -1168,7 +1168,7 @@ export class GscFileParser {
 
                     const group2_isCall = childGroup2?.isUnsolvedGroupOfOneOfType(GroupType.FunctionCall, GroupType.KeywordCall) ?? false;
 
-                    const isInForeach = parentGroup.type === GroupType.ForEachExpression;
+                    const isInForeach = parentGroup.type === GroupType.ForEachExpression && childGroup1.getTokensAsString() === "in";
 
                     // var func();   or    var waittill();
                     if (group1_isVarReference && group2_isCall && !isInForeach) {
@@ -1579,35 +1579,53 @@ export class GscFileParser {
                         // for (i = 1; i < 5)       TerminatedStatement Value
 
 
+                        // First: its terminated statement -> for (i = 1; ...)
                         if (paramPos === 0 && childGroup1.type === GroupType.TerminatedStatement) {
                             changeGroupToSolvedAndChangeType(group, childGroup1, GroupType.ForStatement);
                             childGroup1.solved = true;
                             paramPos++;
 
+                        // First: its terminator -> for (; ...)
                         } else if (paramPos === 0 && childGroup1.type === GroupType.Terminator) {
                             const newGroup = groupItems(group, i, GroupType.ForStatement, 0, 0, [childGroup1]);
                             changeGroupToSolvedAndChangeType(newGroup, childGroup1, GroupType.Terminator);
                             newGroup.solved = true;
                             paramPos++;
 
-                        // Change Value + TerminatedStatement (1+1)+(;) into single ForStatement
-                        } else if (paramPos === 1 && typeEqualsToOneOf(childGroup1.type, ...GscFileParser.valueTypesWithIdentifier)) {
-                            const childGroup2 = group.items.at(i + 1);
-                            if (childGroup2?.type === GroupType.Terminator) 
-                            {
-                                const newGroup = groupItems(group, i, GroupType.ForStatement, 0, 0, [childGroup1, childGroup2]);
-                                childGroup1.solved = true;
-                                changeGroupToSolvedAndChangeType(newGroup, childGroup2, GroupType.Terminator);
+                        // Second: condition -> for (;;)    for (...; i < 5; ...)   or   for (...; variable;)   or   for (...; level functionCall();)
+                        } else if (paramPos === 1) {
+                            
+                            // Its just terminator -> for (...; ...)
+                            if (childGroup1.type === GroupType.Terminator) {
+                                const newGroup = groupItems(group, i, GroupType.ForStatement, 0, 0, [childGroup1]);
+                                changeGroupToSolvedAndChangeType(newGroup, childGroup1, GroupType.Terminator);
                                 newGroup.solved = true;
+                                paramPos++;   
+
+                            // Its terminated statement
+                            // for (...; isOk(); ...)
+                            // for (...; level isOk(); ...)
+                            } else if (childGroup1.type === GroupType.TerminatedStatement) {
+                                changeGroupToSolvedAndChangeType(group, childGroup1, GroupType.ForStatement);
+                                paramPos++;
+
+                            // Its value or identifier (its not terminated by default)
+                            // for (...; variable; ...)
+                            // for (...; level.variable; ...)
+                            // for (...; i < 5; ...)
+                            } else if (typeEqualsToOneOf(childGroup1.type, ...GscFileParser.valueTypesWithIdentifier)) {
+                                const childGroup2 = group.items.at(i + 1);
+                                if (childGroup2?.type === GroupType.Terminator) 
+                                {
+                                    const newGroup = groupItems(group, i, GroupType.ForStatement, 0, 0, [childGroup1, childGroup2]);
+                                    changeGroupToSolvedAndChangeType(newGroup, childGroup1, GroupType.Value);
+                                    changeGroupToSolvedAndChangeType(newGroup, childGroup2, GroupType.Terminator);
+                                    newGroup.solved = true;
+                                }
+                                paramPos++;
                             }
-                            paramPos++;
 
-                        } else if (paramPos === 1 && childGroup1.type === GroupType.Terminator) {
-                            const newGroup = groupItems(group, i, GroupType.ForStatement, 0, 0, [childGroup1]);
-                            changeGroupToSolvedAndChangeType(newGroup, childGroup1, GroupType.Terminator);
-                            newGroup.solved = true;
-                            paramPos++;
-
+                        // Third: increment -> for (...; ...; i++)
                         } else if (paramPos === 2 && typeEqualsToOneOf(childGroup1.type, GroupType.Statement)) {
                             changeGroupToSolvedAndChangeType(group, childGroup1, GroupType.ForStatement);
 
