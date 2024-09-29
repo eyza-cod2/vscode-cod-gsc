@@ -1,8 +1,4 @@
-#include scripts\Include;
-
 #include scripts\file;
-#include scripts\file;
-
 #include scripts\file2;
 
 main() {

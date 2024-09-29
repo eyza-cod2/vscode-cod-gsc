@@ -284,6 +284,50 @@ export class GscDiagnosticsCollection {
                                         return new vscode.Diagnostic(range, "Function calls with object should be on single line.", vscode.DiagnosticSeverity.Information);
                                     }
                                     break;
+
+
+                                case GroupType.DeveloperBlock:
+                                case GroupType.DeveloperBlockInner:
+                                    if (gscFile.gameConfig.developerBlocks === false) {
+                                        return new vscode.Diagnostic(group.getRange(), "Developer blocks are not supported for " + gscFile.currentGame, vscode.DiagnosticSeverity.Error);
+                                    }
+                                    if (gscFile.gameConfig.developerBlocksRecursive === false) {
+                                        const isRecursive = group.findParentOfType(GroupType.DeveloperBlock, GroupType.DeveloperBlockInner) !== undefined;
+                                        if (isRecursive) {
+                                            return new vscode.Diagnostic(group.getRange(), "Recursive developer blocks are not supported for " + gscFile.currentGame, vscode.DiagnosticSeverity.Error);
+                                        }
+                                    }
+                                    break;
+
+                                case GroupType.VariableNameGlobal:
+                                    if (gscFile.gameConfig.globalVariables === false) {
+                                        return new vscode.Diagnostic(group.getRange(), "Global variable definitions are not supported for " + gscFile.currentGame, vscode.DiagnosticSeverity.Error);
+                                    }
+                                    break;
+
+                                case GroupType.ForEachDeclaration:
+                                    if (gscFile.gameConfig.foreach === false) {
+                                        return new vscode.Diagnostic(group.getRange(), "Foreach is not supported for " + gscFile.currentGame, vscode.DiagnosticSeverity.Error);
+                                    }
+                                    break;
+
+                                case GroupType.DoDeclaration:
+                                    if (gscFile.gameConfig.doWhile === false) {
+                                        return new vscode.Diagnostic(group.getRange(), "Do-while is not supported for " + gscFile.currentGame, vscode.DiagnosticSeverity.Error);
+                                    }
+                                    break;
+
+                                case GroupType.ArrayInitializer:
+                                    if (gscFile.gameConfig.arrayInitializer === false && group.items.length > 0) {
+                                        return new vscode.Diagnostic(group.getRange(), "Array initialization is not supported for " + gscFile.currentGame, vscode.DiagnosticSeverity.Error);
+                                    }
+                                    break;
+
+                                case GroupType.Ternary:
+                                    if (gscFile.gameConfig.ternary === false) {
+                                        return new vscode.Diagnostic(group.getRange(), "Ternary operators are not supported for " + gscFile.currentGame, vscode.DiagnosticSeverity.Error);
+                                    }
+                                    break;
                             }
                         }
                         return undefined;
@@ -355,8 +399,7 @@ export class GscDiagnosticsCollection {
 
         const referenceData = GscFiles.getReferencedFileForFile(gscFile, tokensAsPath);
 
-
-        if (referenceData.gscFile?.uri.toString() === gscFile.uri.toString()) {
+        if (!gscFile.gameConfig.includeFileItself && referenceData.gscFile?.uri.toString() === gscFile.uri.toString()) {
             return new vscode.Diagnostic(group.getRange(), "File is including itself", vscode.DiagnosticSeverity.Error);
         }
 

@@ -424,11 +424,11 @@ suite('GscFileParser.parse #2.5 developer', () => {
         checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0].items[0], GroupType.FunctionName, 1, 1, true, 0);
         checkGroup2(rootGroup, rootGroup.items[0].items[0].items[0].items[1], GroupType.FunctionParametersExpression, 2, 3, true, 0);
         checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1], GroupType.FunctionScope, 4, 15, true, 3);
-        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0], GroupType.DeveloperBlockInner, 5, 6, false, 0);
-        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1], GroupType.DeveloperBlockInner, 7, 10, false, 1);
-        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0], GroupType.DeveloperBlockInner, 8, 9, false, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[0], GroupType.DeveloperBlockInner, 5, 6, true, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1], GroupType.DeveloperBlockInner, 7, 10, true, 1);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[1].items[0], GroupType.DeveloperBlockInner, 8, 9, true, 0);
         checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2], GroupType.Scope, 11, 14, true, 1);
-        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[0], GroupType.DeveloperBlockInner, 12, 13, false, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[0].items[1].items[2].items[0], GroupType.DeveloperBlockInner, 12, 13, true, 0);
     });
 
     test(`#2.5.7 developer errors 2`, async () => {
@@ -457,11 +457,11 @@ suite('GscFileParser.parse #2.5 developer', () => {
         checkGroup2(rootGroup, rootGroup.items[0].items[1], GroupType.FunctionScope, 3, 18, true, 3);
         checkGroup2(rootGroup, rootGroup.items[0].items[1].items[0], GroupType.DeveloperBlockInner, 4, 5, true, 0);
         checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1], GroupType.DeveloperBlockInner, 6, 9, true, 1);
-        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[0], GroupType.DeveloperBlockInner, 7, 8, false, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[1].items[0], GroupType.DeveloperBlockInner, 7, 8, true, 0);
         checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2], GroupType.Scope, 10, 17, true, 2);
         checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2].items[0], GroupType.DeveloperBlockInner, 11, 12, true, 0);
         checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2].items[1], GroupType.DeveloperBlockInner, 13, 16, true, 1);
-        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2].items[1].items[0], GroupType.DeveloperBlockInner, 14, 15, false, 0);
+        checkGroup2(rootGroup, rootGroup.items[0].items[1].items[2].items[1].items[0], GroupType.DeveloperBlockInner, 14, 15, true, 0);
     });
 
     test(`#2.5.8 developer weird`, async () => {

@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { GscFileParser, GscData, GroupType } from './GscFileParser';
 import * as fs from 'fs';
 import * as path from 'path';
-import { ConfigErrorDiagnostics, GscConfig, GscGame, GscGameRootFolder } from './GscConfig';
+import { ConfigErrorDiagnostics, GscConfig, GscGame, GscGameConfig, GscGameRootFolder } from './GscConfig';
 import { LoggerOutput } from './LoggerOutput';
 import { GscDiagnosticsCollection } from './GscDiagnosticsCollection';
 
@@ -719,6 +719,8 @@ export class GscFile {
     currentGame: GscGame;
     errorDiagnostics: ConfigErrorDiagnostics;
 
+    gameConfig: GscGameConfig;
+
 
     diagnostics: vscode.Diagnostic[] = [];
 
@@ -744,12 +746,14 @@ export class GscFile {
             this.ignoredFunctionNames = data.ignoredFunctionNames;
             this.ignoredFilePaths = data.ignoredFilePaths;
             this.errorDiagnostics = data.errorDiagnostics;
+            this.gameConfig = GscConfig.gamesConfigs.get(this.currentGame)!;
         } else {
             this.referenceableGameRootFolders = [];
             this.currentGame = GscGame.UniversalGame;
             this.ignoredFunctionNames = [];
             this.ignoredFilePaths = [];
             this.errorDiagnostics = ConfigErrorDiagnostics.Enable;
+            this.gameConfig = GscConfig.gamesConfigs.get(this.currentGame)!;
         }
     }
 
@@ -807,6 +811,7 @@ class GscWorkspaceFileData {
             file.ignoredFunctionNames = data.ignoredFunctionNames;
             file.ignoredFilePaths = data.ignoredFilePaths;
             file.errorDiagnostics = data.errorDiagnostics;
+            file.gameConfig = data.gameConfig;
         }
     }
 
@@ -818,7 +823,8 @@ class GscWorkspaceFileData {
         const ignoredFunctionNames = GscConfig.getIgnoredFunctionNames(workspaceFolder.uri);
         const ignoredFilePaths = GscConfig.getIgnoredFilePaths(workspaceFolder.uri);
         const errorDiagnostics = GscConfig.getErrorDiagnostics(workspaceFolder.uri);
+        const gameConfig = GscConfig.gamesConfigs.get(currentGame)!;
 
-        return {referenceableGameRootFolders, currentGame, ignoredFunctionNames, ignoredFilePaths, errorDiagnostics};
+        return {referenceableGameRootFolders, currentGame, ignoredFunctionNames, ignoredFilePaths, errorDiagnostics, gameConfig};
     }
 }

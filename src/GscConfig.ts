@@ -27,9 +27,74 @@ export type GscGameRootFolder = {
 type ConfigChangeHandler = () => Promise<void> | void;
 
 
+export type GscGameConfig = {
+	game: GscGame;
+	/** Allow file being #include itself */
+	includeFileItself: boolean;
+	/** Allow global variable definitions */
+	globalVariables: boolean;
+	/** Allow /# #/ */
+	developerBlocks: boolean;
+	/** Allow /# #/ inside another /# #/ */
+	developerBlocksRecursive: boolean;
+	
+	foreach: boolean;
+	doWhile: boolean;
+	arrayInitializer: boolean;
+	ternary: boolean;
+}
+
+
 export class GscConfig {
 
-	public static game: GscGame = GscGame.UniversalGame;
+	public static gamesConfigs: Map<GscGame, GscGameConfig> = new Map(
+		[
+			[GscGame.UniversalGame, {
+				game: GscGame.UniversalGame,
+				includeFileItself: true, 
+				globalVariables: true,
+				developerBlocks: true,
+				developerBlocksRecursive: true,
+				foreach: true, 
+				doWhile: true, 
+				arrayInitializer: true, 
+				ternary: true,
+			}],
+			[GscGame.CoD1, {
+				game: GscGame.CoD1,
+				includeFileItself: false, 
+				globalVariables: false,
+				developerBlocks: false,
+				developerBlocksRecursive: false,
+				foreach: false, 
+				doWhile: true, 
+				arrayInitializer: false, 
+				ternary: false,
+			}],
+			[GscGame.CoD2SP, {
+				game: GscGame.CoD2SP,
+				includeFileItself: false, 
+				globalVariables: false,
+				developerBlocks: true,
+				developerBlocksRecursive: false,
+				foreach: false, 
+				doWhile: false, 
+				arrayInitializer: false, 
+				ternary: false,
+			}],
+			[GscGame.CoD2MP, {
+				game: GscGame.CoD2MP,
+				includeFileItself: false, 
+				globalVariables: false,
+				developerBlocks: true,
+				developerBlocksRecursive: false,
+				foreach: false, 
+				doWhile: false, 
+				arrayInitializer: false, 
+				ternary: false,
+			}],
+		]
+	);
 
     private static configChangeSubscribers: ConfigChangeHandler[] = [];
 

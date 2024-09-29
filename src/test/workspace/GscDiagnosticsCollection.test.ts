@@ -1,6 +1,9 @@
 import * as vscode from 'vscode';
 import assert from 'assert';
 import * as tests from '../Tests.test';
+import { GscHoverProvider } from '../../GscHoverProvider';
+import { GscFunction } from '../../GscFunctions';
+import { GscDefinitionProvider } from '../../GscDefinitionProvider';
 
 
 /*
@@ -25,7 +28,38 @@ suite('GscDiagnosticsCollection', () => {
         assert.ok(gsc.diagnostics.length === 3);
     });
 
+
+
+    test('GscDiagnosticsCollection.DuplicateInclude', async () => {
+        try {
+            const gsc = await tests.loadGscFile(['GscDiagnosticsCollection', 'scripts', 'DuplicateInclude.gsc']);
+            
+            tests.checkDiagnostic(gsc.diagnostics, 0, "Duplicate #include file path", vscode.DiagnosticSeverity.Error);
+            tests.checkDiagnostic(gsc.diagnostics, 1, "Duplicate #include file path", vscode.DiagnosticSeverity.Error);
+            assert.strictEqual(gsc.diagnostics.length, 2);
+
+        } catch (error) {
+            tests.printDebugInfoForError(error);
+        }
+    });
+
+
+    test('GscDiagnosticsCollection.DuplicateFunctionViaInclude', async () => {
+        try {
+            const gsc = await tests.loadGscFile(['GscDiagnosticsCollection', 'scripts', 'DuplicateFunctionViaInclude.gsc']);
+            
+            tests.checkDiagnostic(gsc.diagnostics, 0, "Function 'func2' is defined in 2 places!", vscode.DiagnosticSeverity.Error);
+            assert.strictEqual(gsc.diagnostics.length, 1);
+
+        } catch (error) {
+            tests.printDebugInfoForError(error);
+        }
+    });
+
 });
+
+
+
 
 
 
@@ -97,6 +131,29 @@ suite('GscDiagnosticsCollection.CoD2MP', () => {
         tests.checkDiagnostic(gsc.diagnostics, 0, "File 'unknown_path\\script.gsc' was not found in workspace folder 'GscDiagnosticsCollection.CoD2MP'", vscode.DiagnosticSeverity.Error);
         assert.ok(gsc.diagnostics.length === 1);
     });
+
+
+    
+    test('GscDiagnosticsCollection.CoD2MP.ItselfInclude', async () => {
+        try {
+            const gsc = await tests.loadGscFile(['GscDiagnosticsCollection.CoD2MP', 'scripts', 'ItselfInclude.gsc']);
+            
+            tests.checkDiagnostic(gsc.diagnostics, 0, "File is including itself", vscode.DiagnosticSeverity.Error);
+            assert.strictEqual(gsc.diagnostics.length, 1);
+
+            // Correct path
+            // FunctionReferencesFolder\FunctionReferencesFile::funcName();
+            const hover1 = await GscHoverProvider.getHover(gsc, new vscode.Position(3, 6));
+            tests.checkHover(hover1, GscFunction.generateMarkdownDescription({name: "func1", parameters: []}, true, tests.filePathToUri("GscDiagnosticsCollection.CoD2MP/scripts/ItselfInclude.gsc").toString()).value);
+
+            const locations1 = await GscDefinitionProvider.getFunctionDefinitionLocations(gsc, new vscode.Position(3, 6));
+            tests.checkDefinition(locations1, "GscDiagnosticsCollection.CoD2MP/scripts/ItselfInclude.gsc");
+
+
+        } catch (error) {
+            tests.printDebugInfoForError(error);
+        }
+    });
 });
 
 
@@ -155,5 +212,25 @@ suite('GscDiagnosticsCollection.UniversalGame', () => {
 
         tests.checkDiagnostic(gsc.diagnostics, 0, "File 'unknown_path\\script.gsc' was not found in workspace folder 'GscDiagnosticsCollection.UniversalGame'", vscode.DiagnosticSeverity.Error);
         assert.ok(gsc.diagnostics.length === 1);
+    });
+
+    test('GscDiagnosticsCollection.UniversalGame.ItselfInclude', async () => {
+        try {
+            const gsc = await tests.loadGscFile(['GscDiagnosticsCollection.UniversalGame', 'scripts', 'ItselfInclude.gsc']);
+            
+            assert.strictEqual(gsc.diagnostics.length, 0);
+
+            // Correct path
+            // FunctionReferencesFolder\FunctionReferencesFile::funcName();
+            const hover1 = await GscHoverProvider.getHover(gsc, new vscode.Position(3, 6));
+            tests.checkHover(hover1, GscFunction.generateMarkdownDescription({name: "func1", parameters: []}, true, tests.filePathToUri("GscDiagnosticsCollection.UniversalGame/scripts/ItselfInclude.gsc").toString()).value);
+
+            const locations1 = await GscDefinitionProvider.getFunctionDefinitionLocations(gsc, new vscode.Position(3, 6));
+            tests.checkDefinition(locations1, "GscDiagnosticsCollection.UniversalGame/scripts/ItselfInclude.gsc");
+
+
+        } catch (error) {
+            tests.printDebugInfoForError(error);
+        }
     });
 });

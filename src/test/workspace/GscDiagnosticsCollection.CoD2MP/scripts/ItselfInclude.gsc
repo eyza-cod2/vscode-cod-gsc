@@ -1,4 +1,4 @@
-#include scripts\DoubleInclude;
+#include scripts\ItselfInclude;
 
 main() {
     func1();

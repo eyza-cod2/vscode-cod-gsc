@@ -1860,12 +1860,12 @@ export class GscFileParser {
 
                 case GroupType.DeveloperBlock:
                     // In root
-                    group.solved = lastFunctionScope === undefined && lastDeveloperScope === undefined;
+                    group.solved = lastFunctionScope === undefined; // && lastDeveloperScope === undefined;
                     break;
 
                 case GroupType.DeveloperBlockInner:
                     // In function
-                    group.solved = lastFunctionScope !== undefined && lastDeveloperScope === undefined;
+                    group.solved = lastFunctionScope !== undefined;// && lastDeveloperScope === undefined;
                     break;
 
                 case GroupType.Statement:

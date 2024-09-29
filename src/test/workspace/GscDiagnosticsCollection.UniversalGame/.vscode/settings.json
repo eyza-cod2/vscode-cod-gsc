@@ -1,4 +1,5 @@
 {
+    "gsc.game": "Universal game",
     "gsc.ignoredFilePaths": [
         "unknown_path_but_ignored",
         "unknown_path\\ignored_script"
