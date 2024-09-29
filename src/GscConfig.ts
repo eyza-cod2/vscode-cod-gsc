@@ -37,11 +37,13 @@ export type GscGameConfig = {
 	developerBlocks: boolean;
 	/** Allow /# #/ inside another /# #/ */
 	developerBlocksRecursive: boolean;
-	
+
 	foreach: boolean;
 	doWhile: boolean;
 	arrayInitializer: boolean;
 	ternary: boolean;
+	/** Allow #"cvar" */
+	cvarString: boolean;
 }
 
 
@@ -59,6 +61,7 @@ export class GscConfig {
 				doWhile: true, 
 				arrayInitializer: true, 
 				ternary: true,
+				cvarString: true
 			}],
 			[GscGame.CoD1, {
 				game: GscGame.CoD1,
@@ -70,6 +73,7 @@ export class GscConfig {
 				doWhile: true, 
 				arrayInitializer: false, 
 				ternary: false,
+				cvarString: false
 			}],
 			[GscGame.CoD2SP, {
 				game: GscGame.CoD2SP,
@@ -81,6 +85,7 @@ export class GscConfig {
 				doWhile: false, 
 				arrayInitializer: false, 
 				ternary: false,
+				cvarString: false
 			}],
 			[GscGame.CoD2MP, {
 				game: GscGame.CoD2MP,
@@ -92,6 +97,7 @@ export class GscConfig {
 				doWhile: false, 
 				arrayInitializer: false, 
 				ternary: false,
+				cvarString: false
 			}],
 		]
 	);

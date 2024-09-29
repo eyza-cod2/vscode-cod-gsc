@@ -328,6 +328,12 @@ export class GscDiagnosticsCollection {
                                         return new vscode.Diagnostic(group.getRange(), "Ternary operators are not supported for " + gscFile.currentGame, vscode.DiagnosticSeverity.Error);
                                     }
                                     break;
+
+                                case GroupType.Constant:
+                                    if (gscFile.gameConfig.cvarString === false && group.getSingleTokenType() === TokenType.CvarString) {
+                                        return new vscode.Diagnostic(group.getRange(), "Cvar string is not supported for " + gscFile.currentGame, vscode.DiagnosticSeverity.Error);
+                                    }
+                                    break;
                             }
                         }
                         return undefined;
