@@ -4,6 +4,24 @@ All notable changes to the "gsc" extension will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
+## [0.2.0] - 2024-10-01
+- Added support for global variable definitions (CONST_VAR1 = 1;)
+- Added support for array initializers, like "arr = [10, 20, 30]"
+- Added support for conditional ternary operators (var = a ? b : c)
+- Added support for do {} while ();
+- Added list of supported GSC features for each game. Universal game supports everything. For example CoD2 does not support foreach, do-while, array initializer, global variables, ternary, recursive developer blocks, etc. When not supported, error diagnostics is shown.
+- Improved missing semicolon error indication - now the red underline is visible only at the end of the statement where the semicolon should be placed
+- Improved missing semicolon detection by verifying if variable + structure accessor, object + function call are on single line
+- Improved error diagnostics for 'if', 'else', 'for', 'while', 'do' when inline statement is used instead of scope (single-line scope) and there is some error in that inline statement. (for example "if (true) some error here;" would no longer consider "if (true)" as bad syntax)
+- Improved exception messages when parsing GSC files.
+- Fixed correct update of currently selected game in status bar when manually changed
+- Fixed foreach with function call in array parameter -> "foreach(v in getArray())" -> 'in' keyword was recognized as variable name
+- Fixed 'for' with function call in condition statement -> "for (i = 1; self isOk(); i++)"
+- Fixed double negations -> "var1 = !!true;"
+- Fixed no error detected when foreach expression is empty -> foreach() {}
+- Fixed error for unclosed scope bracket -> { }
+
+
 ## [0.1.10] - 2024-09-22
 
 - Added support for "foreach"

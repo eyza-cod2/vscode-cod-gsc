@@ -92,6 +92,55 @@
 
 
 
+    <div ${VERSION_0.2.0}>
+        <h2>Version [0.2.0] - 2024-10-01</h2>
+
+        <h3>Added support for global variable definitions (CONST_VAR1 = 1;)</h3>
+        <h3>Added support for array initializers, like "arr = [10, 20, 30]"</h3>
+        <h3>Added support for conditional ternary operators (var = a ? b : c)</h3>
+        <h3>Added support for do {} while ();</h3>
+        <img src="../images/vscode-update-news-1.png">
+
+        <h3>Added list of supported GSC features for each game.</h3>
+        <p>
+            Universal game supports everything.<br>
+            For example CoD2 does not support foreach, do-while, array initializer, global variables, ternary, recursive developer blocks, etc. When not supported, error diagnostics is shown.
+        </p>
+        <img src="../images/vscode-update-news-2.png">
+
+        <h3>Improved missing semicolon error indication</h3>
+        <p>
+            The red underline is visible only at the end of the statement where the semicolon should be placed
+        </p>
+        <img src="../images/vscode-update-news-3.png">
+
+        <h3>Improved missing semicolon detection</h3>
+        <p>
+            By verifying if (object + function call) and (variable + structure accessor) are on single line
+        </p>
+        <img src="../images/vscode-diagnostics-single-line.png">
+
+        <h3>All changes:</h3>
+        <p class="lines">
+            - Added support for global variable definitions (CONST_VAR1 = 1;)
+            - Added support for array initializers, like "arr = [10, 20, 30]"
+            - Added support for conditional ternary operators (var = a ? b : c)
+            - Added support for do {} while ();
+            - Added list of supported GSC features for each game. Universal game supports everything. For example CoD2 does not support foreach, do-while, array initializer, global variables, ternary, recursive developer blocks, etc. When not supported, error diagnostics is shown.
+            - Improved missing semicolon error indication - now the red underline is visible only at the end of the statement where the semicolon should be placed
+            - Improved missing semicolon detection by verifying if variable + structure accessor, object + function call are on single line
+            - Improved error diagnostics for 'if', 'else', 'for', 'while', 'do' when inline statement is used instead of scope (single-line scope) and there is some error in that inline statement. (for example "if (true) some error here;" would no longer consider "if (true)" as bad syntax)
+            - Improved exception messages when parsing GSC files.
+            - Fixed correct update of currently selected game in status bar when manually changed
+            - Fixed foreach with function call in array parameter -> "foreach(v in getArray())" -> 'in' keyword was recognized as variable name
+            - Fixed 'for' with function call in condition statement -> "for (i = 1; self isOk(); i++)"
+            - Fixed double negations -> "var1 = !!true;"
+            - Fixed no error detected when foreach expression is empty -> foreach() {}
+            - Fixed error for unclosed scope bracket -> { }
+        </p>
+    </div>
+
+
     <div ${VERSION_0.1.10}>
         <h2>Version [0.1.10] - 2024-09-22</h2>
 

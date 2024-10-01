@@ -54,7 +54,7 @@ This extension adds language support for the GSC scripts used in Call of Duty ga
         <td rowspan="2">IW4</td>
         <td>original</td>
         <td>❗ Tested, errors</td>
-        <td>foreach, global variables, childthread, call</td>
+        <td>childthread, call</td>
     </tr>
     <tr>
         <td>Alterware IW4x</td>
@@ -78,7 +78,7 @@ This extension adds language support for the GSC scripts used in Call of Duty ga
         <td rowspan="3">IW5</td>
         <td>original</td>
         <td>❗ Tested, errors</td>
-        <td>foreach, global variables, childthread, call</td>
+        <td>childthread, call</td>
     </tr>
     <tr>
         <td>Plutonium IW5</td>
@@ -95,12 +95,12 @@ This extension adds language support for the GSC scripts used in Call of Duty ga
         <td rowspan="2">T6</td>
         <td>original</td>
         <td>❗ Tested, errors</td>
-        <td>#insert, #define, autoexec, do while, const, %xxx::yyy, /@ comments @/</td>
+        <td>#insert, #define, param default value, autoexec, const, %xxx::yyy, /@ comments @/</td>
     </tr>
     <tr>
         <td>Plutonium T6</td>
         <td>❗ Tested, errors</td>
-        <td>foreach</td>
+        <td>order of file references</td>
     </tr>
     <tr>
         <td rowspan="2">Ghosts</td>
@@ -119,7 +119,7 @@ This extension adds language support for the GSC scripts used in Call of Duty ga
         <td rowspan="2">S1</td>
         <td>original</td>
         <td>❗ Tested, errors</td>
-        <td>foreach, global variables, array initializator, childthread, call</td>
+        <td>childthread, call</td>
     </tr>
     <tr>
         <td>Alterware S1-Mod</td>
@@ -155,7 +155,7 @@ This extension adds language support for the GSC scripts used in Call of Duty ga
     <tr>
         <td>Aurora H1-mod</td>
         <td>❗ Tested, errors</td>
-        <td>foreach, param default value, ternary operator</td>
+        <td>param default value, call, childthread</td>
     </tr>
     <tr>
         <td>WWII</td>
@@ -266,6 +266,10 @@ Diagnostics - invalid file for #include
 
 ![Completion](images/vscode-diagnostics-include.png)
 
+Diagnostics - possible missing semicolon indication
+
+![Completion](images/vscode-diagnostics-single-line.png)
+
 
 
 Function definition
@@ -316,9 +320,10 @@ Status bar
     - Comments (`/*...*/`, `//...`)
     - Developer blocks (`/# ... #/`)
     - Preprocessor (`#include`, `#using_animtree`, `#animtree`)
-    - Keywords (`return`, `if`, `else`, `for`, `while`, `switch`, `continue`, `break`, `case`, `default`, `thread`, `wait`, `waittillframeend`, `waittill`, `waittillmatch`, `endon`, `notify`, `breakpoint`)
+    - Keywords (`return`, `if`, `else`, `for`, `foreach`, `while`, `do-while`, `switch`, `continue`, `break`, `case`, `default`, `thread`, `wait`, `waittillframeend`, `waittill`, `waittillmatch`, `endon`, `notify`, `breakpoint`)
     - Operators (`=`, `+=`, `-=`, `*=`, `/=`, `%=`, `|=`, `&=`, `^=`, `++`, `--`, `+`, `-`, `*`, `/`, `%`, `|`, `&`, `^`, `<<`, `>>`, `==`, `!=`, `<`, `>`, `<=`, `>=`, `&&`, `||`, `!`, `~`)
     - Strings (`"default"`, `&"STRING_LOCALIZED"`, `#"sv_cvar_string"`)
+    - Ternary conditional operators (`true ? "yes" : "no"`)
     - Anim string (`%xanim_file_name`)
     - Path (eg. `maps\mp\gametypes\sd`)
   - Detection of explicitly typed types of variables (string, localized string, cvar string, vector, integer, float, structure, array, function, entity, bool, xanim)
@@ -335,6 +340,7 @@ Status bar
   - Extra semicolons
   - Invalid function parameters
   - Missing files
+  - Invalid numbers of function parameters
 - Semantics token provider 
   - Proper colorization of tokens
 - Definition provider
@@ -350,7 +356,6 @@ Status bar
 
 
 ## TODO
-- foreach, ternary operator, do while, array initializer
 - Add .csc files (client side scripts)
 - Parser for .menu files
 - Integrate list of built-in functions for CoD4
