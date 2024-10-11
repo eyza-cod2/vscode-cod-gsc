@@ -131,7 +131,7 @@ export class GscFunctions {
         }
 
         // This function name is ignored by configuration
-        if (funcInfo && gscFile.ignoredFunctionNames.some(name => name.toLowerCase() === funcInfo.name.toLowerCase())) {
+        if (funcInfo && gscFile.config.ignoredFunctionNames.some(name => name.toLowerCase() === funcInfo.name.toLowerCase())) {
             return ret(GscFunctionState.NameIgnored, []);
         }
            
@@ -141,7 +141,7 @@ export class GscFunctions {
         // File not found
         if (definitions === undefined) {          
             // This file path is ignored by configuration
-            if (funcInfo && gscFile.ignoredFilePaths.some(ignoredPath => funcInfo.path.toLowerCase().startsWith(ignoredPath.toLowerCase()))) {
+            if (funcInfo && gscFile.config.ignoredFilePaths.some(ignoredPath => funcInfo.path.toLowerCase().startsWith(ignoredPath.toLowerCase()))) {
                 return ret(GscFunctionState.NotFoundFileButIgnored, []);
             }
             return ret(GscFunctionState.NotFoundFile, []);           
@@ -159,7 +159,7 @@ export class GscFunctions {
 
 
         // This function is predefined function
-        else if (funcInfo && funcInfo.path === "" && CodFunctions.isPredefinedFunction(funcInfo.name, gscFile.currentGame)) {
+        else if (funcInfo && funcInfo.path === "" && CodFunctions.isPredefinedFunction(funcInfo.name, gscFile.config.currentGame)) {
             return ret(GscFunctionState.FoundInPredefined, definitions);
         }
 

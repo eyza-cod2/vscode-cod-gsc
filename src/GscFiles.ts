@@ -407,9 +407,9 @@ export class GscFiles {
      * @param referencedFilePath Path in GSC file format (e.g. scripts\scriptName)
      * @returns The reference status and the parsed file data if found
      */
-    public static getReferencedFileForFile(gscFile: GscFile, referencedFilePath: string): GscDataAndReferenceState {
+    public static getReferencedFileForFile(gscFile: GscFile, referencedFilePath: string): GscFileAndReferenceState {
     
-        for (const referenceableGameRoot of gscFile.referenceableGameRootFolders) {
+        for (const referenceableGameRoot of gscFile.config.referenceableGameRootFolders) {
             const gscFilePathUri = vscode.Uri.joinPath(referenceableGameRoot.uri, referencedFilePath.replace(/\\/g, '/') + ".gsc");                      
             const gsc = GscFiles.getCachedFile(gscFilePathUri, referenceableGameRoot.workspaceFolder.uri);
 
@@ -735,11 +735,26 @@ export class GscFiles {
 }
 
 
-export enum GscFileReferenceState {
-    NotFound,
-    LocalFile,
-    IncludedWorkspaceFolder
-}
+
+
+
+
+
+
+type GscFileConfig = {
+    /** All possible game root folders where GSC files can be found and referenced. */
+    referenceableGameRootFolders: GscGameRootFolder[];
+    /** Ignored function names */
+    ignoredFunctionNames: string[];
+    /** Ignored file paths */
+    ignoredFilePaths: string[];
+    /** Currently selected game */
+    currentGame: GscGame;
+    /** Mode of diagnostics collection */
+    errorDiagnostics: ConfigErrorDiagnostics;
+    /** Syntax configuration of the selected game */
+    gameConfig: GscGameConfig;
+};
 
 
 export class GscFile {
@@ -750,18 +765,10 @@ export class GscFile {
     /** URI of the file */
     uri: vscode.Uri;
 
+    /** Configuration related to this file */
+    config: GscFileConfig;
 
-    /** Locations where other files can be found */
-    referenceableGameRootFolders: GscGameRootFolder[];
-
-    ignoredFilePaths: string[];
-    ignoredFunctionNames: string[];
-    currentGame: GscGame;
-    errorDiagnostics: ConfigErrorDiagnostics;
-
-    gameConfig: GscGameConfig;
-
-
+    /** Diagnostics generated for this file. @see GscFileDiagnostics.ts */
     diagnostics: vscode.Diagnostic[] = [];
 
 
@@ -780,20 +787,16 @@ export class GscFile {
         this.uri = uri;
 
         if (workspaceFolder !== undefined) {
-            const data = GscWorkspaceFileData.getConfig(workspaceFolder);
-            this.referenceableGameRootFolders = data.referenceableGameRootFolders;
-            this.currentGame = data.currentGame;
-            this.ignoredFunctionNames = data.ignoredFunctionNames;
-            this.ignoredFilePaths = data.ignoredFilePaths;
-            this.errorDiagnostics = data.errorDiagnostics;
-            this.gameConfig = GscConfig.gamesConfigs.get(this.currentGame)!;
+            this.config = GscWorkspaceFileData.getConfig(workspaceFolder);
         } else {
-            this.referenceableGameRootFolders = [];
-            this.currentGame = GscGame.UniversalGame;
-            this.ignoredFunctionNames = [];
-            this.ignoredFilePaths = [];
-            this.errorDiagnostics = ConfigErrorDiagnostics.Enable;
-            this.gameConfig = GscConfig.gamesConfigs.get(this.currentGame)!;
+            this.config = {
+                referenceableGameRootFolders: [],
+                currentGame: GscGame.UniversalGame,
+                ignoredFunctionNames: [],
+                ignoredFilePaths: [],
+                errorDiagnostics: ConfigErrorDiagnostics.Enable,
+                gameConfig: GscConfig.gamesConfigs.get(GscGame.UniversalGame)!
+            };
         }
     }
 
@@ -807,10 +810,6 @@ export class GscFile {
 
 
 
-export type GscDataAndReferenceState = {
-    gscFile: GscFile | undefined,
-    referenceState: GscFileReferenceState
-};
 
 
 /**
@@ -846,16 +845,16 @@ class GscWorkspaceFileData {
 
         // Loop all GscFile and update their configuration
         for (const file of this.parsedFiles.values()) {
-            file.referenceableGameRootFolders = data.referenceableGameRootFolders;
-            file.currentGame = data.currentGame;
-            file.ignoredFunctionNames = data.ignoredFunctionNames;
-            file.ignoredFilePaths = data.ignoredFilePaths;
-            file.errorDiagnostics = data.errorDiagnostics;
-            file.gameConfig = data.gameConfig;
+            file.config.referenceableGameRootFolders = data.referenceableGameRootFolders;
+            file.config.currentGame = data.currentGame;
+            file.config.ignoredFunctionNames = data.ignoredFunctionNames;
+            file.config.ignoredFilePaths = data.ignoredFilePaths;
+            file.config.errorDiagnostics = data.errorDiagnostics;
+            file.config.gameConfig = data.gameConfig;
         }
     }
 
-    static getConfig(workspaceFolder: vscode.WorkspaceFolder) {
+    static getConfig(workspaceFolder: vscode.WorkspaceFolder): GscFileConfig {
 
         // Get config for workspace folder
         const referenceableGameRootFolders = GscFiles.getReferenceableGameRootFolders(workspaceFolder);
@@ -868,3 +867,16 @@ class GscWorkspaceFileData {
         return {referenceableGameRootFolders, currentGame, ignoredFunctionNames, ignoredFilePaths, errorDiagnostics, gameConfig};
     }
 }
+
+
+
+export enum GscFileReferenceState {
+    NotFound,
+    LocalFile,
+    IncludedWorkspaceFolder
+}
+
+export type GscFileAndReferenceState = {
+    gscFile: GscFile | undefined,
+    referenceState: GscFileReferenceState
+};

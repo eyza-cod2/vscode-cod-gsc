@@ -164,7 +164,7 @@ export class GscDiagnosticsCollection {
             gscFile.diagnostics.length = 0;
 
             // Return empty diagnostics if diagnostics are disabled
-            if (gscFile.errorDiagnostics === ConfigErrorDiagnostics.Disable) {
+            if (gscFile.config.errorDiagnostics === ConfigErrorDiagnostics.Disable) {
                 this.diagnosticCollection?.set(uri, gscFile.diagnostics);
                 // Notify subscribers
                 this.notifyDiagnosticsUpdateSubscribers(gscFile);
@@ -173,7 +173,7 @@ export class GscDiagnosticsCollection {
             }
 
             // Load ignored function names
-            const isUniversalGame = GscConfig.isUniversalGame(gscFile.currentGame);
+            const isUniversalGame = GscConfig.isUniversalGame(gscFile.config.currentGame);
         
             const groupFunctionNames: {group: GscGroup, uri: vscode.Uri}[] = [];
             const groupIncludedPaths: {group: GscGroup, uri: vscode.Uri}[] = [];
@@ -248,8 +248,8 @@ export class GscDiagnosticsCollection {
                                     break;
 
                                 case GroupType.DataTypeKeyword:
-                                    if (!isUniversalGame && gscFile.currentGame !== GscGame.CoD1) {
-                                        return new vscode.Diagnostic(group.getRange(), "Casting to data type is not supported for " + gscFile.currentGame, vscode.DiagnosticSeverity.Error);
+                                    if (!isUniversalGame && gscFile.config.currentGame !== GscGame.CoD1) {
+                                        return new vscode.Diagnostic(group.getRange(), "Casting to data type is not supported for " + gscFile.config.currentGame, vscode.DiagnosticSeverity.Error);
                                     }
                                     break;
 
@@ -288,50 +288,50 @@ export class GscDiagnosticsCollection {
 
                                 case GroupType.DeveloperBlock:
                                 case GroupType.DeveloperBlockInner:
-                                    if (gscFile.gameConfig.developerBlocks === false) {
-                                        return new vscode.Diagnostic(group.getRange(), "Developer blocks are not supported for " + gscFile.currentGame, vscode.DiagnosticSeverity.Error);
+                                    if (gscFile.config.gameConfig.developerBlocks === false) {
+                                        return new vscode.Diagnostic(group.getRange(), "Developer blocks are not supported for " + gscFile.config.currentGame, vscode.DiagnosticSeverity.Error);
                                     }
-                                    if (gscFile.gameConfig.developerBlocksRecursive === false) {
+                                    if (gscFile.config.gameConfig.developerBlocksRecursive === false) {
                                         const isRecursive = group.findParentOfType(GroupType.DeveloperBlock, GroupType.DeveloperBlockInner) !== undefined;
                                         if (isRecursive) {
-                                            return new vscode.Diagnostic(group.getRange(), "Recursive developer blocks are not supported for " + gscFile.currentGame, vscode.DiagnosticSeverity.Error);
+                                            return new vscode.Diagnostic(group.getRange(), "Recursive developer blocks are not supported for " + gscFile.config.currentGame, vscode.DiagnosticSeverity.Error);
                                         }
                                     }
                                     break;
 
                                 case GroupType.VariableNameGlobal:
-                                    if (gscFile.gameConfig.globalVariables === false) {
-                                        return new vscode.Diagnostic(group.getRange(), "Global variable definitions are not supported for " + gscFile.currentGame, vscode.DiagnosticSeverity.Error);
+                                    if (gscFile.config.gameConfig.globalVariables === false) {
+                                        return new vscode.Diagnostic(group.getRange(), "Global variable definitions are not supported for " + gscFile.config.currentGame, vscode.DiagnosticSeverity.Error);
                                     }
                                     break;
 
                                 case GroupType.ForEachDeclaration:
-                                    if (gscFile.gameConfig.foreach === false) {
-                                        return new vscode.Diagnostic(group.getRange(), "Foreach is not supported for " + gscFile.currentGame, vscode.DiagnosticSeverity.Error);
+                                    if (gscFile.config.gameConfig.foreach === false) {
+                                        return new vscode.Diagnostic(group.getRange(), "Foreach is not supported for " + gscFile.config.currentGame, vscode.DiagnosticSeverity.Error);
                                     }
                                     break;
 
                                 case GroupType.DoDeclaration:
-                                    if (gscFile.gameConfig.doWhile === false) {
-                                        return new vscode.Diagnostic(group.getRange(), "Do-while is not supported for " + gscFile.currentGame, vscode.DiagnosticSeverity.Error);
+                                    if (gscFile.config.gameConfig.doWhile === false) {
+                                        return new vscode.Diagnostic(group.getRange(), "Do-while is not supported for " + gscFile.config.currentGame, vscode.DiagnosticSeverity.Error);
                                     }
                                     break;
 
                                 case GroupType.ArrayInitializer:
-                                    if (gscFile.gameConfig.arrayInitializer === false && group.items.length > 0) {
-                                        return new vscode.Diagnostic(group.getRange(), "Array initialization is not supported for " + gscFile.currentGame, vscode.DiagnosticSeverity.Error);
+                                    if (gscFile.config.gameConfig.arrayInitializer === false && group.items.length > 0) {
+                                        return new vscode.Diagnostic(group.getRange(), "Array initialization is not supported for " + gscFile.config.currentGame, vscode.DiagnosticSeverity.Error);
                                     }
                                     break;
 
                                 case GroupType.Ternary:
-                                    if (gscFile.gameConfig.ternary === false) {
-                                        return new vscode.Diagnostic(group.getRange(), "Ternary operators are not supported for " + gscFile.currentGame, vscode.DiagnosticSeverity.Error);
+                                    if (gscFile.config.gameConfig.ternary === false) {
+                                        return new vscode.Diagnostic(group.getRange(), "Ternary operators are not supported for " + gscFile.config.currentGame, vscode.DiagnosticSeverity.Error);
                                     }
                                     break;
 
                                 case GroupType.Constant:
-                                    if (gscFile.gameConfig.cvarString === false && group.getSingleTokenType() === TokenType.CvarString) {
-                                        return new vscode.Diagnostic(group.getRange(), "Cvar string is not supported for " + gscFile.currentGame, vscode.DiagnosticSeverity.Error);
+                                    if (gscFile.config.gameConfig.cvarString === false && group.getSingleTokenType() === TokenType.CvarString) {
+                                        return new vscode.Diagnostic(group.getRange(), "Cvar string is not supported for " + gscFile.config.currentGame, vscode.DiagnosticSeverity.Error);
                                     }
                                     break;
                             }
@@ -405,7 +405,7 @@ export class GscDiagnosticsCollection {
 
         const referenceData = GscFiles.getReferencedFileForFile(gscFile, tokensAsPath);
 
-        if (!gscFile.gameConfig.includeFileItself && referenceData.gscFile?.uri.toString() === gscFile.uri.toString()) {
+        if (!gscFile.config.gameConfig.includeFileItself && referenceData.gscFile?.uri.toString() === gscFile.uri.toString()) {
             return new vscode.Diagnostic(group.getRange(), "File is including itself", vscode.DiagnosticSeverity.Error);
         }
 
@@ -423,12 +423,12 @@ export class GscDiagnosticsCollection {
         if (referenceData.gscFile === undefined) {
 
             // This file path is ignored by configuration
-            if (gscFile.ignoredFilePaths.some(ignoredPath => tokensAsPath.toLowerCase().startsWith(ignoredPath.toLowerCase()))) {
+            if (gscFile.config.ignoredFilePaths.some(ignoredPath => tokensAsPath.toLowerCase().startsWith(ignoredPath.toLowerCase()))) {
                 return;
             }
             const d = new vscode.Diagnostic(
                 group.getRange(), 
-                `File '${tokensAsPath}.gsc' was not found in workspace folder ${gscFile.referenceableGameRootFolders.map(f => "'" + f.relativePath + "'").join(", ")}`, 
+                `File '${tokensAsPath}.gsc' was not found in workspace folder ${gscFile.config.referenceableGameRootFolders.map(f => "'" + f.relativePath + "'").join(", ")}`, 
                 vscode.DiagnosticSeverity.Error);        
             d.code = "unknown_file_path_" + tokensAsPath;
             return d;
@@ -447,7 +447,7 @@ export class GscDiagnosticsCollection {
             const funcName = group.getFirstToken().name;
 
             // This function is overwriting the build-in function
-            if (CodFunctions.isPredefinedFunction(funcName, gscFile.currentGame)) {
+            if (CodFunctions.isPredefinedFunction(funcName, gscFile.config.currentGame)) {
                 return new vscode.Diagnostic(group.getRange(), `Function '${funcName}' is overwriting build-in function`, vscode.DiagnosticSeverity.Information);
             }
             
@@ -487,7 +487,7 @@ export class GscDiagnosticsCollection {
                     // This function is predefined function
                     case GscFunctionState.FoundInPredefined:
                         // Find in predefined functions
-                        const preDefFunc = CodFunctions.getByName(funcInfo.name, funcInfo.callOn !== undefined, gscFile.currentGame);
+                        const preDefFunc = CodFunctions.getByName(funcInfo.name, funcInfo.callOn !== undefined, gscFile.config.currentGame);
 
                         // Predefined function was not found because the callon mismatch
                         if (preDefFunc === undefined) {
@@ -518,11 +518,11 @@ export class GscDiagnosticsCollection {
                     case GscFunctionState.NotFoundFile:
 
                         // This file path is ignored by configuration
-                        if (gscFile.ignoredFilePaths.some(ignoredPath => funcInfo.path.toLowerCase().startsWith(ignoredPath.toLowerCase()))) {
+                        if (gscFile.config.ignoredFilePaths.some(ignoredPath => funcInfo.path.toLowerCase().startsWith(ignoredPath.toLowerCase()))) {
                             return;
                         }
                         var r = (funcInfo.pathGroup) ? funcInfo.pathGroup.getRange() : group.getRange();
-                        const folders = gscFile.referenceableGameRootFolders.map(f => "'" + f.relativePath + "'").join(", ");
+                        const folders = gscFile.config.referenceableGameRootFolders.map(f => "'" + f.relativePath + "'").join(", ");
                         const d = new vscode.Diagnostic(r, `File '${funcInfo.path}.gsc' was not found in workspace folder ${folders}`, vscode.DiagnosticSeverity.Error);               
                         d.code = "unknown_file_path_" + funcInfo.path;
 
@@ -542,7 +542,7 @@ export class GscDiagnosticsCollection {
 
 
                     case GscFunctionState.NotFoundFunctionLocal:
-                        if (gscFile.currentGame !== GscGame.UniversalGame) {
+                        if (gscFile.config.currentGame !== GscGame.UniversalGame) {
                             const d = new vscode.Diagnostic(group.getRange(), `Function '${funcInfo.name}' is not defined!`, vscode.DiagnosticSeverity.Error);
                             if (funcInfo.path === "") {
                                 d.code = "unknown_function_" + funcInfo.name; // Special constant to create a CodeAction to add function name into ignored list

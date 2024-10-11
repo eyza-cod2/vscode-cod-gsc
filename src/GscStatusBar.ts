@@ -63,7 +63,7 @@ export class GscStatusBar {
 
 					const gscFile = GscFiles.getCachedFile(uri);
 					
-					const currentGame = (gscFile === undefined || debugText === "configChanged") ? GscConfig.getSelectedGame(workspaceFolder.uri) : gscFile.currentGame;
+					const currentGame = (gscFile === undefined || debugText === "configChanged") ? GscConfig.getSelectedGame(workspaceFolder.uri) : gscFile.config.currentGame;
 					
 					LoggerOutput.log(`[GscStatusBar] Status bar updated with game: "${currentGame}"`, vscode.workspace.asRelativePath(uri));
 

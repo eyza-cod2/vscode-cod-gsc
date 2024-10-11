@@ -49,8 +49,8 @@ export class GscHoverProvider implements vscode.HoverProvider {
             const funcInfo = groupAtCursor.getFunctionReferenceInfo();
             if (funcInfo !== undefined) {
 
-                const isUniversalGame = GscConfig.isUniversalGame(gscFile.currentGame);
-                const errorDiagnosticsDisabled = gscFile.errorDiagnostics === ConfigErrorDiagnostics.Disable;
+                const isUniversalGame = GscConfig.isUniversalGame(gscFile.config.currentGame);
+                const errorDiagnosticsDisabled = gscFile.config.errorDiagnostics === ConfigErrorDiagnostics.Disable;
 
                 const res = await GscFunctions.getFunctionReferenceState({name: funcInfo.name, path: funcInfo.path}, gscFile);
     
@@ -82,10 +82,10 @@ export class GscHoverProvider implements vscode.HoverProvider {
 
                     case GscFunctionState.FoundInPredefined:
                         // Find in predefined functions
-                        var preDefFunc = CodFunctions.getByName(funcInfo.name, funcInfo.callOn !== undefined, gscFile.currentGame);
+                        var preDefFunc = CodFunctions.getByName(funcInfo.name, funcInfo.callOn !== undefined, gscFile.config.currentGame);
 
                         if (preDefFunc === undefined) {
-                            preDefFunc = CodFunctions.getByName(funcInfo.name, undefined, gscFile.currentGame)!;
+                            preDefFunc = CodFunctions.getByName(funcInfo.name, undefined, gscFile.config.currentGame)!;
                         }
 
                         markdown.appendMarkdown(preDefFunc.generateMarkdownDescription().value);
