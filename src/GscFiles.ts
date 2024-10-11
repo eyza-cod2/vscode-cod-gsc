@@ -5,6 +5,7 @@ import * as path from 'path';
 import { ConfigErrorDiagnostics, GscConfig, GscGame, GscGameConfig, GscGameRootFolder } from './GscConfig';
 import { LoggerOutput } from './LoggerOutput';
 import { GscDiagnosticsCollection } from './GscDiagnosticsCollection';
+import { Issues } from './Issues';
 
 /**
  * On startup scan every .gsc file, parse it, and save the result into memory.
@@ -171,6 +172,9 @@ export class GscFiles {
 
         // Update diagnostics for all files
         await GscDiagnosticsCollection.updateDiagnosticsAll("all files parsed");
+
+        // Notify all subscribers
+        this.notifyOnDidInitialParse();
     }
 
     /**
@@ -481,6 +485,42 @@ export class GscFiles {
             this.debugWindow.webview.html = this.getWebviewContent();
         }
     }
+
+
+
+    private static initialParseSubscribers: (() => void)[] = [];
+
+    /**
+	 * Subscribe to initial parse. The handler will be called when all files are parsed.
+	 * @param handler 
+	 */
+    public static onDidInitialParse(handler: () => void): vscode.Disposable {
+        this.initialParseSubscribers.push(handler);
+        return vscode.Disposable.from({
+            dispose: () => {
+                const index = this.initialParseSubscribers.indexOf(handler);
+                if (index > -1) {
+                    this.initialParseSubscribers.splice(index, 1);
+                }
+            }
+        });
+    }
+
+	/**
+	 * Handle vscode configuration change event. 
+	 * Emit a configuration change event. This will call all subscribers in the order they were added.
+	 */
+	private static notifyOnDidInitialParse() {
+        for (const handler of this.initialParseSubscribers) {
+            try {
+                const result = handler();
+            } catch (error) {
+                Issues.handleError(error);
+            }
+        }
+	}
+
+
 
 
 
