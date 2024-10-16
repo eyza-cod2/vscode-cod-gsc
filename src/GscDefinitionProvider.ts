@@ -1,12 +1,16 @@
 import * as vscode from 'vscode';
-import { GscFile, GscFiles } from './GscFiles';
-import { GroupType, GscData, GscFileParser } from './GscFileParser';
+import { GscFiles } from './GscFiles';
+import { GscFile } from './GscFile';
+import { GroupType } from './GscFileParser';
 import { GscFunctions } from './GscFunctions';
 import { Issues } from './Issues';
+import { LoggerOutput } from './LoggerOutput';
 
 export class GscDefinitionProvider implements vscode.DefinitionProvider {
 
     static async activate(context: vscode.ExtensionContext) {       
+        LoggerOutput.log("[GscDefinitionProvider] Activating");
+        
         context.subscriptions.push(vscode.languages.registerDefinitionProvider('gsc', new GscDefinitionProvider()));
     }
 
@@ -18,7 +22,7 @@ export class GscDefinitionProvider implements vscode.DefinitionProvider {
     {
         try {
             // Get parsed file
-            const gscFile = await GscFiles.getFileData(document.uri);
+            const gscFile = await GscFiles.getFileData(document.uri, false, "provide definition");
 
             const locations = await GscDefinitionProvider.getFunctionDefinitionLocations(gscFile, position);
 

@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
-import { GscFile, GscFiles } from './GscFiles';
-import { GroupType, GscData } from './GscFileParser';
+import { GscFiles } from './GscFiles';
+import { GscFile } from './GscFile';
+import { GroupType } from './GscFileParser';
 import { CodFunctions } from './CodFunctions';
 import { ConfigErrorDiagnostics, GscConfig } from './GscConfig';
 import { GscFunctions, GscFunctionState } from './GscFunctions';
@@ -9,7 +10,9 @@ import { LoggerOutput } from './LoggerOutput';
 
 export class GscHoverProvider implements vscode.HoverProvider {
     
-    static async activate(context: vscode.ExtensionContext) {       
+    static async activate(context: vscode.ExtensionContext) {    
+        LoggerOutput.log("[GscHoverProvider] Activating");
+           
         context.subscriptions.push(vscode.languages.registerHoverProvider('gsc', new GscHoverProvider()));
     }
 
@@ -22,7 +25,7 @@ export class GscHoverProvider implements vscode.HoverProvider {
             LoggerOutput.log("[GscHoverProvider] Provide hover at " + position.line + ":" + position.character, vscode.workspace.asRelativePath(document.uri));
             
             // Get parsed file
-            const gscData = await GscFiles.getFileData(document.uri);
+            const gscData = await GscFiles.getFileData(document.uri, false, "provide hover");
 
             const hover = await GscHoverProvider.getHover(gscData, position);
 

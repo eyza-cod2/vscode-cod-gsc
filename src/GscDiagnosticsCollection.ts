@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
-import { GscFile, GscFiles } from './GscFiles';
+import { GscFiles } from './GscFiles';
+import { GscFile } from './GscFile';
 import { GroupType, GscData, GscGroup, GscToken, TokenType } from './GscFileParser';
 import { CodFunctions } from './CodFunctions';
 import { ConfigErrorDiagnostics, GscConfig, GscGame, GscGameRootFolder } from './GscConfig';
@@ -7,6 +8,7 @@ import { GscFunctions, GscFunctionState } from './GscFunctions';
 import { assert } from 'console';
 import { LoggerOutput } from './LoggerOutput';
 import { Issues } from './Issues';
+import { Events } from './Events';
 
 type DiagnosticsUpdateHandler = (gscFile: GscFile) => Promise<void> | void;
 
@@ -15,10 +17,8 @@ export class GscDiagnosticsCollection {
     private static statusBarItem: vscode.StatusBarItem | undefined;
     private static currentCancellationTokenSource: vscode.CancellationTokenSource | null = null;
 
-    private static diagnosticsUpdateSubscribers: DiagnosticsUpdateHandler[] = [];
-
-
     static async activate(context: vscode.ExtensionContext) {
+        LoggerOutput.log("[GscDiagnosticsCollection] Activating");
         
         // Create a status bar item to show background task indicator
         this.statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 0);
@@ -33,45 +33,14 @@ export class GscDiagnosticsCollection {
 
         // Refresh command
         context.subscriptions.push(vscode.commands.registerCommand('gsc.refreshDiagnosticsCollection', () => this.refreshDiagnosticsCollection()));   
-		
-        // Settings changed, handle it...
-        GscConfig.onDidConfigChange(async () => await this.onDidConfigChange());
     }
 
-
-    /**
-	 * Subscribe to diagnostics collection updates. 
-     * The handler will be called whenever the diagnostics collection for any files is updated. 
-     * Subscribers are called in the order they were added and they are not awaited.
-	 * @param handler 
-	 */
-    public static onDidDiagnosticsChange(handler: DiagnosticsUpdateHandler): vscode.Disposable {
-        this.diagnosticsUpdateSubscribers.push(handler);
-        return vscode.Disposable.from({
-            dispose: () => {
-                const index = this.diagnosticsUpdateSubscribers.indexOf(handler);
-                if (index > -1) {
-                    this.diagnosticsUpdateSubscribers.splice(index, 1);
-                }
-            }
-        });
-    }
-
-    private static notifyDiagnosticsUpdateSubscribers(gscFile: GscFile) {
-        for (const handler of this.diagnosticsUpdateSubscribers) {
-            try {
-                void handler(gscFile);
-            } catch (error) {
-                Issues.handleError(error);
-            }
-        }
-    }
 
 
     /**
      * Update diagnostics for all parsed files. Since its computation intensive, its handled in async manner.
      */
-    static async updateDiagnosticsAll(debugText: string) {
+    static async updateDiagnosticsForAll(debugText: string) {
 
         LoggerOutput.log("[GscDiagnosticsCollection] Creating diagnostics for all files", "because: " + debugText);
 
@@ -106,7 +75,7 @@ export class GscDiagnosticsCollection {
         }
 
         try {
-            this.diagnosticCollection?.clear();
+            this.deleteDiagnosticsAll(); // Clear all diagnostics
 
             for (const data of files) {
                 if (token.isCancellationRequested) {
@@ -118,7 +87,7 @@ export class GscDiagnosticsCollection {
                     this.statusBarItem.tooltip = data.uri.toString();
                 }
 
-                count += await this.generateDiagnostics(data);
+                count += await this.updateDiagnosticsForFile(data);
 
                 // Check if it's time to pause for UI update
                 const now = Date.now();
@@ -154,7 +123,7 @@ export class GscDiagnosticsCollection {
      * @param gscFile The GSC file to generate diagnostics for.
      * @returns The number of diagnostics created.
      */
-    static async generateDiagnostics(gscFile: GscFile): Promise<number> {
+    public static async updateDiagnosticsForFile(gscFile: GscFile): Promise<number> {
         try {
             LoggerOutput.log("[GscDiagnosticsCollection] Creating diagnostics for file", vscode.workspace.asRelativePath(gscFile.uri));
             
@@ -167,7 +136,7 @@ export class GscDiagnosticsCollection {
             if (gscFile.config.errorDiagnostics === ConfigErrorDiagnostics.Disable) {
                 this.diagnosticCollection?.set(uri, gscFile.diagnostics);
                 // Notify subscribers
-                this.notifyDiagnosticsUpdateSubscribers(gscFile);
+                Events.GscDiagnosticsHasChanged(gscFile);
                 LoggerOutput.log("[GscDiagnosticsCollection] Done for file, diagnostics is disabled", vscode.workspace.asRelativePath(gscFile.uri));
                 return 0;
             }
@@ -343,7 +312,7 @@ export class GscDiagnosticsCollection {
 
 
             // Notify subscribers
-			this.notifyDiagnosticsUpdateSubscribers(gscFile);
+			Events.GscDiagnosticsHasChanged(gscFile);
 
 
             LoggerOutput.log("[GscDiagnosticsCollection] Done for file, diagnostics created: " + gscFile.diagnostics.length, vscode.workspace.asRelativePath(gscFile.uri));
@@ -357,13 +326,16 @@ export class GscDiagnosticsCollection {
         }
     }
     
+    private static deleteDiagnosticsAll() {
+        this.diagnosticCollection?.clear();
+    }
 
-    static deleteDiagnostics(uri: vscode.Uri) {
+    public static deleteDiagnosticsForFile(uri: vscode.Uri) {
         this.diagnosticCollection?.delete(uri);
     }
 
 
-    static createDiagnosticsForUnsolved(group: GscGroup, parentGroup: GscGroup, nextGroup: GscGroup | undefined) {
+    private static createDiagnosticsForUnsolved(group: GscGroup, parentGroup: GscGroup, nextGroup: GscGroup | undefined) {
         
         // Not terminated statement
         if (
@@ -398,7 +370,7 @@ export class GscDiagnosticsCollection {
     }
 
 
-    static createDiagnosticsForIncludedPaths(group: GscGroup, gscFile: GscFile, includedPaths: string[]): vscode.Diagnostic | undefined {
+    private static createDiagnosticsForIncludedPaths(group: GscGroup, gscFile: GscFile, includedPaths: string[]): vscode.Diagnostic | undefined {
         assert(group.type === GroupType.Path);
 
         const tokensAsPath = group.getTokensAsString();
@@ -437,7 +409,7 @@ export class GscDiagnosticsCollection {
     }
 
 
-    static async createDiagnosticsForFunctionName(
+    private static async createDiagnosticsForFunctionName(
         group: GscGroup, gscFile: GscFile) {
 
         // Function declaration
@@ -575,12 +547,8 @@ export class GscDiagnosticsCollection {
     }
 
 
-    private static async onDidConfigChange() {
-        await this.updateDiagnosticsAll("config changed");
-    }
-
     private static async refreshDiagnosticsCollection() {
-        await this.updateDiagnosticsAll("manual refresh");
+        await this.updateDiagnosticsForAll("manual refresh");
     }
 
 }

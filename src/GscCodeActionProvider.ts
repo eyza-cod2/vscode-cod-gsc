@@ -2,10 +2,13 @@ import * as vscode from 'vscode';
 import { ConfigErrorDiagnostics, GscConfig } from './GscConfig';
 import * as path from 'path';
 import { Issues } from './Issues';
+import { LoggerOutput } from './LoggerOutput';
 
 export class GscCodeActionProvider implements vscode.CodeActionProvider {
    
-    static async activate(context: vscode.ExtensionContext) {        
+    static async activate(context: vscode.ExtensionContext) {
+        LoggerOutput.log("[GscCodeActionProvider] Activating");
+            
         vscode.languages.registerCodeActionsProvider('gsc', new GscCodeActionProvider(), {
             providedCodeActionKinds: [vscode.CodeActionKind.QuickFix]
         });

@@ -1,8 +1,10 @@
 import * as vscode from 'vscode';
 import { GscFiles } from './GscFiles';
 import { GroupType, GscGroup} from './GscFileParser';
-import { error } from 'console';
 import { Issues } from './Issues';
+import { LoggerOutput } from './LoggerOutput';
+import { Events } from './Events';
+import { GscFile } from './GscFile';
 
 
 export class GscSemanticTokensProvider implements vscode.DocumentSemanticTokensProvider {
@@ -35,6 +37,7 @@ export class GscSemanticTokensProvider implements vscode.DocumentSemanticTokensP
     
 
     static async activate(context: vscode.ExtensionContext) {
+        LoggerOutput.log("[GscSemanticTokensProvider] Activating");
         
         context.subscriptions.push(vscode.languages.registerDocumentSemanticTokensProvider({ language: 'gsc' }, new GscSemanticTokensProvider(), GscSemanticTokensProvider.legend));
     }
@@ -60,12 +63,41 @@ export class GscSemanticTokensProvider implements vscode.DocumentSemanticTokensP
         //  - when the language id of the document has changed.
 
 		//vscode.window.showWarningMessage("SemanticTokensBuilder: " + document.uri.toString());
+        LoggerOutput.log("[GscSemanticTokensProvider] Providing semantics...", vscode.workspace.asRelativePath(document.uri) + ", version: " + document.version);
 
         const builder = new vscode.SemanticTokensBuilder(GscSemanticTokensProvider.legend);
 
         // Get the parsed file
-        var gscFile = await GscFiles.getFileData(document.uri, true);
-        
+        var gscFile = await GscFiles.getCachedFile(document.uri);
+
+        // If the cached file is not found, or cached version is not the latest, wait till the file is parsed
+        if (gscFile === undefined || (gscFile.version > -1 && gscFile.version !== document.version)) {
+
+            if (gscFile === undefined) {
+                LoggerOutput.log("[GscSemanticTokensProvider] File not found in cache. Waiting for file to be parsed...", vscode.workspace.asRelativePath(document.uri));
+            } else {
+                LoggerOutput.log("[GscSemanticTokensProvider] File version mismatch. parsed: " + gscFile.version + ". document: " + document.version + "  waiting for file to be parsed...", vscode.workspace.asRelativePath(document.uri));
+            }
+            
+            // Wait for file to be parsed
+            // If not parsed till specified time, parse the file by force
+            gscFile = await new Promise<GscFile>((resolve, reject) => {
+                const disposable = Events.onDidGscFileParsed((gscFileNew) => {
+                    if (gscFileNew.uri.toString() === document.uri.toString()) {
+                        disposable.dispose();  // Clean up the event listener
+                        clearTimeout(timeoutId);  // Cancel the timeout
+                        LoggerOutput.log("[GscSemanticTokensProvider] File has been parsed: " + gscFileNew.version + ". document: " + document.version);
+                        resolve(gscFileNew);
+                    }
+                });
+                const timeoutId = setTimeout(async () => {
+                    disposable.dispose();
+                    LoggerOutput.log("[GscSemanticTokensProvider] Parsing file by force...");
+                    const gscFile = await GscFiles.getFileData(document.uri, true, "provide semantic tokens");
+                    resolve(gscFile);
+                }, 1000);
+            });    
+        }
 
         function walkGroupItems(parentGroup: GscGroup, items: GscGroup[], action: (parentGroup: GscGroup, group: GscGroup) => void) {
             // This object have child items, process them first
@@ -142,7 +174,8 @@ export class GscSemanticTokensProvider implements vscode.DocumentSemanticTokensP
         });
 
         //vscode.window.showInformationMessage("SemanticTokensBuilder done");
-        	
+        LoggerOutput.log("[GscSemanticTokensProvider] Done", vscode.workspace.asRelativePath(document.uri) + ", version: " + document.version);
+
 		return builder.build();
 	}
 };

@@ -29,7 +29,7 @@ export class LoggerOutput {
         }
 
         if (spaces === undefined) {
-            spaces = 70;
+            spaces = 100;
         }
 
         // If there is a right message, align the left message to number of spaces and then add the right message

@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
-import { GscFile, GscFiles } from './GscFiles';
-import { GroupType, GscData, GscGroup, GscVariableDefinitionType } from './GscFileParser';
+import { GscFiles } from './GscFiles';
+import { GscFile } from './GscFile';
+import { GroupType, GscGroup, GscVariableDefinitionType } from './GscFileParser';
 import { CodFunctions } from './CodFunctions';
 import { GscConfig, GscGame } from './GscConfig';
 import { GscFunctions, GscVariableDefinition } from './GscFunctions';
@@ -17,7 +18,9 @@ export interface CompletionConfig {
 
 export class GscCompletionItemProvider implements vscode.CompletionItemProvider {
     
-    static async activate(context: vscode.ExtensionContext) {        
+    static async activate(context: vscode.ExtensionContext) {    
+        LoggerOutput.log("[GscCompletionItemProvider] Activating");
+            
         context.subscriptions.push(vscode.languages.registerCompletionItemProvider('gsc', new GscCompletionItemProvider(), '\\', '.', '[', ']'));
     }
     
@@ -28,9 +31,9 @@ export class GscCompletionItemProvider implements vscode.CompletionItemProvider 
             // This function is called when user types a character or presses ctrl+space
 
             // Get parsed file
-            const gscFile = await GscFiles.getFileData(document.uri);
+            const gscFile = await GscFiles.getFileData(document.uri, true, "provide completion items");
 
-            const currentGame = GscConfig.getSelectedGame(document.uri);
+            const currentGame = gscFile.config.currentGame;
 
             const items = await GscCompletionItemProvider.getCompletionItems(gscFile, position, currentGame, undefined, document.uri);
 

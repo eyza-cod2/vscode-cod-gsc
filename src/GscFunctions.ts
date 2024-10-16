@@ -1,9 +1,7 @@
 import * as vscode from 'vscode';
 import { GscGroup, GscToken, GscVariableDefinitionType } from './GscFileParser';
-import { GscConfig, GscGame, GscGameRootFolder } from './GscConfig';
-import * as fs from 'fs';
-import * as path from 'path';
-import { GscFile, GscFileReferenceState, GscFiles } from './GscFiles';
+import { GscFiles, GscFileReferenceState } from './GscFiles';
+import { GscFile } from './GscFile';
 import { CodFunctions } from './CodFunctions';
 
 

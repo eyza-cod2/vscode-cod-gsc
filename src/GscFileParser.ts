@@ -3164,6 +3164,8 @@ export class GscData {
     /** Unique set of paths included via #include */
     includes: Set<string> = new Set();
     content: string;
+    /** The version number of open document (it will strictly increase after each change, including undo/redo). If file is not open in editor, it will be -1 */
+    contentVersion: number = -1;
 
     constructor(structure: GscGroup, content: string) {
         this.root = structure;

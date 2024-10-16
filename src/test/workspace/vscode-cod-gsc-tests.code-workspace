@@ -47,6 +47,9 @@
 		{
 			"name": "GscCompletionItemProvider.NonIncludedFolder",
 			"path": "GscCompletionItemProvider.NonIncludedFolder"
+		},
+		{
+			"path": "GscFiles"
 		}
 	]
 }

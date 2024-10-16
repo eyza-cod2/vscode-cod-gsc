@@ -3,16 +3,17 @@ import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
 import assert from 'assert';
-import { GscData, GscVariableDefinitionType } from '../GscFileParser';
+import { GscVariableDefinitionType } from '../GscFileParser';
 import { GscHoverProvider } from '../GscHoverProvider';
 import { GscDefinitionProvider } from '../GscDefinitionProvider';
 import { EXTENSION_ID } from '../extension';
-import { GscFile, GscFiles } from '../GscFiles';
+import { GscFiles } from '../GscFiles';
+import { GscFile } from '../GscFile';
 import { GscCompletionItemProvider } from '../GscCompletionItemProvider';
 import { GscCodeActionProvider } from '../GscCodeActionProvider';
 import { GscFunction } from '../GscFunctions';
 import { LoggerOutput } from '../LoggerOutput';
-import { GscDiagnosticsCollection } from '../GscDiagnosticsCollection';
+import { Events } from '../Events';
 
 export const testWorkspaceDir = path.join(os.tmpdir(), 'vscode-test-workspace');
 
@@ -46,7 +47,7 @@ export async function loadGscFile(paths: string[]): Promise<GscFile> {
     
     LoggerOutput.log("[Tests] loadGscFile() " + vscode.workspace.asRelativePath(fileUri));
     
-    var gscFile = await GscFiles.getFileData(fileUri);
+    var gscFile = await GscFiles.getFileData(fileUri, true, "loadGscFile");
     return gscFile;
 }
 
@@ -173,9 +174,28 @@ export function checkCompletions(gscFile: GscFile, items: vscode.CompletionItem[
 }
 
 
+export function checkCachedFile(cachedFiles: GscFile[], index: number, paths: string[]) {
 
-export function filePathToUri(relativePath: string): vscode.Uri {
-    const filePath = path.join(testWorkspaceDir, relativePath);
+    const filePath = path.join(testWorkspaceDir, ...paths);
+    const fileUri = vscode.workspace.asRelativePath(vscode.Uri.file(filePath));
+
+    function message(message: string, current: string, expected: string) {
+        var debugText = cachedFiles.map((file, i) => "  " + i + ": " + vscode.workspace.asRelativePath(file.uri)).join('\n');
+        return message + "\n\ngscFiles[" + index + "] = \n'" + current + "'. \n\nExpected: \n'" + expected + "'. \n\nErrors:\n" + debugText + "\n\n";
+    }
+
+    var item = cachedFiles.at(index);
+    assert.ok(item !== undefined, message("Undefined", typeof item, "undefined"));
+
+    assert.deepStrictEqual(vscode.workspace.asRelativePath(item.uri), fileUri, message("Unexpected uri", vscode.workspace.asRelativePath(item.uri), fileUri));
+}
+
+
+
+
+
+export function filePathToUri(...paths: string[]): vscode.Uri {
+    const filePath = path.join(testWorkspaceDir, ...paths);
     const fileUri = vscode.Uri.file(filePath);
     return fileUri;
 }
@@ -183,11 +203,10 @@ export function filePathToUri(relativePath: string): vscode.Uri {
 
 
 
-
 export function waitForDiagnosticsChange(uri: vscode.Uri, debugText: string = ""): Promise<vscode.Diagnostic[]> {
     //console.log("waitForDiagnosticsChange: " + vscode.workspace.asRelativePath(uri));
     return new Promise((resolve, reject) => {
-        const disposable = GscDiagnosticsCollection.onDidDiagnosticsChange((gscFile) => {
+        const disposable = Events.onDidGscDiagnosticChange((gscFile) => {
             //console.log("onDidDiagnosticsChange: " + vscode.workspace.asRelativePath(gscFile.uri));
             if (gscFile.uri.toString() === uri.toString()) {
                 disposable.dispose();  // Clean up the event listener

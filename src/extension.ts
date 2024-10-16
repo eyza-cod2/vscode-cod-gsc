@@ -5,6 +5,7 @@ import { Gsc } from './Gsc';
 import { Issues } from './Issues';
 import { Updates } from './Updates';
 import { LoggerOutput } from './LoggerOutput';
+import { Events } from './Events';
 
 export const EXTENSION_ID = 'eyza.cod-gsc';
 export const GITHUB_ISSUES_URL = 'https://github.com/eyza-cod2/vscode-cod-gsc/issues';
@@ -23,29 +24,13 @@ export async function activate(context: vscode.ExtensionContext) {
 	LoggerOutput.activate(context);
 
 	Issues.activate(context);
+
+	Events.activate(context);
 	
 	await Gsc.activate(context);
 
 	await Updates.activate(context);
 
-
-
-	// Testing
-	/*
-	console.log("activate");
-
-	vscode.workspace.onDidSaveTextDocument((doc) => {
-		console.log("onDidSaveTextDocument: " + doc.uri.toString());
-	}, null, context.subscriptions);
-
-	vscode.workspace.onDidChangeWorkspaceFolders((event) => { 
-		console.log("onDidChangeWorkspaceFolders: " + event.added.length + " " + event.removed.length);
-	}, null, context.subscriptions);
-
-	context.subscriptions.push({ dispose: () => {
-		console.log("dispose");
-	}});
-*/
 }
 
 // This method is called when your extension is deactivated

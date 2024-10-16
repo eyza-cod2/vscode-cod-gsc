@@ -1,9 +1,9 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import { GscFileParser, GscGroup, GroupType, GscVariableDefinitionType, GscData } from '../GscFileParser';
+import { GscFileParser, GscVariableDefinitionType, GscData } from '../GscFileParser';
 import { CompletionConfig, GscCompletionItemProvider } from '../GscCompletionItemProvider';
 import { GscGame } from '../GscConfig';
-import { GscFile } from '../GscFiles';
+import { GscFile } from '../GscFile';
 
 function checkItem(gscData: GscData, items: vscode.CompletionItem[], index: number, labelName: string, kind: vscode.CompletionItemKind, types: GscVariableDefinitionType[]) {
 

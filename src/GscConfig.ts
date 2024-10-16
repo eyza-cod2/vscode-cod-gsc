@@ -1,5 +1,8 @@
 import * as vscode from 'vscode';
 import { LoggerOutput } from './LoggerOutput';
+import { GscDiagnosticsCollection } from './GscDiagnosticsCollection';
+import { GscFiles } from './GscFiles';
+import { GscStatusBar } from './GscStatusBar';
 import { Issues } from './Issues';
 
 // These must match with package.json settings
@@ -106,7 +109,7 @@ export class GscConfig {
 
 
 	static async activate(context: vscode.ExtensionContext) { 
-		vscode.workspace.onDidChangeConfiguration((e) => this.onDidChangeConfiguration(e), null, context.subscriptions);
+		LoggerOutput.log("[GscConfig] Activating");
 	}
 
 
@@ -114,39 +117,22 @@ export class GscConfig {
 	 * Handle vscode configuration change event. 
 	 * Emit a configuration change event. This will call all subscribers in the order they were added.
 	 */
-	private static async onDidChangeConfiguration(e: vscode.ConfigurationChangeEvent) {
+	public static async onDidChangeConfiguration(e: vscode.ConfigurationChangeEvent) {
 		if (e.affectsConfiguration('gsc')) {
 			LoggerOutput.log("[GscConfig] GSC configuration changed.");
-			
-			for (const handler of this.configChangeSubscribers) {
-				try {
-					const result = handler();
-					if (result instanceof Promise) {
-						await result;
-					}
-				} catch (error) {
-					Issues.handleError(error);
-				}
-			}
+
+			// 1. Load new configuration for each workspace and assign it to cached files
+			GscFiles.updateConfigurationOfCachedFiles();
+
+			// 2. Update tree view
+
+			// 3. Update status bar in case the game has changed
+			await GscStatusBar.updateStatusBar("configChanged");
+
+			// 4. Update diagnostics for all files with new configuration
+			await GscDiagnosticsCollection.updateDiagnosticsForAll("config changed");
 		}
 	}
-
-
-    /**
-	 * Subscribe to configuration changes. The handler will be called whenever the configuration changes. Subscribers are called in the order they were added.
-	 * @param handler 
-	 */
-    public static onDidConfigChange(handler: ConfigChangeHandler): vscode.Disposable {
-        this.configChangeSubscribers.push(handler);
-        return vscode.Disposable.from({
-            dispose: () => {
-                const index = this.configChangeSubscribers.indexOf(handler);
-                if (index > -1) {
-                    this.configChangeSubscribers.splice(index, 1);
-                }
-            }
-        });
-    }
 
 
 
