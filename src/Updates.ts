@@ -9,27 +9,26 @@ export class Updates {
     static currentVersion: string | undefined;
     static previousVersion: string | undefined;
 
-    static async activate(context: vscode.ExtensionContext) {
+    static extensionPath: string;
+
+    static activate(context: vscode.ExtensionContext) {
+        this.extensionPath = context.extensionPath;
+
+        setTimeout(() => Updates.checkUpdate(context), 5000);
+    }
+
+
+    private static checkUpdate(context: vscode.ExtensionContext) {
         Updates.currentVersion = vscode.extensions.getExtension(EXTENSION_ID)?.packageJSON.version;
         Updates.previousVersion = context.globalState.get<string>('extensionVersion');
-    
+
         if (Updates.previousVersion !== Updates.currentVersion) {
-            
+
             // Show the webview if there's a new version
-            const panel = vscode.window.createWebviewPanel(
-                'updateNotification', // Identifies the type of the webview
-                'Extension Updated', // Title of the panel displayed to the user
-                vscode.ViewColumn.One, // Editor column to show the new webview panel in
-                {
-                    enableScripts: true, // Allow scripts in the webview
-                    localResourceRoots: [vscode.Uri.file(path.join(context.extensionPath, 'images'))] // Allow access to local files in 'media' folder
-                }
-            );  
-            panel.webview.html = this.getWebviewContent(panel.webview, context.extensionPath);
-            
+            Updates.showUpdateWindow();
 
             // Update the stored version to the current version
-            await context.globalState.update('extensionVersion', Updates.currentVersion);
+            void context.globalState.update('extensionVersion', Updates.currentVersion);
         }
 
         // Testing
@@ -37,6 +36,18 @@ export class Updates {
         //await context.globalState.update('extensionVersion', "0.0.1");
     }
 
+    public static showUpdateWindow() {
+        const panel = vscode.window.createWebviewPanel(
+            'updateNotification', // Identifies the type of the webview
+            'Extension Updated', // Title of the panel displayed to the user
+            vscode.ViewColumn.One, // Editor column to show the new webview panel in
+            {
+                enableScripts: true, // Allow scripts in the webview
+                localResourceRoots: [vscode.Uri.file(path.join(this.extensionPath, 'images'))] // Allow access to local files in 'media' folder
+            }
+        );
+        panel.webview.html = this.getWebviewContent(panel.webview, this.extensionPath);
+    }
 
     private static getWebviewContent(webview: vscode.Webview, extensionPath: string): string {
         // Path to the media directory
