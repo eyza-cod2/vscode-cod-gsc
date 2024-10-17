@@ -766,34 +766,52 @@ export class GscFileParser {
         function group_path(parentGroup: GscGroup) {
             var iPathStart = -1;
             if (parentGroup.items.length === 0 || parentGroup.type === GroupType.Path) { return; }
-            for (var i = 0; i <= parentGroup.items.length; i++) {             
-                const childGroup1 = parentGroup.items.at(i);
-                if (childGroup1?.solved === true) { continue; }
-                const childGroup2 = parentGroup.items.at(i + 1);
-                if (childGroup2?.solved === true) { continue; }
-                const typeOfUnknownToken2 = childGroup2?.getTypeOfUnknownToken();
 
-                const isWord = childGroup1?.typeEqualsToOneOf(GroupType.Identifier, GroupType.ReservedKeyword) ?? false;
+            // Join identifiers with path separators into one path
 
-                // First word must be an identifier, after the first \ it may also contain preserved keywords
+            // folder\script
+            // folder\subfolder\script
+            // folder\\script
+            // folder\
 
-                if (((iPathStart === -1 && childGroup1?.type === GroupType.Identifier) || 
-                     (iPathStart !== -1 && isWord)) &&           
-                   (typeOfUnknownToken2 === TokenType.PathSeparator || typeOfUnknownToken2 === TokenType.FunctionPointer)) 
-                {     
-                    if (iPathStart === -1) {
-                        iPathStart = i; // This is a path start
+            // Single path identifier in function call or #include statement are handled separately (singleFile::func(); #include file;)
+
+            for (let i = 0; i < parentGroup.items.length; i++) {
+                const childGroup1 = parentGroup.items[i];
+                if (childGroup1.solved === true) { continue; }
+
+                // Path does not start yet
+                if (iPathStart === -1) {
+                    // First group must be an identifier
+                    if (childGroup1.type !== GroupType.Identifier) { continue; }
+                    // Second group must be a path separator
+                    const childGroup2 = parentGroup.items.at(i + 1);
+                    if (childGroup2 === undefined || !childGroup2.isUnknownUnsolvedSingleTokenOfOneOfType(TokenType.PathSeparator)) { continue; }
+                    // First and second group must be on the same line
+                    if (childGroup1.getFirstToken().range.start.line !== childGroup2.getFirstToken().range.end.line) { continue; }
+
+                    iPathStart = i; // This is a path start
+                    
+                } else {
+                    const isOnSameLine = parentGroup.items[iPathStart].getFirstToken().range.start.line === childGroup1.getFirstToken().range.end.line;
+                    
+                    // This token is still a part of the path
+                    if (isOnSameLine && childGroup1.typeEqualsToOneOf(GroupType.Identifier, GroupType.ReservedKeyword) || childGroup1.isUnsolvedSingleTokenOfOneOfType(TokenType.PathSeparator)) {
+                        // If this is the last item
+                        if (i === parentGroup.items.length - 1) {
+                            replaceGroupsWithSingleGroup(parentGroup, iPathStart, i, GroupType.Path);
+                            i = iPathStart - 1; // go back to start because the parent group items has changed
+                            iPathStart = -1;
+                        } else {
+                            continue; // go to next item
+                        }
+                    } else {
+                        replaceGroupsWithSingleGroup(parentGroup, iPathStart, i - 1, GroupType.Path);
+                        i = iPathStart - 1; // go back to start because the parent group items has changed
+                        iPathStart = -1;
                     }
-                    if (typeOfUnknownToken2 === TokenType.PathSeparator) {
-                        i++;
-                    }
-                } else if (iPathStart > -1) {                  
-                    const iPathEnd = (isWord) ? i : i - 1;
-                    replaceGroupsWithSingleGroup(parentGroup, iPathStart, iPathEnd, GroupType.Path);
-                    i = iPathStart - 1;
-                    iPathStart = -1;
                 }
-            } 
+            }
         }
 
         // (-1 - -1)    (+1 + 1)    (-.1 + +.1)    (-1, +1, -1)
@@ -917,7 +935,7 @@ export class GscFileParser {
 
                 // Check type directly without making new group
                 else if (group.type === GroupType.Unknown || group.type === newType || (
-                    group.type === GroupType.Identifier && typeEqualsToOneOf(newType, GroupType.VariableName, GroupType.FunctionName, GroupType.StructureField, GroupType.XAnim)
+                    group.type === GroupType.Identifier && typeEqualsToOneOf(newType, GroupType.VariableName, GroupType.FunctionName, GroupType.StructureField, GroupType.XAnim, GroupType.Path)
                 ) || (
                     group.type === GroupType.Expression && (typeEqualsToOneOf(newType, GroupType.FunctionParametersExpression, GroupType.KeywordParametersExpression, GroupType.ForExpression, GroupType.ForEachExpression, GroupType.CastExpression)) 
                 ) || (
@@ -1988,11 +2006,14 @@ export class GscFileParser {
 
 
         // Preprocessors
-        group_byKeywordNameAndGroup(["#include"], [GroupType.Path],
-            GroupType.PreprocessorStatement, GroupType.ReservedKeyword, GroupType.Path);
-        group_byKeywordNameAndGroup(["#using_animtree"], [GroupType.Expression],
-            GroupType.PreprocessorStatement, GroupType.ReservedKeyword, GroupType.PreprocessorAnimtreeParametersExpression);
-        group_byKeyword(["#animtree"], GroupType.Constant, GroupType.ReservedKeyword);
+        group_byKeywordNameAndGroup(["#include"], 
+            [GroupType.Path, GroupType.Identifier], GroupType.PreprocessorStatement, GroupType.ReservedKeyword, GroupType.Path);
+
+        group_byKeywordNameAndGroup(["#using_animtree"], 
+            [GroupType.Expression], GroupType.PreprocessorStatement, GroupType.ReservedKeyword, GroupType.PreprocessorAnimtreeParametersExpression);
+
+        group_byKeyword(["#animtree"], 
+            GroupType.Constant, GroupType.ReservedKeyword);
 
         
 
@@ -2009,7 +2030,7 @@ export class GscFileParser {
 
         // Join function call = path + function call
         // maps\mp\gametypes\_teams::CountPlayers()
-        group_byGroupAndTokenAndGroup([GroupType.Path], TokenType.FunctionPointer, [GroupType.FunctionCall], 
+        group_byGroupAndTokenAndGroup([GroupType.Path, GroupType.Identifier], TokenType.FunctionPointer, [GroupType.FunctionCall], 
             GroupType.FunctionCall, GroupType.Path, GroupType.Token, GroupType.FunctionCall);
 
 
@@ -2055,7 +2076,7 @@ export class GscFileParser {
             GroupType.FunctionPointer, GroupType.Token, GroupType.FunctionName );
 
         // maps\mp\gametypes\_teams::CountPlayers
-        group_byGroupAndGroup([GroupType.Path], [GroupType.FunctionPointer],
+        group_byGroupAndGroup([GroupType.Path, GroupType.Identifier], [GroupType.FunctionPointer],
             GroupType.FunctionPointerExternal, GroupType.Path, GroupType.FunctionPointer);
         
 

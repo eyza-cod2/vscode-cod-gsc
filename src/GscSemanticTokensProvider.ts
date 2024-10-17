@@ -108,6 +108,17 @@ export class GscSemanticTokensProvider implements vscode.DocumentSemanticTokensP
             }
         }
 
+        function getSingleLineRange(group: GscGroup): vscode.Range {
+            let range = group.getRange();
+
+            if (range.isSingleLine === false) {
+                Issues.handleError(new Error(group.toString() + " spread across multiple lines - it must be single line!. Line start: " + range.start.line + ". Line end: " + range.end.line));
+                // Transform the range to be single line
+                range = new vscode.Range(range.start, range.start.translate(0, 1));
+            }
+            return range;
+        }
+
 
         walkGroupItems(gscFile.data.root, gscFile.data.root.items, (parentGroup, group) => {
 
@@ -128,14 +139,14 @@ export class GscSemanticTokensProvider implements vscode.DocumentSemanticTokensP
 
             if (group.type === GroupType.Path) {
                 builder.push(
-                    group.getRange(),
+                    getSingleLineRange(group),
                     'namespace',
                     ['declaration']
                 );
             }
             else if (group.type === GroupType.FunctionName) {
                 builder.push(
-                    group.getRange(),
+                    getSingleLineRange(group),
                     'function',
                     ['declaration']
                 );
@@ -144,13 +155,13 @@ export class GscSemanticTokensProvider implements vscode.DocumentSemanticTokensP
                 var token = group.getSingleToken();
                 if (token !== undefined && (token.name === "level" || token.name === "game" || token.name === "self")) {
                     builder.push(
-                        group.getRange(),
+                        getSingleLineRange(group),
                         'variable',
                         ['readonly']
                     );
                 } else {
                     builder.push(
-                        group.getRange(),
+                        getSingleLineRange(group),
                         'variable',
                         ['declaration']
                     );
@@ -159,14 +170,14 @@ export class GscSemanticTokensProvider implements vscode.DocumentSemanticTokensP
 
             else if (group.type === GroupType.StructureField) {
                 builder.push(
-                    group.getRange(),
+                    getSingleLineRange(group),
                     'variable',
                     ['declaration']
                 );            
             }
             else if (group.type === GroupType.ReservedKeyword) {
                 builder.push(
-                    group.getRange(),
+                    getSingleLineRange(group),
                     'keyword',
                     ['declaration']
                 );
