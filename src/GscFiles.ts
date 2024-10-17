@@ -18,7 +18,7 @@ export class GscFiles {
 
     private static cachedFiles: GscCachedFilesPerWorkspace = new GscCachedFilesPerWorkspace();
 
-    private static statusBarItem: vscode.StatusBarItem | undefined;
+    private static statusBarItem: vscode.StatusBarItem;
     private static debugWindow: vscode.WebviewPanel | undefined = undefined;
 
     private static fileWatcher: vscode.FileSystemWatcher;
@@ -140,21 +140,14 @@ export class GscFiles {
 
 
     public static async parseAllFiles() {
-        if (GscFiles.statusBarItem) {
-            GscFiles.statusBarItem.show();
-        }
+        GscFiles.statusBarItem.show();
 
         this.removeAllCachedFiles();
 
         // Parse all
         await GscFiles.parseAndCacheAllFiles();
 
-
-        if (GscFiles.statusBarItem) {
-            GscFiles.statusBarItem.hide();
-            GscFiles.statusBarItem.dispose();
-            GscFiles.statusBarItem = undefined;
-        } 
+        GscFiles.statusBarItem.hide();
 
         // Update diagnostics for all files
         await GscDiagnosticsCollection.updateDiagnosticsForAll("all files parsed");
@@ -185,10 +178,8 @@ export class GscFiles {
         
         const parseFile = async (file: vscode.Uri, index: number) => {
             const gsc = await this.getFileData(file, true, "parsing all files");
-            if (GscFiles.statusBarItem) {
-                GscFiles.statusBarItem.text = `$(sync~spin) Parsing GSC file ${index + 1}/${files.length}...`;
-                GscFiles.statusBarItem.tooltip = file.fsPath;
-            }
+            GscFiles.statusBarItem.text = `$(sync~spin) Parsing GSC file ${index + 1}/${files.length}...`;
+            GscFiles.statusBarItem.tooltip = file.fsPath;
         };
         
         // Split the files into chunks of files
