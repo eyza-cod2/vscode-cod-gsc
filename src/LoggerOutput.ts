@@ -77,9 +77,17 @@ export class LoggerOutput {
 
     // Helper to format the current timestamp
     private static getFormattedTimestamp(date: Date): string {
-        const datePart = date.toISOString().slice(0, 10);
-        const timePart = date.toISOString().slice(11, 23);
-        return `${datePart} ${timePart}`; // Example: 2024-09-14 10:15:59.649
+        const currentDate = new Date();
+
+        const formattedDate = `${currentDate.getFullYear()}-${
+          (currentDate.getMonth() + 1).toString().padStart(2, '0')}-${
+          currentDate.getDate().toString().padStart(2, '0')} ${
+          currentDate.getHours().toString().padStart(2, '0')}:${
+          currentDate.getMinutes().toString().padStart(2, '0')}:${
+          currentDate.getSeconds().toString().padStart(2, '0')}.${
+          currentDate.getMilliseconds().toString().padStart(3, '0')}`;
+
+        return formattedDate; // Example: 2024-09-14 10:15:59.649
     }
 
     // Clean up old logs that are older than 5 minutes
