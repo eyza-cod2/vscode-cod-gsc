@@ -130,6 +130,20 @@ export class Events {
 
 
 
+    private static readonly onDidGscActivateEvent = new vscode.EventEmitter<void>();
+    public static readonly onDidGscActivate = this.onDidGscActivateEvent.event;
+
+
+    static GscActivated() {
+        LoggerOutput.log("[Events] GSC activated");
+
+        this.onDidGscActivateEvent.fire();
+    }
+
+
+
+
+
     private static readonly onDidGscFileParsedEvent = new vscode.EventEmitter<GscFile>();
     public static readonly onDidGscFileParsed = this.onDidGscFileParsedEvent.event;
 

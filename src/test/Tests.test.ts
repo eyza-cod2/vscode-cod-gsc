@@ -23,8 +23,27 @@ export async function activateExtension() {
     const extension = vscode.extensions.getExtension(EXTENSION_ID);
     assert.ok(extension, "Extension should be available");
 
+    if (extension.isActive) {
+        return;
+    }
+
+    // Wait for the GSC to activate
+    const waitGsc = new Promise<void>((resolve, reject) => {
+        const event = Events.onDidGscActivate(() => {
+            event.dispose();
+            clearTimeout(to);
+            resolve();
+        });
+        const to = setTimeout(() => {
+            event.dispose();
+            reject(new Error('Timeout waiting for extension to activate'));
+        }, 5000);
+    });
+
     // Activate the extension
     await extension!.activate();
+
+    await waitGsc;
 
     assert.ok(extension!.isActive, "Extension should be activated");
 

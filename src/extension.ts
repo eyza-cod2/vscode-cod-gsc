@@ -16,7 +16,7 @@ export const EMAIL = 'mailto:kratas.tom' + '@' + 'seznam.cz';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
-export async function activate(context: vscode.ExtensionContext) {
+export function activate(context: vscode.ExtensionContext) {
 
 	// Note:
 	//   This function is also called when workspace folders changes (add/remove/reorder) without deactivate() being called!!!
@@ -27,10 +27,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	Events.activate(context);
 	
-	await Gsc.activate(context);
+	Updates.activate(context);
 
-	await Updates.activate(context);
-
+	void Gsc.activate(context);
 }
 
 // This method is called when your extension is deactivated

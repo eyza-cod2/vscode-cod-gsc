@@ -10,6 +10,7 @@ import { GscConfig } from './GscConfig';
 import { GscCodeActionProvider } from './GscCodeActionProvider';
 import { Issues } from './Issues';
 import { LoggerOutput } from './LoggerOutput';
+import { Events } from './Events';
 
 
 export class Gsc {
@@ -30,6 +31,8 @@ export class Gsc {
             await GscDefinitionProvider.activate(context);
             await GscHoverProvider.activate(context);
             await GscStatusBar.activate(context);
+
+            Events.GscActivated();
         } catch (error) {
             Issues.handleError(error);
         }
