@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { GscConfig } from './GscConfig';
 import { GscFiles } from './GscFiles';
 import { GscStatusBar } from './GscStatusBar';
+import { GscSidePanel } from './GscSidePanel';
 import { GscFile } from './GscFile';
 import { LoggerOutput } from './LoggerOutput';
 import { Issues } from './Issues';
@@ -35,6 +36,7 @@ export class Events {
 
                 await GscFiles.onChangeWorkspaceFolders(e);
 
+                GscSidePanel.workspaceInfoProvider.refreshAll();
             } catch (error) {
                 Issues.handleError(error);
             }
@@ -61,6 +63,8 @@ export class Events {
                     LoggerOutput.log("[Events] Debounce done (250ms) - Active editor changed to " + e?.document.fileName);
 
                     await GscStatusBar.updateStatusBar("activeEditorChanged");
+
+                    GscSidePanel.fileInfoProvider.refresh();
                 }, 250);
 
             } catch (error) {
@@ -88,7 +92,10 @@ export class Events {
             try {
                 //LoggerOutput.log("[Events] Editor selection changed.");
 
-                GscFiles.onChangeEditorSelection(e);
+                if (e.kind !== undefined) {
+                    GscFiles.onChangeEditorSelection(e);
+                }
+
             } catch (error) {
                 Issues.handleError(error);
             }
@@ -152,6 +159,11 @@ export class Events {
         LoggerOutput.log("[Events] GSC file parsed", vscode.workspace.asRelativePath(gscFile.uri));
 
         this.onDidGscFileParsedEvent.fire(gscFile);
+
+        // Refresh the side panel if the active editor is the parsed file
+        if (gscFile.uri.toString() === vscode.window.activeTextEditor?.document.uri.toString()) {
+            GscSidePanel.fileInfoProvider.refresh();
+        }
     }
 
 
@@ -172,5 +184,6 @@ export class Events {
     static GscFileCacheFileHasChanged(fileUri: vscode.Uri) {
         LoggerOutput.log("[Events] GSC cache changed for file", vscode.workspace.asRelativePath(fileUri));
 
+        GscSidePanel.workspaceInfoProvider.refreshCachedGscFiles(fileUri);
     }
 }

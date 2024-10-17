@@ -3,7 +3,7 @@ import { LoggerOutput } from './LoggerOutput';
 import { GscDiagnosticsCollection } from './GscDiagnosticsCollection';
 import { GscFiles } from './GscFiles';
 import { GscStatusBar } from './GscStatusBar';
-import { Issues } from './Issues';
+import { GscSidePanel } from './GscSidePanel';
 
 // These must match with package.json settings
 export enum GscGame {
@@ -125,6 +125,7 @@ export class GscConfig {
 			GscFiles.updateConfigurationOfCachedFiles();
 
 			// 2. Update tree view
+			GscSidePanel.workspaceInfoProvider.refreshIncludedWorkspaceFolders();
 
 			// 3. Update status bar in case the game has changed
 			await GscStatusBar.updateStatusBar("configChanged");

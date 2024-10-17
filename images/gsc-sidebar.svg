@@ -1,0 +1,9 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="50" height="50">
+	<title>Nový projekt</title>
+	<style>
+		.s0 { fill: none;stroke: #000000;stroke-miterlimit:100;stroke-width: 3 } 
+	</style>
+	<path id="Shape 1" class="s0" d="m13 17.1v-3l-1-1.1h-9l-1 1v22l1 1h9l1-1v-10l-1-1h-4.8"/>
+	<path id="Layer 2" class="s0" d="m30 15v-1l-1-1h-9l-1 1.1v9.9l1 1h9l1 1v10.1l-1 0.9h-9l-0.9-1-0.1-2.5"/>
+	<path id="Layer 3" class="s0" d="m48.1 16.5l-0.1-2.5-1-1-9 0.1-1 0.9v22l0.9 1 9.1 0.1 1.1-1.1-0.1-2.3"/>
+</svg>

@@ -45,6 +45,32 @@
         "path": "./syntaxes/gsc.tmLanguage.json"
       }
     ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "gsc-sidebar",
+          "title": "GSC",
+          "icon": "images/gsc-sidebar.svg"
+        }
+      ]
+    },
+    "views": {
+      "gsc-sidebar": [
+        {
+          "id": "gsc-view-workspace-info",
+          "name": "Workspace info"
+        },
+        {
+          "id": "gsc-view-file-info",
+          "name": "File info"
+        },
+        {
+          "id": "gsc-view-other",
+          "name": "Other",
+          "type": "webview"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "gsc.selectGame",

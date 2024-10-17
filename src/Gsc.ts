@@ -9,6 +9,7 @@ import { GscStatusBar } from './GscStatusBar';
 import { GscConfig } from './GscConfig';
 import { GscCodeActionProvider } from './GscCodeActionProvider';
 import { Issues } from './Issues';
+import { GscSidePanel } from './GscSidePanel';
 import { LoggerOutput } from './LoggerOutput';
 import { Events } from './Events';
 
@@ -22,6 +23,7 @@ export class Gsc {
 
         // Register events
         try {
+            await GscSidePanel.activate(context);
             await GscConfig.activate(context);
             await GscDiagnosticsCollection.activate(context);
             await GscFiles.activate(context);
