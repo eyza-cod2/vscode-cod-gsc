@@ -2263,6 +2263,7 @@ export class GscFileParser {
                                 paramTokens,
                                 [],
                                 innerGroup.getRange(),
+                                innerGroup.items[0].items[0].getRange(),
                                 innerGroup.items[1].getRange()
                             );
 

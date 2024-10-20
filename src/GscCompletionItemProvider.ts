@@ -80,7 +80,7 @@ export class GscCompletionItemProvider implements vscode.CompletionItemProvider 
 
         // Get current function data
         const functionGroup = gscData.functions.find(f => {
-            const range = f.scopeRange;
+            const range = f.rangeScope;
             if (((position.line === range.start.line && position.character > range.start.character) || position.line > range.start.line) && 
                 ((position.line === range.end.line && position.character < range.end.character) || position.line < range.end.line)) 
             {
@@ -360,11 +360,11 @@ export class GscCompletionItemProvider implements vscode.CompletionItemProvider 
             // Uri is undefined in tests
             if (gscFile !== undefined) {
                 // Local functions and included functions
-                const res = await GscFunctions.getFunctionReferenceState(undefined, gscFile);
+                const res = GscFunctions.getFunctionReferenceState(undefined, gscFile);
     
                 res.definitions.forEach(f => {
                     const item = new vscode.CompletionItem({label: f.func.name, description: "", detail: ""}, vscode.CompletionItemKind.Function);
-                    item.documentation = f.func.generateMarkdownDescription(f.uri === gscFile.uri.toString(), f.uri, f.reason);
+                    item.documentation = f.func.generateMarkdownDescription(f.uri.toString() === gscFile.uri.toString(), f.uri.toString(), f.reason);
                     completionItems.push(item);
                 });
             }

@@ -1,20 +1,16 @@
 {
 	"folders": [
 		{
-			"name": "GscComplex",
-			"path": "GscComplex"
+			"name": "GscAll",
+			"path": "GscAll"
 		},
 		{
-			"name": "GscDiagnosticsCollection",
-			"path": "GscDiagnosticsCollection"
+			"name": "GscAll.CoD2MP",
+			"path": "GscAll.CoD2MP"
 		},
 		{
-			"name": "GscDiagnosticsCollection.CoD2MP",
-			"path": "GscDiagnosticsCollection.CoD2MP"
-		},
-		{
-			"name": "GscDiagnosticsCollection.UniversalGame",
-			"path": "GscDiagnosticsCollection.UniversalGame"
+			"name": "GscAll.UniversalGame",
+			"path": "GscAll.UniversalGame"
 		},
 		{
 			"name": "GscQuickFix",

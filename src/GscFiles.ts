@@ -469,7 +469,7 @@ export class GscFiles {
                 LoggerOutput.log("Debouncing done (" + debounceTime + "ms elapsed) - diagnostics update for file (" + debugText + ")", vscode.workspace.asRelativePath(uri!));
                 this.debounceTimersDiagnostics.delete(uriString);
 
-                void GscDiagnosticsCollection.updateDiagnosticsForFile(gscFile);
+                GscDiagnosticsCollection.updateDiagnosticsForFile(gscFile);
             }, debounceTime));    
         } else {
             this.debounceTimersDiagnostics.set("", setTimeout(() => {

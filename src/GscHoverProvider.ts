@@ -55,7 +55,7 @@ export class GscHoverProvider implements vscode.HoverProvider {
                 const isUniversalGame = GscConfig.isUniversalGame(gscFile.config.currentGame);
                 const errorDiagnosticsDisabled = gscFile.config.errorDiagnostics === ConfigErrorDiagnostics.Disable;
 
-                const res = await GscFunctions.getFunctionReferenceState({name: funcInfo.name, path: funcInfo.path}, gscFile);
+                const res = GscFunctions.getFunctionReferenceState({name: funcInfo.name, path: funcInfo.path}, gscFile);
     
                 switch (res.state as GscFunctionState) {
                     case GscFunctionState.NameIgnored:
@@ -63,23 +63,35 @@ export class GscHoverProvider implements vscode.HoverProvider {
                         break;
 
                     case GscFunctionState.Found:
-                        res.definitions.forEach(async d => {
 
-                            markdown.appendMarkdown(d.func.generateMarkdownDescription(d.uri === uri.toString(), d.uri, d.reason).value);
-    
-                            /*public static markdownAppendFunctionData(md: vscode.MarkdownString, fileUri: string, functionData: GscFunction) {
-                                const parametersText = functionData.parameters.map(p => p.name).join(", ");
-                                
-                                md.appendCodeblock(`${functionData.name}(${parametersText})`);
-                        
-                                md.appendMarkdown("File: ```" + vscode.workspace.asRelativePath(vscode.Uri.parse(fileUri)) + "```");
-                            }*/
-                        });
-                        break;
+                        for (let i = 0; i < res.definitions.length; i++) {
+                            const d = res.definitions[i];
+                            if (!gscFile.config.gameConfig.duplicateFunctionDefinitions && i > 0) {
+                                markdown.appendMarkdown('\n\r');
+                                markdown.appendMarkdown('--------------------------------------------------------------------------  \n\r');
+                            }
 
+                            markdown.appendMarkdown(d.func.generateMarkdownDescription(d.uri.toString() === uri.toString(), d.uri.toString(), d.reason).value);
 
-                    case GscFunctionState.FoundOnMultiplePlaces:
-                        // There would be error by diagnostics
+                            if (gscFile.config.gameConfig.duplicateFunctionDefinitions) {
+                                if (res.definitions.length > 1) {
+                                    const files = res.definitions
+                                        .filter((f, i) => (i > 0) && (f.uri.toString() !== uri.toString())); // ignore first definition and current file (if duplicate func)
+                                        
+                                    if (files.length > 0) {
+                                        markdown.appendMarkdown('\n\r');
+                                        markdown.appendMarkdown('--------------------------------------------------------------------------  \n\r');
+                                        if (files.length === 1) {
+                                            markdown.appendMarkdown(`Function '${funcInfo.name}' is also defined in this file:  \n\r`);
+                                        } else {
+                                            markdown.appendMarkdown(`Function '${funcInfo.name}' is also defined in these files:  \n\r`);
+                                        }
+                                        markdown.appendMarkdown(files.map(f => `\n- ${vscode.workspace.asRelativePath(f.uri)}`).join(""));
+                                    }
+                                }
+                                break; // Show only first definition for universal game
+                            }
+                        }
                         break;
 
 

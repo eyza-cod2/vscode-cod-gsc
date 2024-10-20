@@ -3,8 +3,8 @@ import { GscFiles } from './GscFiles';
 import { GscFile } from './GscFile';
 import { GroupType, GscData, GscGroup, GscToken, TokenType } from './GscFileParser';
 import { CodFunctions } from './CodFunctions';
-import { ConfigErrorDiagnostics, GscConfig, GscGame, GscGameRootFolder } from './GscConfig';
-import { GscFunctions, GscFunctionState } from './GscFunctions';
+import { ConfigErrorDiagnostics, GscConfig, GscGame } from './GscConfig';
+import { GscFunctionDefinition, GscFunctions, GscFunctionState } from './GscFunctions';
 import { assert } from 'console';
 import { LoggerOutput } from './LoggerOutput';
 import { Issues } from './Issues';
@@ -87,7 +87,7 @@ export class GscDiagnosticsCollection {
                     this.statusBarItem.tooltip = data.uri.toString();
                 }
 
-                count += await this.updateDiagnosticsForFile(data);
+                count += this.updateDiagnosticsForFile(data);
 
                 // Check if it's time to pause for UI update
                 const now = Date.now();
@@ -123,7 +123,7 @@ export class GscDiagnosticsCollection {
      * @param gscFile The GSC file to generate diagnostics for.
      * @returns The number of diagnostics created.
      */
-    public static async updateDiagnosticsForFile(gscFile: GscFile): Promise<number> {
+    public static updateDiagnosticsForFile(gscFile: GscFile): number {
         try {
             LoggerOutput.log("[GscDiagnosticsCollection] Creating diagnostics for file", vscode.workspace.asRelativePath(gscFile.uri));
             
@@ -151,18 +151,20 @@ export class GscDiagnosticsCollection {
             walkGroupItems(gscFile.data.root, gscFile.data.root.items);
 
 
-            // Create diagnostic for function names
-            for (const d of groupFunctionNames) {
-                const diag = await GscDiagnosticsCollection.createDiagnosticsForFunctionName(d.group, gscFile);
+            // Create diagnostic for included files
+            const includedPaths = groupIncludedPaths.map(g => g.group.getTokensAsString());
+            for (let i = 0; i < groupIncludedPaths.length; i++) {
+                const d = groupIncludedPaths[i];
+                const path = d.group.getTokensAsString();
+                const diag = GscDiagnosticsCollection.createDiagnosticsForIncludedPaths(gscFile, d.group, path, includedPaths, i);
                 if (diag) {
                     gscFile.diagnostics.push(diag);
                 }
             }
 
-            // Create diagnostic for included files
-            const includedPaths = groupIncludedPaths.map(g => g.group.getTokensAsString());
-            for (const d of groupIncludedPaths) {
-                const diag = GscDiagnosticsCollection.createDiagnosticsForIncludedPaths(d.group, gscFile, includedPaths);
+            // Create diagnostic for function names
+            for (const d of groupFunctionNames) {
+                const diag = GscDiagnosticsCollection.createDiagnosticsForFunctionName(d.group, gscFile);
                 if (diag) {
                     gscFile.diagnostics.push(diag);
                 }
@@ -370,12 +372,10 @@ export class GscDiagnosticsCollection {
     }
 
 
-    private static createDiagnosticsForIncludedPaths(group: GscGroup, gscFile: GscFile, includedPaths: string[]): vscode.Diagnostic | undefined {
+    private static createDiagnosticsForIncludedPaths(gscFile: GscFile, group: GscGroup, path: string, allIncludedPaths: string[], index: number): vscode.Diagnostic | undefined {
         assert(group.type === GroupType.Path);
 
-        const tokensAsPath = group.getTokensAsString();
-
-        const referenceData = GscFiles.getReferencedFileForFile(gscFile, tokensAsPath);
+        const referenceData = GscFiles.getReferencedFileForFile(gscFile, path);
 
         if (!gscFile.config.gameConfig.includeFileItself && referenceData.gscFile?.uri.toString() === gscFile.uri.toString()) {
             return new vscode.Diagnostic(group.getRange(), "File is including itself", vscode.DiagnosticSeverity.Error);
@@ -383,8 +383,8 @@ export class GscDiagnosticsCollection {
 
         // Find how many times this file is included
         let count = 0;
-        for (const includedPath of includedPaths) {
-            if (includedPath === tokensAsPath) {
+        for (const includedPath of allIncludedPaths) {
+            if (includedPath === path) {
                 count++;
             }
             if (count >= 2) {
@@ -392,31 +392,68 @@ export class GscDiagnosticsCollection {
             }
         }
 
+        // Check for duplicated function definitions
+        if (gscFile.config.gameConfig.duplicateFunctionDefinitions === false && referenceData.gscFile) {
+            // Get all function definitions from included file
+            const funcDefsInIncludedFile = GscFunctions.getLocalFunctionDefinitions(referenceData.gscFile);
+            
+            const alreadyDefinedFunctions: GscFunctionDefinition[] = [];
+            
+            const funcDefsFromLocalFile = GscFunctions.getLocalFunctionDefinitions(gscFile);
+            alreadyDefinedFunctions.push(...funcDefsFromLocalFile.map(f => ({func: f, uri: gscFile.uri, reason: "Local file"})));
+
+            for (let j = 0; j < index; j++) {
+                const otherPath = allIncludedPaths[j];
+                const otherReferenceData = GscFiles.getReferencedFileForFile(gscFile, otherPath);
+                if (!otherReferenceData.gscFile) {
+                    continue;
+                }
+                const otherFuncDefs = GscFunctions.getLocalFunctionDefinitions(otherReferenceData.gscFile);
+
+                alreadyDefinedFunctions.push(...otherFuncDefs.map(f => ({func: f, uri: otherReferenceData.gscFile!.uri, reason: "Included file"})));
+            }
+
+            for (const funcDef of funcDefsInIncludedFile) {
+                for (const alreadyDefinedFunction of alreadyDefinedFunctions) {
+                    if (funcDef.nameId === alreadyDefinedFunction.func.nameId) {
+                        const s = alreadyDefinedFunction.reason === "Local file" ? "this file" : "included file '" + vscode.workspace.asRelativePath(alreadyDefinedFunction.uri) + "'";
+                        return new vscode.Diagnostic(group.getRange(), `Function '${funcDef.name}' is already defined in ${s}!`, vscode.DiagnosticSeverity.Error);
+                    }
+                }
+            }
+        }
+
         if (referenceData.gscFile === undefined) {
 
             // This file path is ignored by configuration
-            if (gscFile.config.ignoredFilePaths.some(ignoredPath => tokensAsPath.toLowerCase().startsWith(ignoredPath.toLowerCase()))) {
+            if (gscFile.config.ignoredFilePaths.some(ignoredPath => path.toLowerCase().startsWith(ignoredPath.toLowerCase()))) {
                 return;
             }
             const d = new vscode.Diagnostic(
                 group.getRange(), 
-                `File '${tokensAsPath}.gsc' was not found in workspace folder ${gscFile.config.referenceableGameRootFolders.map(f => "'" + f.relativePath + "'").join(", ")}`, 
+                `File '${path}.gsc' was not found in workspace folder ${gscFile.config.referenceableGameRootFolders.map(f => "'" + f.relativePath + "'").join(", ")}`, 
                 vscode.DiagnosticSeverity.Error);        
-            d.code = "unknown_file_path_" + tokensAsPath;
+            d.code = "unknown_file_path_" + path;
             return d;
         }
 
     }
 
 
-    private static async createDiagnosticsForFunctionName(
+    private static createDiagnosticsForFunctionName(
         group: GscGroup, gscFile: GscFile) {
 
         // Function declaration
         if (group.parent?.type === GroupType.FunctionDeclaration) {
-            // TODO check for duplicate
-
+            
             const funcName = group.getFirstToken().name;
+            
+            // Check for duplicate function name definition
+            const defs = GscFunctions.getLocalFunctionDefinitions(gscFile, funcName);
+            if (defs.length > 1) {
+                return new vscode.Diagnostic(group.getRange(), `Duplicate function definition of '${funcName}'!`, vscode.DiagnosticSeverity.Error);
+            }
+            
 
             // This function is overwriting the build-in function
             if (CodFunctions.isPredefinedFunction(funcName, gscFile.config.currentGame)) {
@@ -430,13 +467,13 @@ export class GscDiagnosticsCollection {
             const funcInfo = group.getFunctionReferenceInfo();
             if (funcInfo !== undefined) {
                 
-                const res = await GscFunctions.getFunctionReferenceState({name: funcInfo.name, path: funcInfo.path}, gscFile);
+                const res = GscFunctions.getFunctionReferenceState({name: funcInfo.name, path: funcInfo.path}, gscFile);
     
                 switch (res.state as GscFunctionState) {      
                     case GscFunctionState.NameIgnored:
                         return;
 
-                    // Function was found in exactly one place
+                    // Function was found
                     case GscFunctionState.Found:
                         const funcDef = res.definitions[0].func;
                         if (funcInfo.params.length > funcDef.parameters.length) {  
@@ -449,11 +486,6 @@ export class GscDiagnosticsCollection {
                             }
                         }
                         break;
-
-
-                    // Function is defined on too many places
-                    case GscFunctionState.FoundOnMultiplePlaces:
-                        return new vscode.Diagnostic(group.getRange(), `Function '${funcInfo.name}' is defined in ${res.definitions.length} places!`, vscode.DiagnosticSeverity.Error);
 
 
                     // This function is predefined function

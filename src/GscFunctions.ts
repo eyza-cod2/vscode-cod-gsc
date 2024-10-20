@@ -17,7 +17,8 @@ export class GscFunction {
         /** Local variable declarations like "a = 1;". Its always statement with item[0] as Reference */
         public localVariableDefinitions: GscVariableDefinition[],
         public range: vscode.Range,
-        public scopeRange: vscode.Range,
+        public rangeFunctionName: vscode.Range,
+        public rangeScope: vscode.Range,
     ) {}
 
     public static generateMarkdownDescription(
@@ -72,7 +73,7 @@ export class GscFunction {
 
 export type GscFunctionDefinition = {
     func: GscFunction, 
-    uri: string,
+    uri: vscode.Uri,
     reason: string
 };
 
@@ -86,10 +87,10 @@ export type GscVariableDefinition = {
 
 
 
+
 export enum GscFunctionState {
     NameIgnored,
     Found,
-    FoundOnMultiplePlaces,
     FoundInPredefined,
     NotFoundFile,
     NotFoundFileButIgnored,
@@ -119,25 +120,20 @@ export class GscFunctions {
      * Get the state of the function reference and its definitions.
      * It will tell if referenced function is found, not found, found on multiple places, ignored, etc.
      */
-    static async getFunctionReferenceState(
+    static getFunctionReferenceState(
         funcInfo: {name:string, path: string} | undefined,
         gscFile: GscFile)
-        : Promise<GscFunctionStateAndDefinitions>
+        : GscFunctionStateAndDefinitions
     {
         function ret(state: GscFunctionState, definitions: GscFunctionDefinition[]) {
             return {state: state, definitions: definitions};
         }
-
-        // This function name is ignored by configuration
-        if (funcInfo && gscFile.config.ignoredFunctionNames.some(name => name.toLowerCase() === funcInfo.name.toLowerCase())) {
-            return ret(GscFunctionState.NameIgnored, []);
-        }
            
         // Get file URI and position where the file is defined
-        const definitions = await GscFunctions.getAvailableFunctionsForFile(gscFile, funcInfo?.name, funcInfo?.path);
+        const definitions = GscFunctions.getFunctionDefinitions(gscFile, funcInfo);
 
         // File not found
-        if (definitions === undefined) {          
+        if (definitions === undefined) {
             // This file path is ignored by configuration
             if (funcInfo && gscFile.config.ignoredFilePaths.some(ignoredPath => funcInfo.path.toLowerCase().startsWith(ignoredPath.toLowerCase()))) {
                 return ret(GscFunctionState.NotFoundFileButIgnored, []);
@@ -146,15 +142,9 @@ export class GscFunctions {
         }
 
         // Function was found in exactly one place
-        else if (definitions.length === 1) {
+        else if (definitions.length >= 1) {
             return ret(GscFunctionState.Found, definitions);
         }
-
-        // Function is defined on too many places
-        else if (definitions.length > 1) {
-            return ret(GscFunctionState.FoundOnMultiplePlaces, definitions);
-        }
-
 
         // This function is predefined function
         else if (funcInfo && funcInfo.path === "" && CodFunctions.isPredefinedFunction(funcInfo.name, gscFile.config.currentGame)) {
@@ -164,8 +154,12 @@ export class GscFunctions {
         // Function name was not found
         else 
         {
+            // This function name is ignored by configuration
+            if (funcInfo && gscFile.config.ignoredFunctionNames.some(name => name.toLowerCase() === funcInfo.name.toLowerCase())) {
+                return ret(GscFunctionState.NameIgnored, []); // TODO rename to NotFoundNameButIgnored?
+            
             // External function call
-            if (funcInfo && funcInfo.path.length > 0) {
+            } else if (funcInfo && funcInfo.path.length > 0) {
                 return ret(GscFunctionState.NotFoundFunctionExternal, definitions);
             
             // Local function call
@@ -176,38 +170,58 @@ export class GscFunctions {
 
     }
 
+    /**
+     * Get function defined in specified GSC file by its name. Only current file is used, included files are ignored.
+     * If the function name is not specified, all functions are returned.
+     */
+    public static getLocalFunctionDefinitions(gscFile: GscFile, funcName?: string) : GscFunction[]
+    {
+        if (funcName === undefined) {
+            return gscFile.data.functions;
+        }
+        const funcNameId = funcName.toLowerCase();
+
+        const functions = gscFile.data.functions.filter(f => f.nameId === funcNameId);
+
+        return functions;
+    }
+
 
 
     /**
-     * Get array of functions that are available for specified document URI. If funcName is specified, only functions with that name are returned.
-     * If the file is not found, undefined is returned. If file is found but function is not found, it will return an empty array.
+     * Get function definitions available for specified GSC file by its name and file path.
+     * It uses local or external file and files included by '#include' directive.
+     * If the function name and file path is not specified, all functions are returned.
+     * If the file path is specified but the file is not found, undefined is returned. If the file is found, but function name is not, it will return an empty array.
      */
-    public static async getAvailableFunctionsForFile(gscFile: GscFile, funcName: string | undefined = undefined, funcFilePath: string | undefined = undefined)
-    : Promise<GscFunctionDefinition[] | undefined> 
+    public static getFunctionDefinitions(gscFile: GscFile, funcInfo: {name: string, path: string | ""} | undefined) : GscFunctionDefinition[] | undefined
     {
-        const funcDefs: GscFunctionDefinition [] = [];  
-        const funcNameId = funcName ? funcName.toLowerCase() : undefined;
+        let funcDefinitions: GscFunctionDefinition[] = [];
+        const funcNameId = funcInfo ? funcInfo.name.toLowerCase() : undefined;
 
         if (!gscFile.workspaceFolder) {
             return undefined; // This file is not part of workspace
         }
 
         // Its external function call
-        if (funcFilePath && funcFilePath.length > 0) 
+        if (funcInfo && funcInfo.path.length > 0) 
         {
-            const referenceData = GscFiles.getReferencedFileForFile(gscFile, funcFilePath);
+            const referenceData = GscFiles.getReferencedFileForFile(gscFile, funcInfo.path);
             const referencedGscFile = referenceData.gscFile;
-
             if (referencedGscFile === undefined) {
                 return undefined;
             }
 
-            referencedGscFile.data.functions.forEach(f => {
-                if (!funcNameId || f.nameId === funcNameId) {
-                    const reason = referenceData.referenceState === GscFileReferenceState.IncludedWorkspaceFolder ? "Included via workspace folder settings" : "";
-                    funcDefs.push({func: f, uri: referencedGscFile.uri.toString(), reason: reason});
+            for (const f of referencedGscFile.data.functions) {
+                if (!funcInfo || f.nameId === funcNameId) {
+                    const funcDefinition: GscFunctionDefinition = {
+                        func: f, 
+                        uri: referencedGscFile.uri, 
+                        reason: referenceData.referenceState === GscFileReferenceState.IncludedWorkspaceFolder ? "Included via workspace folder settings" : ""
+                    };
+                    funcDefinitions.push(funcDefinition);
                 }
-            });
+            }
         } 
 
         // Its local function or included function
@@ -216,34 +230,44 @@ export class GscFunctions {
             // TODO look into additional global include list
 
             // Find function in this file
-            gscFile.data.functions.forEach(f => {
-                if (!funcNameId || f.nameId === funcNameId) {
-                    funcDefs.push({func: f, uri: gscFile.uri.toString(), reason: /*"Local function"*/""});
+            for (const f of gscFile.data.functions) {
+                if (!funcInfo || f.nameId === funcNameId) {
+                    const funcDefinition: GscFunctionDefinition = {
+                        func: f, 
+                        uri: gscFile.uri, 
+                        reason: /*"Local function"*/""
+                    };
+                    funcDefinitions.push(funcDefinition);
                 }
-            });
+            }
 
             // Loop through all included files
             for (const includedPath of gscFile.data.includes) {
 
                 const referencedFile = GscFiles.getReferencedFileForFile(gscFile, includedPath).gscFile;
-
                 if (referencedFile === undefined) {
                     continue; // File not found
                 }
-
                 if (referencedFile.uri.toString() === gscFile.uri.toString()) {
-                    continue;
+                    continue; // This includes itself, functions are already added
                 }
                 
-                referencedFile.data.functions.forEach(f => {
-                    if (!funcNameId || f.nameId === funcNameId) {
-                        funcDefs.push({func: f, uri: referencedFile.uri.toString(), reason: "Included via '#include'"});
+                for (const f of referencedFile.data.functions) {
+                    if (!funcInfo || f.nameId === funcNameId) {
+                        const funcDefinition: GscFunctionDefinition = {
+                            func: f, 
+                            uri: referencedFile.uri, 
+                            reason: "Included via '#include'"
+                        };
+                        funcDefinitions.push(funcDefinition);
                     }
-                });
+                }
+
             }
 
         }
         
-        return funcDefs;
+        return funcDefinitions;
     }
+
 }

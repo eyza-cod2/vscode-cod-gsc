@@ -40,6 +40,9 @@ export type GscGameConfig = {
 	developerBlocks: boolean;
 	/** Allow /# #/ inside another /# #/ */
 	developerBlocksRecursive: boolean;
+	/** Allow duplicate function definitions */
+	duplicateFunctionDefinitions: boolean;
+
 
 	foreach: boolean;
 	doWhile: boolean;
@@ -60,6 +63,7 @@ export class GscConfig {
 				globalVariables: true,
 				developerBlocks: true,
 				developerBlocksRecursive: true,
+				duplicateFunctionDefinitions: true,
 				foreach: true, 
 				doWhile: true, 
 				arrayInitializer: true, 
@@ -72,6 +76,7 @@ export class GscConfig {
 				globalVariables: false,
 				developerBlocks: false,
 				developerBlocksRecursive: false,
+				duplicateFunctionDefinitions: false,
 				foreach: false, 
 				doWhile: true, 
 				arrayInitializer: false, 
@@ -84,6 +89,7 @@ export class GscConfig {
 				globalVariables: false,
 				developerBlocks: true,
 				developerBlocksRecursive: false,
+				duplicateFunctionDefinitions: false,
 				foreach: false, 
 				doWhile: false, 
 				arrayInitializer: false, 
@@ -96,6 +102,7 @@ export class GscConfig {
 				globalVariables: false,
 				developerBlocks: true,
 				developerBlocksRecursive: false,
+				duplicateFunctionDefinitions: false,
 				foreach: false, 
 				doWhile: false, 
 				arrayInitializer: false, 

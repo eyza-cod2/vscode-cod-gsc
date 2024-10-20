@@ -25,7 +25,8 @@ export default [
                     format: ["camelCase", "PascalCase"],
                 },
             ],
-            "@typescript-eslint/no-floating-promises": "error", // For TypeScript files
+            "@typescript-eslint/no-floating-promises": "error", // Error on not awaited promises
+            "@typescript-eslint/await-thenable": "warn", // Warn on awaited non-async function calls
             curly: "warn",
             eqeqeq: "warn",
             "no-throw-literal": "warn",
