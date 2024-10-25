@@ -1,24 +1,50 @@
 import * as vscode from 'vscode';
-import { GscFile, GscFileConfig } from './GscFile';
+import { GscFile } from './GscFile';
 import { GscFiles } from './GscFiles';
-import { GscConfig } from './GscConfig';
+import { ConfigErrorDiagnostics, GscConfig, GscGame, GscGameConfig, GscGameRootFolder } from './GscConfig';
 import { Events } from './Events';
 import { LoggerOutput } from './LoggerOutput';
 
 
+
+// Configuration of workspace that applies to all files within the workspace
+export type GscFilesConfig = {
+    /** All possible game root folders where GSC files can be found and referenced. */
+    referenceableGameRootFolders: GscGameRootFolder[];
+    /** All possible game root folders where GSC files can be found and referenced, including reverse references */
+    referenceableGameRootFoldersAll: GscGameRootFolder[];
+
+    /** All possible workspace folders where GSC files can be found and referenced */
+    referenceableWorkspaceFolders: vscode.WorkspaceFolder[];
+    /** All possible workspace folders where GSC files can be found and referenced, including reverse references */
+    referenceableWorkspaceFoldersAll: vscode.WorkspaceFolder[];
+
+    /** Game root folder */
+    rootFolder: GscGameRootFolder | undefined;
+    /** Ignored function names */
+    ignoredFunctionNames: string[];
+    /** Ignored file paths */
+    ignoredFilePaths: string[];
+    /** Currently selected game */
+    currentGame: GscGame;
+    /** Mode of diagnostics collection */
+    errorDiagnostics: ConfigErrorDiagnostics;
+    /** Syntax configuration of the selected game */
+    gameConfig: GscGameConfig;
+};
 
 
 export class GscCachedFilesPerWorkspace {
 
     private cachedFilesPerWorkspace: Map<string, GscWorkspaceFileData> = new Map();
 
-    createNewWorkspaceFileData(workspaceFolder: vscode.WorkspaceFolder): GscWorkspaceFileData {
+    createNewWorkspace(workspaceFolder: vscode.WorkspaceFolder): GscWorkspaceFileData {
         const data = new GscWorkspaceFileData(workspaceFolder);
         this.cachedFilesPerWorkspace.set(workspaceFolder.uri.toString(), data);
         return data;
     }
 
-    getWorkspaceFileData(workspaceUri: vscode.Uri): GscWorkspaceFileData | undefined {
+    getWorkspace(workspaceUri: vscode.Uri): GscWorkspaceFileData | undefined {
         return this.cachedFilesPerWorkspace.get(workspaceUri.toString());
     }
 
@@ -28,15 +54,15 @@ export class GscCachedFilesPerWorkspace {
         if (workspaceFolder === undefined) {
             return;
         }
-        let dataOfWorkspace = this.getWorkspaceFileData(workspaceFolder.uri);
+        let dataOfWorkspace = this.getWorkspace(workspaceFolder.uri);
         if (dataOfWorkspace === undefined) {
             return;
         }
         dataOfWorkspace.removeParsedFile(fileUri);
     }
 
-    removeWorkspaceFiles(workspaceUri: vscode.Uri) {
-        const workspaceData = this.getWorkspaceFileData(workspaceUri);
+    removeWorkspace(workspaceUri: vscode.Uri) {
+        const workspaceData = this.getWorkspace(workspaceUri);
         if (workspaceData === undefined) {
             return false;
         }
@@ -60,9 +86,13 @@ export class GscCachedFilesPerWorkspace {
 export class GscWorkspaceFileData {
     private parsedFiles: Map<string, GscFile> = new Map();
 
+    public config: GscFilesConfig;
+
     constructor(
         public workspaceFolder: vscode.WorkspaceFolder
-    ) {}
+    ) {
+        this.config = GscWorkspaceFileData.loadConfig(this.workspaceFolder);
+    }
 
     addParsedFile(gscFile: GscFile) {
         if (!this.parsedFiles.has(gscFile.id)) {
@@ -107,29 +137,35 @@ export class GscWorkspaceFileData {
     }
 
     updateConfiguration() {
-        const data = GscWorkspaceFileData.getConfig(this.workspaceFolder);
+        this.config = GscWorkspaceFileData.loadConfig(this.workspaceFolder);
 
         // Loop all GscFile and update their configuration
         for (const file of this.parsedFiles.values()) {
-            file.config.referenceableGameRootFolders = data.referenceableGameRootFolders;
-            file.config.currentGame = data.currentGame;
-            file.config.ignoredFunctionNames = data.ignoredFunctionNames;
-            file.config.ignoredFilePaths = data.ignoredFilePaths;
-            file.config.errorDiagnostics = data.errorDiagnostics;
-            file.config.gameConfig = data.gameConfig;
+            file.config = this.config;
+
+            file.gamePath = GscFiles.getGamePathFromGscFile(file);
         }
     }
 
-    static getConfig(workspaceFolder: vscode.WorkspaceFolder): GscFileConfig {
 
-        // Get config for workspace folder
-        const referenceableGameRootFolders = GscFiles.getReferenceableGameRootFolders(workspaceFolder);
+
+    /**
+     * Loads current settings for the workspace folder and returns them as GscFilesConfig object.
+     */
+    public static loadConfig(workspaceFolder: vscode.WorkspaceFolder): GscFilesConfig {
         const currentGame = GscConfig.getSelectedGame(workspaceFolder.uri);
-        const ignoredFunctionNames = GscConfig.getIgnoredFunctionNames(workspaceFolder.uri);
-        const ignoredFilePaths = GscConfig.getIgnoredFilePaths(workspaceFolder.uri);
-        const errorDiagnostics = GscConfig.getErrorDiagnostics(workspaceFolder.uri);
-        const gameConfig = GscConfig.gamesConfigs.get(currentGame)!;
 
-        return {referenceableGameRootFolders, currentGame, ignoredFunctionNames, ignoredFilePaths, errorDiagnostics, gameConfig};
+        return {
+            referenceableGameRootFolders: GscFiles.loadReferenceableGameRootFolders(workspaceFolder, false), 
+            referenceableGameRootFoldersAll: GscFiles.loadReferenceableGameRootFolders(workspaceFolder, true), 
+            referenceableWorkspaceFolders: GscFiles.loadReferenceableWorkspaceFolders(workspaceFolder, false), 
+            referenceableWorkspaceFoldersAll: GscFiles.loadReferenceableWorkspaceFolders(workspaceFolder, true), 
+            rootFolder: GscConfig.getGameRootFolder(workspaceFolder.uri), 
+            currentGame: currentGame, 
+            ignoredFunctionNames: GscConfig.getIgnoredFunctionNames(workspaceFolder.uri), 
+            ignoredFilePaths: GscConfig.getIgnoredFilePaths(workspaceFolder.uri), 
+            errorDiagnostics: GscConfig.getErrorDiagnostics(workspaceFolder.uri), 
+            gameConfig: GscConfig.gamesConfigs.get(currentGame)!
+        };
     }
 }

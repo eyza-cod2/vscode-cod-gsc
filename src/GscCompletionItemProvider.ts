@@ -35,7 +35,7 @@ export class GscCompletionItemProvider implements vscode.CompletionItemProvider 
 
             const currentGame = gscFile.config.currentGame;
 
-            const items = await GscCompletionItemProvider.getCompletionItems(gscFile, position, currentGame, undefined, document.uri);
+            const items = await GscCompletionItemProvider.getCompletionItems(gscFile, position, currentGame, undefined);
 
             return items;
         } catch (error) {
@@ -57,8 +57,7 @@ export class GscCompletionItemProvider implements vscode.CompletionItemProvider 
         gscFile: GscFile,
         position: vscode.Position,
         currentGame: GscGame,
-        config?: CompletionConfig,
-        uri?: vscode.Uri
+        config?: CompletionConfig
     ): Promise<vscode.CompletionItem[]> 
     {
         const completionItems: vscode.CompletionItem[] = [];
@@ -115,7 +114,7 @@ export class GscCompletionItemProvider implements vscode.CompletionItemProvider 
 
                 // Add items for variables like level.aaa, game["bbb"] and local1.aaa[0][1]
                 if (!config || config.variableItems) {
-                    this.createVariableItems(completionItems, functionGroup.localVariableDefinitions, variableBeforeCursor, inWord, inStructureVariable, inArrayBrackets, uri);
+                    this.createVariableItems(completionItems, functionGroup.localVariableDefinitions, variableBeforeCursor, inWord, inStructureVariable, inArrayBrackets, gscFile.uri);
                 }
                 // Add items for predefined keywords (like true, false, undefined, if, else, waittillframeend, ...)
                 if (!config || config.keywordItems) {
@@ -182,7 +181,7 @@ export class GscCompletionItemProvider implements vscode.CompletionItemProvider 
             const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
 
             if (workspaceFolder !== undefined) {
-                const gscFiles = GscFiles.getReferenceableCachedFiles(workspaceFolder);
+                const gscFiles = GscFiles.getReferenceableCachedFiles(workspaceFolder.uri, false);
 
                 // Level variables
                 if (variableBeforeCursor.startsWith("level")) {

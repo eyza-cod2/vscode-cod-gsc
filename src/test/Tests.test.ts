@@ -23,6 +23,9 @@ export async function activateExtension() {
     const extension = vscode.extensions.getExtension(EXTENSION_ID);
     assert.ok(extension, "Extension should be available");
 
+    // Clear all editors
+    await vscode.commands.executeCommand('workbench.action.closeAllEditors');
+
     if (extension.isActive) {
         return;
     }
@@ -46,9 +49,6 @@ export async function activateExtension() {
     await waitGsc;
 
     assert.ok(extension!.isActive, "Extension should be activated");
-
-    // Clear all editors
-    void vscode.commands.executeCommand('workbench.action.closeAllEditors');
 }
 
 
@@ -116,8 +116,8 @@ export function checkQuickFix(codeActions: vscode.CodeAction[], index: number, e
 
 
 export function checkHover(hover: vscode.Hover | undefined, expected: string) {
-    assert.ok(hover !== undefined);
-    assert.ok(hover.contents.length === 1);
+    assert.ok(hover !== undefined, `Hover is undefined - Actual: ${hover}, Expected: defined`);
+    assert.deepStrictEqual(hover.contents.length, 1);
     assert.ok(hover.contents[0] instanceof vscode.MarkdownString);
     assert.deepStrictEqual(hover.contents[0].value, expected, "Not equal:\n\nCurrent:\n'" + hover.contents[0].value + "'\n\nExpected:\n'" + expected + "'\n\n");
 }
@@ -135,8 +135,8 @@ export function getFunctionDescription(name: string, parameters: {name: string, 
 
 export function checkDefinition(locations: vscode.Location[], expectedFileEnd: string) {
     assert.ok(locations !== undefined, "Locations are undefined");
-    assert.ok(locations.length === 1, "Locations does not contain exactly one item");
-    assert.ok(locations[0].uri.path.endsWith(expectedFileEnd), "Expected file end: " + expectedFileEnd + ". Actual: " + locations[0].uri.path);
+    assert.deepStrictEqual(locations.length, 1, "Locations does not contain exactly one item");
+    assert.deepStrictEqual(locations[0].uri.path.slice(-expectedFileEnd.length), expectedFileEnd, "Expected file end: " + expectedFileEnd + ". Actual: " + locations[0].uri.path);
 }
 
 export async function checkDefinitionFunc(gscFile: GscFile, pos: vscode.Position, pathUri: string) {

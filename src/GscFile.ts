@@ -1,27 +1,13 @@
 import * as vscode from 'vscode';
 import { GscData } from "./GscFileParser";
-import { ConfigErrorDiagnostics, GscConfig, GscGame, GscGameConfig, GscGameRootFolder } from './GscConfig';
-import { GscWorkspaceFileData } from './GscFileCache';
+import { ConfigErrorDiagnostics, GscConfig, GscGame } from './GscConfig';
+import { GscFilesConfig, GscWorkspaceFileData } from './GscFileCache';
+import { GscFiles } from './GscFiles';
 
 /**
  * This type holds workspace configuration for current GSC file to easily access configuration without actually reading it from config file.
  * When configuration is changed, it is updated in all GscFile instances.
  */
-export type GscFileConfig = {
-    /** All possible game root folders where GSC files can be found and referenced. */
-    referenceableGameRootFolders: GscGameRootFolder[];
-    /** Ignored function names */
-    ignoredFunctionNames: string[];
-    /** Ignored file paths */
-    ignoredFilePaths: string[];
-    /** Currently selected game */
-    currentGame: GscGame;
-    /** Mode of diagnostics collection */
-    errorDiagnostics: ConfigErrorDiagnostics;
-    /** Syntax configuration of the selected game */
-    gameConfig: GscGameConfig;
-};
-
 
 
 export class GscFile {
@@ -32,8 +18,11 @@ export class GscFile {
     /** URI of the file */
     uri: vscode.Uri;
 
+    /** Path of this file from game perspective. For example: maps\mp\gametypes\script.gsc */
+    gamePath: string;
+
     /** Configuration related to this file */
-    config: GscFileConfig;
+    config: GscFilesConfig;
 
     /** Diagnostics generated for this file. @see GscFileDiagnostics.ts */
     diagnostics: vscode.Diagnostic[] = [];
@@ -58,10 +47,14 @@ export class GscFile {
         this.uri = uri;
 
         if (workspaceFolder !== undefined) {
-            this.config = GscWorkspaceFileData.getConfig(workspaceFolder);
+            this.config = GscWorkspaceFileData.loadConfig(workspaceFolder);
         } else {
             this.config = {
                 referenceableGameRootFolders: [],
+                referenceableGameRootFoldersAll: [],
+                referenceableWorkspaceFolders: [],
+                referenceableWorkspaceFoldersAll: [],
+                rootFolder: undefined,
                 currentGame: GscGame.UniversalGame,
                 ignoredFunctionNames: [],
                 ignoredFilePaths: [],
@@ -69,6 +62,8 @@ export class GscFile {
                 gameConfig: GscConfig.gamesConfigs.get(GscGame.UniversalGame)!
             };
         }
+
+        this.gamePath = GscFiles.getGamePathFromGscFile(this);
     }
 
     updateData(data: GscData, version: number) {

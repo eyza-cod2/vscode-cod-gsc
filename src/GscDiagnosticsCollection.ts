@@ -170,9 +170,6 @@ export class GscDiagnosticsCollection {
                 }
             }
 
-            // TODO check where this file is referenced to update particular files
-            // It will be crusual for #include files
-
             this.diagnosticCollection?.set(uri, gscFile.diagnostics);
 
             // ------------------------------------------------------------------------------------------------------------------------------------------

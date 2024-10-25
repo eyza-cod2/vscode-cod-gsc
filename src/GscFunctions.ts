@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { GscGroup, GscToken, GscVariableDefinitionType } from './GscFileParser';
+import { GroupType, GscGroup, GscToken, GscVariableDefinitionType } from './GscFileParser';
 import { GscFiles, GscFileReferenceState } from './GscFiles';
 import { GscFile } from './GscFile';
 import { CodFunctions } from './CodFunctions';
@@ -8,6 +8,10 @@ import { CodFunctions } from './CodFunctions';
 export class GscFunction {
 
     constructor(
+        /** Function definition (type GroupType.FunctionDefinition) */
+        public group: GscGroup,
+        /** Function name (type GroupType.FunctionDefinition) */
+        public groupFunctionName: GscGroup,
         /** Function name (original as it is defined in file) */
         public name: string,
         /** Lower-case function name, used to compare the same function names */
@@ -81,6 +85,12 @@ export type GscFunctionDefinition = {
 export type GscVariableDefinition = {
     variableReference: GscGroup,
     type: GscVariableDefinitionType
+};
+
+
+export type GscFunctionReference = {
+    func: GscGroup, 
+    uri: vscode.Uri
 };
 
 
@@ -212,12 +222,22 @@ export class GscFunctions {
                 return undefined;
             }
 
+            let reason = "";
+            switch (referenceData.referenceState) {
+                case GscFileReferenceState.IncludedWorkspaceFolder:
+                    reason = "Included via workspace folder settings";
+                    break;
+                case GscFileReferenceState.IncludedWorkspaceFolderReversed:
+                    reason = "Included via other workspace folder settings.  \nFile in current workspace is being overwritten.";
+                    break;
+            }
+
             for (const f of referencedGscFile.data.functions) {
                 if (!funcInfo || f.nameId === funcNameId) {
                     const funcDefinition: GscFunctionDefinition = {
                         func: f, 
                         uri: referencedGscFile.uri, 
-                        reason: referenceData.referenceState === GscFileReferenceState.IncludedWorkspaceFolder ? "Included via workspace folder settings" : ""
+                        reason: reason
                     };
                     funcDefinitions.push(funcDefinition);
                 }
@@ -270,4 +290,65 @@ export class GscFunctions {
         return funcDefinitions;
     }
 
+
+
+    /**
+     * Get all function references (function definitions, call or function pointer) in all GSC files for specified function name and file path.
+     */
+    public static getFunctionReferences(gscFile: GscFile, funcInfo: {name: string, path: string | ""} | undefined) : GscFunctionReference[] | undefined {
+
+        let funcReferences: GscFunctionReference[] = [];
+        const funcNameId = funcInfo ? funcInfo.name.toLowerCase() : undefined;
+
+        // Get function definitions
+        const funcDefs = GscFunctions.getFunctionDefinitions(gscFile, funcInfo);
+        if (funcDefs === undefined || funcDefs.length === 0) {
+            return undefined; // Function not found
+        }
+
+        // Add function definitions
+        funcReferences.push(...funcDefs.map(f => {return {func: f.func.groupFunctionName, uri: f.uri};}));
+
+        // Find all function references in all files
+        const allFiles = gscFile.workspaceFolder ? GscFiles.getReferenceableCachedFiles(gscFile.workspaceFolder.uri, false) : [gscFile];
+
+        for (const gscFile2 of allFiles) {
+            gscFile2.data.root.walk((group) => {
+                if (group.type === GroupType.FunctionName && group.parent?.typeEqualsToOneOf(GroupType.FunctionCall, GroupType.FunctionPointer)) { 
+
+                    const funcInfo2 = group.getFunctionReferenceInfo();
+                    if (funcInfo2 === undefined) {
+                        return; // not a function
+                    }
+
+                    if (funcInfo2.name.toLowerCase() !== funcNameId) {
+                        return; // not the function we are looking for
+                    }
+
+                    const funcDefs2 = GscFunctions.getFunctionDefinitions(gscFile2, funcInfo2);
+                    if (funcDefs2 === undefined || funcDefs2.length === 0) {
+                        return; // file not found
+                    }
+
+                    //console.log("Found function call: " + funcInfo2.name + " in " + file.uri.fsPath + " at " + group.getRange().start.line + ":" + group.getRange().start.character);
+
+                    // Loop found definitions of this functuion reference
+                    for (const funcDef2 of funcDefs2) {
+                        // Check if function definitions match the found functions
+                        for (const funcDef of funcDefs) {
+
+                            if (funcDef2.func.nameId === funcDef.func.nameId && funcDef2.uri.toString() === funcDef.uri.toString()) {
+                                // Found
+                                funcReferences.push({func: group, uri: gscFile2.uri});
+                                //console.log("Adding location: " + funcDef2.func.name + " in " + file.uri + " at " + group.getRange().start.line + ":" + group.getRange().start.character);
+                                //return;
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        return funcReferences;
+    }
 }

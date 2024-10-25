@@ -2258,6 +2258,8 @@ export class GscFileParser {
                             }
                             const funcName = innerGroup.items[0].items[0].getSingleToken()!.name;
                             func = new GscFunction(
+                                innerGroup,
+                                innerGroup.items[0].items[0],
                                 funcName,
                                 funcName.toLowerCase(),
                                 paramTokens,

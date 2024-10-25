@@ -46,6 +46,15 @@
 		},
 		{
 			"path": "GscFiles"
+		},
+		{
+			"path": "GscFileReferences.1"
+		},
+		{
+			"path": "GscFileReferences.2"
+		},
+		{
+			"path": "GscFileReferences.3"
 		}
 	]
 }

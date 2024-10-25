@@ -68,7 +68,7 @@ export class GscSemanticTokensProvider implements vscode.DocumentSemanticTokensP
         const builder = new vscode.SemanticTokensBuilder(GscSemanticTokensProvider.legend);
 
         // Get the parsed file
-        var gscFile = await GscFiles.getCachedFile(document.uri);
+        var gscFile = GscFiles.getCachedFile(document.uri);
 
         // If the cached file is not found, or cached version is not the latest, wait till the file is parsed
         if (gscFile === undefined || (gscFile.version > -1 && gscFile.version !== document.version)) {

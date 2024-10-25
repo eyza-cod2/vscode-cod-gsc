@@ -102,7 +102,7 @@ suite('GscCompletionItemProvider', () => {
         tests.checkDiagnostic(gsc.diagnostics, 1, "Unexpected token", vscode.DiagnosticSeverity.Error);
         assert.ok(gsc.diagnostics.length === 2);
 
-        const completions = await GscCompletionItemProvider.getCompletionItems(gsc, new vscode.Position(3, 10), GscGame.UniversalGame, cfgVariablesOnly, gsc.uri);
+        const completions = await GscCompletionItemProvider.getCompletionItems(gsc, new vscode.Position(3, 10), GscGame.UniversalGame, cfgVariablesOnly);
 
         tests.checkCompletions(gsc, completions, 0, "aaa_included", vscode.CompletionItemKind.Field, [GscVariableDefinitionType.Integer]);
         tests.checkCompletions(gsc, completions, 1, "bbb_included", vscode.CompletionItemKind.Field, [GscVariableDefinitionType.Integer]);
