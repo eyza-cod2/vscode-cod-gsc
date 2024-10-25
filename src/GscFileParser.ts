@@ -3155,6 +3155,19 @@ export class GscGroup {
 
 
 
+    public walk(callback: (group: GscGroup) => void) {
+        function recursiveWalk(group: GscGroup) {
+            callback(group);
+            for (const item of group.items) {
+                recursiveWalk(item);
+            }
+        }
+        recursiveWalk(this);
+    }
+
+
+
+
     public getTokensBeforePosition(position: vscode.Position) {
         return this.tokensAll.slice(this.tokenIndexStart, this.tokenIndexEnd+1).filter(f => position.isAfterOrEqual(f.range.end));
     }
