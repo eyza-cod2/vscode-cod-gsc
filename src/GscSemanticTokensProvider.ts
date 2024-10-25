@@ -120,6 +120,19 @@ export class GscSemanticTokensProvider implements vscode.DocumentSemanticTokensP
         }
 
 
+        // Check if file is replaced via game path
+        
+        if (GscFiles.isFileReplacedByAnotherFile(gscFile)) {
+            // Get text editor out of the document
+            const editor = vscode.window.visibleTextEditors.find(e => e.document.uri.toString() === document.uri.toString());
+            if (editor !== undefined) {
+                // Get full range of the document
+                const documentRange = new vscode.Range(document.positionAt(0), document.positionAt(document.getText().length));
+                editor?.setDecorations(vscode.window.createTextEditorDecorationType({opacity: '0.5'}), [documentRange]);
+            }
+        }
+
+
         walkGroupItems(gscFile.data.root, gscFile.data.root.items, (parentGroup, group) => {
 
             /*          

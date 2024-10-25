@@ -427,6 +427,7 @@ export class GscFiles {
      * Get referenced file in specified file. It tries to find the file in all possible locations where it can be found (workspace folder and included workspace folders).
      * @param gscFile GSC file where the reference is located.
      * @param referencedFilePath Path in GSC file format (e.g. scripts\scriptName)
+     * @param includeReversedReferences If true, it also checks if the file is replaced by another file in another workspace folder.
      * @returns The reference status and the parsed file data if found
      */
     public static getReferencedFileForFile(gscFile: GscFile, referencedFilePath: string, includeReversedReferences: boolean = false): GscFileAndReferenceState {
@@ -473,12 +474,32 @@ export class GscFiles {
      * Converts the file URI into game path considering game root folder (eg. "c:/mod/src/maps/mp/script.gsc" -> "maps\mp\script.gsc")
      */
     public static getGamePathFromGscFile(gscFile: GscFile): string {
+        
         if (gscFile.workspaceFolder && gscFile.config.rootFolder) {
-            const path = gscFile.uri.fsPath.replace(gscFile.config.rootFolder.uri.fsPath, "").replace(/\//g, '\\');
-            return path;
+            var path = gscFile.uri.fsPath.replace(gscFile.config.rootFolder.uri.fsPath, "").replace(/\//g, '\\');
         } else {
-            return vscode.workspace.asRelativePath(gscFile.uri).replace(/\//g, '\\');
+            var path = vscode.workspace.asRelativePath(gscFile.uri).replace(/\//g, '\\');
         }
+
+        if (path.startsWith("\\")) {
+            path = path.substring(1);
+        }
+        path = path.replace(/\.gsc/i, "");
+
+        return path;
+    }
+
+    /**
+     * Check if the GSC file is replaced by another file in another workspace folder (reverse reference).
+     */
+    public static isFileReplacedByAnotherFile(gscFile: GscFile): boolean {
+
+        const referencedFiles = this.getReferencedFileForFile(gscFile, gscFile.gamePath, true);
+
+        if (referencedFiles.gscFile !== gscFile) {
+            return true;
+        }
+        return false;
     }
 
 
