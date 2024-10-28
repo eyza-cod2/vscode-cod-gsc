@@ -12,6 +12,7 @@ on:
 jobs:
   build:
     strategy:
+      fail-fast: false  # Run all tests, even if one fails
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
