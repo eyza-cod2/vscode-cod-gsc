@@ -62,6 +62,24 @@ export class GscFileCache {
     
         return id;
     }
+
+
+    /**
+     * Generates an ID from a given vscode.Uri that represents game path, which is case-insensitive.
+     * @param uri - The URI to generate an ID from.
+     * @returns A string that represents a consistent ID for the given URI
+     */
+    public static getGamePathId(uri: vscode.Uri): string {
+        let normalizedPath = uri.path; // it uses forward slashes
+
+        // Normalize the path to be case-insensitive
+        normalizedPath = normalizedPath.toLowerCase();
+    
+        // Include the authority and other relevant parts of the Uri
+        const id = `${uri.scheme}://${uri.authority}${normalizedPath}`;
+    
+        return id;
+    }
 }
 
 
@@ -142,7 +160,7 @@ export class GscWorkspaceFileData {
     }
 
     addParsedFile(gscFile: GscFile) {
-        const id = GscFileCache.getUriId(gscFile.uri);
+        const id = GscFileCache.getGamePathId(gscFile.uri);
         if (!this.parsedFiles.has(id)) {
             LoggerOutput.log("[GscFileCache] Added file to cache", vscode.workspace.asRelativePath(gscFile.uri));
         } else {
@@ -154,7 +172,7 @@ export class GscWorkspaceFileData {
     }
 
     getParsedFile(uri: vscode.Uri): GscFile | undefined {
-        const id = GscFileCache.getUriId(uri);
+        const id = GscFileCache.getGamePathId(uri);
         const data = this.parsedFiles.get(id);
 
         return data;
@@ -162,7 +180,7 @@ export class GscWorkspaceFileData {
 
     getParsedFilesByFileOrFolderPath(uri: vscode.Uri): GscFile[] {
         const files: GscFile[] = [];
-        const id = GscFileCache.getUriId(uri);
+        const id = GscFileCache.getGamePathId(uri);
         for (const [fileId, file] of this.parsedFiles) {
             if (fileId === id || fileId.startsWith(id + "/")) {
                 files.push(file);
@@ -172,7 +190,7 @@ export class GscWorkspaceFileData {
     }
 
     removeParsedFile(uri: vscode.Uri): boolean {
-        const id = GscFileCache.getUriId(uri);
+        const id = GscFileCache.getGamePathId(uri);
         const removed = this.parsedFiles.delete(id);
 
         if (removed) {
