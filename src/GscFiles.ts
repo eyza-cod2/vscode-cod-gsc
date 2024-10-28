@@ -8,6 +8,7 @@ import { GscConfig, GscGameRootFolder } from './GscConfig';
 import { LoggerOutput } from './LoggerOutput';
 import { GscDiagnosticsCollection } from './GscDiagnosticsCollection';
 import { Events } from './Events';
+import { Issues } from './Issues';
 
 /**
  * On startup scan every .gsc file, parse it, and save the result into memory.
@@ -657,42 +658,157 @@ export class GscFiles {
 
     private static handleFileChanges(context: vscode.ExtensionContext) {
 
-        this.fileWatcher = vscode.workspace.createFileSystemWatcher('**/*.gsc');
+        this.fileWatcher = vscode.workspace.createFileSystemWatcher('**');
 
         // Subscribe to file system events
-        // If file is renamed, create event with new name is called first, then delete event with old name is called
-        this.fileWatcher.onDidDelete(this.onGscFileDelete, this, context.subscriptions);
-        this.fileWatcher.onDidCreate(this.onGscFileCreate, this, context.subscriptions);
-        this.fileWatcher.onDidChange(this.onGscFileChange, this, context.subscriptions);
+        this.fileWatcher.onDidDelete((uri) => this.onFileNotification("delete", uri), this, context.subscriptions);
+        this.fileWatcher.onDidCreate((uri) => this.onFileNotification("create", uri), this, context.subscriptions);
+        this.fileWatcher.onDidChange((uri) => this.onFileNotification("change", uri), this, context.subscriptions);
     }
 
+    private static foldersWaitingForFileNotifications: Map<string, NodeJS.Timeout> = new Map();
 
-    private static onGscFileCreate(uri: vscode.Uri) {
-        LoggerOutput.log("[GscFiles] Detected new GSC file", vscode.workspace.asRelativePath(uri));
+    private static async onFileNotification(type: "create" | "delete" | "change", uri: vscode.Uri, manual: boolean = false) {
+        try {
+            // Notify about change
+            Events.FileSystemChanged(type, uri, manual);
 
-        // Parse the new file
-        void GscFiles.getFileData(uri, true, "new file created");
+            // Delete of file / directory
+            if (type === "delete") {
+                LoggerOutput.logFile("[GscFiles] Detected '" + type + "' of file / folder", vscode.workspace.asRelativePath(uri));
 
-        // Re-diagnose all files, because this new file might solve reference errors in other files
-        this.updateDiagnosticsDebounced(undefined, "new file created");
+                // Remove files from cache that starts with this path          
+                // At this point it might be directory or file
+                //   If it is directory, it might contain GSC files (or other files)
+                //   If it is file, it might be GSC file (or other file)
+                const filesToRemove = this.cachedFiles.getParsedFilesByFileOrFolderPath(uri);
+
+                if (filesToRemove && filesToRemove.length > 0) {
+                    LoggerOutput.logFile("[GscFiles]   - cached GSC files to remove: " + filesToRemove.length);
+                    for (const file of filesToRemove) {
+                        LoggerOutput.logFile("[GscFiles]     - " + vscode.workspace.asRelativePath(file.uri));
+                    }
+
+                    for (const file of filesToRemove) {
+                        this.cachedFiles.removeCachedFile(file.uri);
+                    }
+
+                    // Re-diagnose all files, because this file might generate reference errors in other files
+                    this.updateDiagnosticsDebounced(undefined, "file deleted");
+                } else {
+                    LoggerOutput.logFile("[GscFiles]   - no cached GSC files found to remove");
+                }
+
+            // Create or change of file / directory
+            } else {
+                var stat: vscode.FileStat;
+                try {
+                    stat = await vscode.workspace.fs.stat(uri);
+                } catch (error) {
+                    // Stat might fail if the file is deleted / renamed before the stat is called, or if the file is not accessible
+                    // Ignore the error
+                    LoggerOutput.logFile("[GscFiles] Detected '" + type + "', but unable to get file stats" + (manual ? ", manually triggered" : ""), vscode.workspace.asRelativePath(uri));
+                    LoggerOutput.logFile("[GscFiles]   - error: " + error);
+                    return;
+                }
+
+                const isValidGscFile = this.isValidGscFile(uri.fsPath, stat);
+                const isDirectory = stat.type === vscode.FileType.Directory;
+    
+                LoggerOutput.logFile("[GscFiles] Detected '" + type + "'" + (isValidGscFile ? ", GSC file" : "") + (isDirectory ? ", directory" : "") + (manual ? ", manually triggered" : ""), vscode.workspace.asRelativePath(uri));
+    
+                if (isValidGscFile) {
+                    if (type === "create") {
+
+                        // Check if there is timer waiting for files in this directory (check path prefix)
+                        for (const [pathPrefix, timer] of this.foldersWaitingForFileNotifications) {
+                            if (uri.fsPath.startsWith(pathPrefix)) {
+                                clearTimeout(timer);
+                                this.foldersWaitingForFileNotifications.delete(pathPrefix);
+                                LoggerOutput.logFile("[GscFiles]   - canceled timer for directory check");
+                            }
+                        }
+
+                        LoggerOutput.logFile("[GscFiles]   - running immediately forced file parsing + debounced diagnostics update for all", vscode.workspace.asRelativePath(uri));
+
+                        // Parse the new file
+                        void GscFiles.getFileData(uri, true, "new file created");
+
+                        // Re-diagnose all files, because this new file might solve reference errors in other files
+                        this.updateDiagnosticsDebounced(undefined, "new file created");
+                        
+                    } else if (type === "change") {
+                        LoggerOutput.logFile("[GscFiles]   - running debounced file parsing + diagnostics update for all", vscode.workspace.asRelativePath(uri));
+
+                        // Force parsing the updated file and then update diagnostics for all files
+                        this.parseFileAndDiagnoseDebounced(uri, true, "file " + vscode.workspace.asRelativePath(uri) + " changed on disc");
+                    }
+
+                // Its directory
+                } else if (isDirectory) {
+                    if (type === "create") {
+                        // New directory might contain GSC files (if the folder was moved)
+                        // There is a bug when folder is moved - create event is not called for each file in the folder
+                        //   but when the folder is copied (so create folder even is also called), then create event is called for each file in the folder
+                        // Solution: when folder is created, prepare timed callback that loads GSC files manually unless create event is called for each file in the folder
+
+                        this.foldersWaitingForFileNotifications.set(uri.fsPath, setTimeout(async () => {
+                            try {
+                                this.foldersWaitingForFileNotifications.delete(uri.fsPath);
+
+                                LoggerOutput.logFile("[GscFiles] Timer elapsed - check files in directory", vscode.workspace.asRelativePath(uri));
+
+                                // Get all files in the new directory
+                                const gscFileUris: vscode.Uri[] = [];
+                                async function readDirectoryRecursive(directoryUri: vscode.Uri) {
+                                    const files = await vscode.workspace.fs.readDirectory(directoryUri);
+                                    for (const [file, fileType] of files) {
+                                        const fileUri = vscode.Uri.joinPath(directoryUri, file);
+                                        if (fileType === vscode.FileType.File && GscFiles.isValidGscFile(fileUri.fsPath)) {
+                                            gscFileUris.push(fileUri);
+                                        } else if (fileType === vscode.FileType.Directory) {
+                                            await readDirectoryRecursive(fileUri); // Recursive call
+                                        }
+                                    }
+                                }
+                                await readDirectoryRecursive(uri);
+
+                                LoggerOutput.logFile("[GscFiles]   - GSC files in directory: " + gscFileUris.length);
+                                for (const gscFile of gscFileUris) {
+                                    LoggerOutput.logFile("[GscFiles]     - " + vscode.workspace.asRelativePath(gscFile));
+                                }
+
+                                for (const gscFile of gscFileUris) {
+                                    void this.onFileNotification("create", gscFile, true);
+                                }
+                            } catch (error) {
+                                Issues.handleError(new Error("Error while processing files in directory. " + error));
+                                throw error;
+                            }
+                        }, 200));
+
+                        LoggerOutput.logFile("[GscFiles]   - added timer to check the directory for files");
+                    }
+
+                // Non-gsc file
+                } else {
+                    LoggerOutput.logFile("[GscFiles]   - not GSC file or directory, ignoring");
+                }
+            }
+        } catch (error) {
+            Issues.handleError(new Error("Error while processing file change notification. " + error));
+            throw error;
+        }
     }
 
-    private static onGscFileDelete(uri: vscode.Uri) {
-        LoggerOutput.log("[GscFiles] Detected deleted GSC file", vscode.workspace.asRelativePath(uri));
-
-        this.cachedFiles.removeCachedFile(uri);
-
-        // Re-diagnose all files, because this file might generate reference errors in other files
-        this.updateDiagnosticsDebounced(undefined, "file deleted");
+    static isValidGscFile(filePath: string, stats?: vscode.FileStat): boolean {
+        if (stats) {
+            return stats.type === vscode.FileType.File && path.extname(filePath).toLowerCase() === '.gsc';
+        } else {
+            return fs.existsSync(filePath) && fs.lstatSync(filePath).isFile() && path.extname(filePath).toLowerCase() === '.gsc';
+        }
     }
 
-    /** GSC file was modified (saved) */
-    private static onGscFileChange(uri: vscode.Uri) {
-        LoggerOutput.log("[GscFiles] Detected GSC File change on disc", vscode.workspace.asRelativePath(uri));
-
-        // Force parsing the updated file and then update diagnostics for all files
-        this.parseFileAndDiagnoseDebounced(uri, true, "file " + vscode.workspace.asRelativePath(uri) + " changed on disc");
-    }
 
 
     /**
@@ -754,12 +870,6 @@ export class GscFiles {
             this.debugWindow.webview.html = this.getWebviewContent();
         }
     }
-
-
-    static isValidGscFile(filePath: string): boolean {
-        return fs.existsSync(filePath) && fs.lstatSync(filePath).isFile() && path.extname(filePath).toLowerCase() === '.gsc';
-    }
-
 
 
 

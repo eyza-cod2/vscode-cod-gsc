@@ -105,7 +105,7 @@ export class Events {
         // File rename
         context.subscriptions.push(vscode.workspace.onDidRenameFiles(async e => {
             try {
-                LoggerOutput.log("[Events] File has been renamed. " + e.files.map(f => vscode.workspace.asRelativePath(f.oldUri) + " -> " + vscode.workspace.asRelativePath(f.newUri)).join(", "));
+                LoggerOutput.log("[Events] File / folder has been renamed. " + e.files.map(f => vscode.workspace.asRelativePath(f.oldUri) + " -> " + vscode.workspace.asRelativePath(f.newUri)).join(", "));
 
             } catch (error) {
                 Issues.handleError(error);
@@ -179,6 +179,22 @@ export class Events {
 
         this.onDidGscDiagnosticChangeEvent.fire(gscFile);
     }
+
+
+
+
+
+
+    private static readonly onDidFileSystemChangeEvent = new vscode.EventEmitter<{type: ("create" | "delete" | "change"), uri: vscode.Uri, manual: boolean}>();
+    public static readonly onDidFileSystemChange = this.onDidFileSystemChangeEvent.event;
+
+    public static FileSystemChanged(type: "create" | "delete" | "change", uri: vscode.Uri, manual: boolean = false) {
+        this.onDidFileSystemChangeEvent.fire({type, uri, manual});
+    }
+
+
+
+
 
 
     static GscFileCacheFileHasChanged(fileUri: vscode.Uri) {

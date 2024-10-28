@@ -12,9 +12,6 @@ import { GscFiles } from './GscFiles';
 
 export class GscFile {
     
-    /** URI as lower-case string */
-    id: string;
-    
     /** URI of the file */
     uri: vscode.Uri;
 
@@ -43,7 +40,6 @@ export class GscFile {
         if (uri === undefined) {
             uri = vscode.Uri.parse("file://undefined");
         }
-        this.id = uri.toString().toLowerCase();
         this.uri = uri;
 
         if (workspaceFolder !== undefined) {

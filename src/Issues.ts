@@ -10,6 +10,7 @@ export class Issues {
 
     static lastError: Error | undefined;
     static lastErrorCode: string | undefined;
+    static lastErrorCount: number = 0;
 
     static activate(context: vscode.ExtensionContext) {
 
@@ -78,7 +79,7 @@ export class Issues {
             }
 
             errorDetails.push('Log (5min):');
-            errorDetails.push(LoggerOutput.getLogs().join('\n'));
+            errorDetails.push(LoggerOutput.getLogs(undefined, 5 * 60).join('\n'));
         
             // Set the webview's HTML content
             panel.webview.html = Issues.getWebviewContent(errorDetails.join('\n'));
@@ -95,6 +96,7 @@ export class Issues {
         // Save the error
         this.lastError = error;
         this.lastErrorCode = vscode.window.activeTextEditor ? this.getEditorCode(vscode.window.activeTextEditor) : undefined;
+        this.lastErrorCount += 1;
 
         this.statusBarItem.show();
 
@@ -297,5 +299,15 @@ export class Issues {
         buffer.push(`-----------------------------------------------------------------------------------------------------`);
 
         return buffer.join('\n');
+    }
+
+
+    public static errorCheckCount = 0;
+    /** Check if new error is reported. For tests */
+    public static checkForNewError(): void {
+        if (this.lastErrorCount > this.errorCheckCount) {
+            this.errorCheckCount = this.lastErrorCount;
+            throw this.lastError;
+        }
     }
 }

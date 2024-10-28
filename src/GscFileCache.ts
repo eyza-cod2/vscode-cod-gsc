@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import * as os from 'os';
 import { GscFile } from './GscFile';
 import { GscFiles } from './GscFiles';
 import { ConfigErrorDiagnostics, GscConfig, GscGame, GscGameConfig, GscGameRootFolder } from './GscConfig';
@@ -34,18 +35,50 @@ export type GscFilesConfig = {
 };
 
 
+export class GscFileCache {
+
+    /**
+     * Generates a normalized identifier (ID) from a given vscode.Uri.
+     * 
+     * This function creates a consistent and comparable ID from a vscode.Uri by:
+     * 1. Using the `scheme`, `authority`, and `path` components of the URI.
+     * 2. Converting the path to lowercase on Windows to ensure that file comparisons are case-insensitive
+     *    (since Windows filesystems are typically case-insensitive).
+     * 3. Normalizing the path separators (`/`) to ensure consistency across platforms.
+     * 
+     * @param uri - The URI to generate an ID from.
+     * @returns A string that represents a consistent ID for the given URI, usable for cross-platform file comparison.
+     */
+    public static getUriId(uri: vscode.Uri): string {
+        let normalizedPath = uri.path; // it uses forward slashes
+
+        // Normalize the path for case-insensitive platforms (e.g., Windows)
+        if (os.platform() === 'win32') {
+            normalizedPath = normalizedPath.toLowerCase();
+        }
+    
+        // Include the authority and other relevant parts of the Uri
+        const id = `${uri.scheme}://${uri.authority}${normalizedPath}`;
+    
+        return id;
+    }
+}
+
+
 export class GscCachedFilesPerWorkspace {
 
     private cachedFilesPerWorkspace: Map<string, GscWorkspaceFileData> = new Map();
 
     createNewWorkspace(workspaceFolder: vscode.WorkspaceFolder): GscWorkspaceFileData {
         const data = new GscWorkspaceFileData(workspaceFolder);
-        this.cachedFilesPerWorkspace.set(workspaceFolder.uri.toString(), data);
+        const id = GscFileCache.getUriId(workspaceFolder.uri);
+        this.cachedFilesPerWorkspace.set(id, data);
         return data;
     }
 
     getWorkspace(workspaceUri: vscode.Uri): GscWorkspaceFileData | undefined {
-        return this.cachedFilesPerWorkspace.get(workspaceUri.toString());
+        const id = GscFileCache.getUriId(workspaceUri);
+        return this.cachedFilesPerWorkspace.get(id);
     }
 
     removeCachedFile(fileUri: vscode.Uri) {
@@ -61,6 +94,19 @@ export class GscCachedFilesPerWorkspace {
         dataOfWorkspace.removeParsedFile(fileUri);
     }
 
+    getParsedFilesByFileOrFolderPath(uri: vscode.Uri): GscFile[] | undefined {
+        const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
+        if (workspaceFolder === undefined) {
+            return;
+        }
+        const workspaceData = this.getWorkspace(workspaceFolder.uri);
+        if (workspaceData === undefined) {
+            return;
+        }
+        const files = workspaceData.getParsedFilesByFileOrFolderPath(uri);
+        return files;
+    }
+
     removeWorkspace(workspaceUri: vscode.Uri) {
         const workspaceData = this.getWorkspace(workspaceUri);
         if (workspaceData === undefined) {
@@ -68,7 +114,8 @@ export class GscCachedFilesPerWorkspace {
         }
         workspaceData.removeAllParsedFiles();
 
-        return this.cachedFilesPerWorkspace.delete(workspaceUri.toString());
+        const id = GscFileCache.getUriId(workspaceUri);
+        return this.cachedFilesPerWorkspace.delete(id);
     }
 
     getAllWorkspaces() {
@@ -95,24 +142,38 @@ export class GscWorkspaceFileData {
     }
 
     addParsedFile(gscFile: GscFile) {
-        if (!this.parsedFiles.has(gscFile.id)) {
+        const id = GscFileCache.getUriId(gscFile.uri);
+        if (!this.parsedFiles.has(id)) {
             LoggerOutput.log("[GscFileCache] Added file to cache", vscode.workspace.asRelativePath(gscFile.uri));
         } else {
             LoggerOutput.log("[GscFileCache] Updated file in cache", vscode.workspace.asRelativePath(gscFile.uri));
         }
-        this.parsedFiles.set(gscFile.id, gscFile);
+        this.parsedFiles.set(id, gscFile);
         
         Events.GscFileCacheFileHasChanged(gscFile.uri);
     }
 
     getParsedFile(uri: vscode.Uri): GscFile | undefined {
-        const data = this.parsedFiles.get(uri.toString().toLowerCase());
+        const id = GscFileCache.getUriId(uri);
+        const data = this.parsedFiles.get(id);
 
         return data;
     }
 
+    getParsedFilesByFileOrFolderPath(uri: vscode.Uri): GscFile[] {
+        const files: GscFile[] = [];
+        const id = GscFileCache.getUriId(uri);
+        for (const [fileId, file] of this.parsedFiles) {
+            if (fileId === id || fileId.startsWith(id + "/")) {
+                files.push(file);
+            }
+        }
+        return files;
+    }
+
     removeParsedFile(uri: vscode.Uri): boolean {
-        const removed = this.parsedFiles.delete(uri.toString().toLowerCase());
+        const id = GscFileCache.getUriId(uri);
+        const removed = this.parsedFiles.delete(id);
 
         if (removed) {
             LoggerOutput.log("[GscFileCache] Removed file from cache", vscode.workspace.asRelativePath(uri));

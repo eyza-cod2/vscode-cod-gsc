@@ -204,7 +204,7 @@ export function checkCachedFile(cachedFiles: GscFile[], index: number, paths: st
     }
 
     var item = cachedFiles.at(index);
-    assert.ok(item !== undefined, message("Undefined", typeof item, "undefined"));
+    assert.ok(item !== undefined, message("Undefined cached file at index " + index, typeof item, "undefined"));
 
     assert.deepStrictEqual(vscode.workspace.asRelativePath(item.uri), fileUri, message("Unexpected uri", vscode.workspace.asRelativePath(item.uri), fileUri));
 }
@@ -242,6 +242,25 @@ export function waitForDiagnosticsChange(uri: vscode.Uri, debugText: string = ""
         setTimeout(() => {
             disposable.dispose();
             reject(new Error('Timeout waiting for diagnostics update. Uri: ' + vscode.workspace.asRelativePath(uri) + ". " + debugText));
+        }, 5000);  // Adjust the timeout as needed
+    });
+}
+
+
+
+
+export function waitForFileSystemChange(type: "create" | "delete" | "change", uri: vscode.Uri, debugText: string = ""): Promise<void> {
+    return new Promise((resolve, reject) => {
+        const disposable = Events.onDidFileSystemChange((data) => {
+            //console.log("onDidDiagnosticsChange: " + vscode.workspace.asRelativePath(gscFile.uri));
+            if (data.type === type, data.uri.toString() === uri.toString()) {
+                disposable.dispose();  // Clean up the event listener
+                resolve();
+            }
+        });
+        setTimeout(() => {
+            disposable.dispose();
+            reject(new Error('Timeout waiting for file system change. Uri: ' + vscode.workspace.asRelativePath(uri) + ". " + debugText));
         }, 5000);  // Adjust the timeout as needed
     });
 }
@@ -364,7 +383,7 @@ export function printDebugInfoForError(err: unknown) {
             }
         }
 
-        const log = LoggerOutput.getLogs().join("\n");
+        const log = LoggerOutput.getLogs(500, 60).join("\n");
 
         appendToBuffer(` `);
         appendToBuffer(` `);
