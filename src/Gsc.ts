@@ -30,6 +30,7 @@ export class Gsc {
             await GscCodeActionProvider.activate(context);
             await GscSemanticTokensProvider.activate(context);
             await GscCompletionItemProvider.activate(context);
+            await GscReferenceProvider.activate(context);
             await GscDefinitionProvider.activate(context);
             await GscHoverProvider.activate(context);
             await GscStatusBar.activate(context);

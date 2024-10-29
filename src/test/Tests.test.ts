@@ -146,6 +146,25 @@ export async function checkDefinitionFunc(gscFile: GscFile, pos: vscode.Position
 
 
 
+export function checkReferenceLocation(locations: vscode.Location[], index: number, uri: vscode.Uri, rangeLine: number, rangeCharacterStart: number, rangeCharacterEnd: number) {
+
+    function message(message: string, current: string, expected: string) {
+        var debugText = locations.map((loc, i) => "  " + i + ": " + loc.uri.fsPath + "  " + loc.range.start.line + ":" + loc.range.start.character + " - " + loc.range.end.line + ":" + loc.range.end.character).join('\n');
+        return message + "\n\locations[" + index + "] = \n'" + current + "'. \n\nExpected: \n'" + expected + "'. \n\nErrors:\n" + debugText + "\n\n";
+    }
+
+    var item = locations.at(index);
+    assert.ok(item !== undefined, message("Undefined location at index " + index, typeof item, "undefined"));
+
+    assert.deepStrictEqual(item.uri.toString(), uri.toString(), message("Unexpected uri", item.uri.toString(), uri.toString()));
+    assert.deepStrictEqual(item.range.start.line, rangeLine, message("Unexpected rangeLine", item.range.start.line.toString(), rangeLine.toString()));
+    assert.deepStrictEqual(item.range.start.character, rangeCharacterStart, message("Unexpected rangeCharacterStart", item.range.start.character.toString(), rangeCharacterStart.toString()));
+    assert.deepStrictEqual(item.range.end.character, rangeCharacterEnd, message("Unexpected rangeCharacterEnd", item.range.end.character.toString(), rangeCharacterEnd.toString()));
+    assert.deepStrictEqual(item.range.start.line, item.range.end.line, message("Range not on same line", item.range.start.line.toString(), item.range.end.line.toString()));
+}
+
+
+
 
 
 export function checkCompletions(gscFile: GscFile, items: vscode.CompletionItem[], index: number, labelName: string, 

@@ -6,6 +6,8 @@ import { GscFunction } from '../../GscFunctions';
 import { GscDefinitionProvider } from '../../GscDefinitionProvider';
 import { GscCompletionItemProvider } from '../../GscCompletionItemProvider';
 import { GscVariableDefinitionType } from '../../GscFileParser';
+import { GscReferenceProvider } from '../../GscReferenceProvider';
+import { Issues } from '../../Issues';
 
 
 suite('GscFileReferences', () => {
@@ -64,6 +66,7 @@ suite('GscFileReferences', () => {
             const locations6 = await GscDefinitionProvider.getFunctionDefinitionLocations(gsc, new vscode.Position(20, 8));
             tests.checkDefinition(locations6, "GscFileReferences.1/LowerUpperCase.gsc");
             
+            Issues.checkForNewError();
         } catch (error) {
             tests.printDebugInfoForError(error);
         }
@@ -114,10 +117,20 @@ suite('GscFileReferences', () => {
             tests.checkCompletions(gsc, completions, 0, "file1", vscode.CompletionItemKind.Field, [GscVariableDefinitionType.Integer], undefined);
             assert.ok(completions.length === 1);
 
+
+
+            // Check references of "main" function
+            const refLocs = await GscReferenceProvider.getFunctionReferenceLocations(gsc, new vscode.Position(0, 2));
+            tests.checkReferenceLocation(refLocs, 0, gsc.uri, 0, 0, 4);
+            tests.checkReferenceLocation(refLocs, 1, gsc.uri, 8, 19, 23);
+            assert.strictEqual(refLocs.length, 2);
+
+
             // Close text editor
             await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
 
 
+            Issues.checkForNewError();
         } catch (error) {
             tests.printDebugInfoForError(error);
         }
@@ -181,6 +194,7 @@ suite('GscFileReferences', () => {
             await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
 
 
+            Issues.checkForNewError();
         } catch (error) {
             tests.printDebugInfoForError(error);
         }
@@ -248,10 +262,78 @@ suite('GscFileReferences', () => {
             await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
 
 
+            Issues.checkForNewError();
         } catch (error) {
             tests.printDebugInfoForError(error);
         }
     });
 
+
+
+    test('GscFileReferences - function references - case', async () => {
+        try {
+            var gsc = await tests.loadGscFile(['GscFileReferences.1', 'LowerUpperCaseFolder', 'FunctionReferencesFile.gsc']);
+            
+            // Check references of "main" function
+            const refLocs = await GscReferenceProvider.getFunctionReferenceLocations(gsc, new vscode.Position(0, 2));
+            tests.checkReferenceLocation(refLocs, 0, gsc.uri, 0, 0, 8);
+            tests.checkReferenceLocation(refLocs, 1, tests.filePathToUri("GscFileReferences.1", "LowerUpperCase.gsc"), 5, 49, 57);
+            tests.checkReferenceLocation(refLocs, 2, tests.filePathToUri("GscFileReferences.1", "LowerUpperCase.gsc"), 8, 49, 57);
+            tests.checkReferenceLocation(refLocs, 3, tests.filePathToUri("GscFileReferences.1", "LowerUpperCase.gsc"), 11, 49, 57);
+            tests.checkReferenceLocation(refLocs, 4, tests.filePathToUri("GscFileReferences.1", "LowerUpperCase.gsc"), 14, 49, 57);
+            assert.strictEqual(refLocs.length, 5);
+
+            Issues.checkForNewError();
+        } catch (error) {
+            tests.printDebugInfoForError(error);
+        }
+    });
+
+
+
+    test('GscFileReferences - function references - in all files', async () => {
+        try {
+            var gsc = await tests.loadGscFile(['GscFileReferences.3', 'scripts', 'file_replaced_all.gsc']);
+            
+
+            assert.strictEqual(gsc.diagnostics.length, 0);
+
+
+            // Check references of "main" function
+            const refLocs = await GscReferenceProvider.getFunctionReferenceLocations(gsc, new vscode.Position(0, 2));
+            tests.checkReferenceLocation(refLocs, 0, gsc.uri, 0, 0, 4);
+            tests.checkReferenceLocation(refLocs, 1, tests.filePathToUri("GscFileReferences.3", "scripts", "file3.gsc"), 1, 31, 35);
+            tests.checkReferenceLocation(refLocs, 2, tests.filePathToUri("GscFileReferences.2", "scripts", "file2.gsc"), 1, 31, 35);
+            tests.checkReferenceLocation(refLocs, 3, tests.filePathToUri("GscFileReferences.1", "scripts", "file1.gsc"), 1, 31, 35);
+            assert.strictEqual(refLocs.length, 4);
+
+
+            Issues.checkForNewError();
+        } catch (error) {
+            tests.printDebugInfoForError(error);
+        }
+    });
+
+
+
+    test('GscFileReferences - function references - in replaced file', async () => {
+        try {
+            var gsc = await tests.loadGscFile(['GscFileReferences.2', 'scripts', 'file_replaced_all.gsc']);
+            
+
+            assert.strictEqual(gsc.diagnostics.length, 0);
+
+
+            // Check references of "main" function
+            const refLocs = await GscReferenceProvider.getFunctionReferenceLocations(gsc, new vscode.Position(0, 2));
+            tests.checkReferenceLocation(refLocs, 0, gsc.uri, 0, 0, 4);
+            assert.strictEqual(refLocs.length, 1);
+
+
+            Issues.checkForNewError();
+        } catch (error) {
+            tests.printDebugInfoForError(error);
+        }
+    });
 
 });
