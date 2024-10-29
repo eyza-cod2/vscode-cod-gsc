@@ -3,6 +3,7 @@ import { GscFiles } from './GscFiles';
 import { GscCompletionItemProvider } from './GscCompletionItemProvider';
 import { GscSemanticTokensProvider } from './GscSemanticTokensProvider';
 import { GscDiagnosticsCollection } from './GscDiagnosticsCollection';
+import { GscReferenceProvider } from './GscReferenceProvider';
 import { GscDefinitionProvider } from './GscDefinitionProvider';
 import { GscHoverProvider } from './GscHoverProvider';
 import { GscStatusBar } from './GscStatusBar';
