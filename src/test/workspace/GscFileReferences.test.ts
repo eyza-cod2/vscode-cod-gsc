@@ -25,45 +25,56 @@ suite('GscFileReferences', () => {
             // There should be no error - everything is case insensitive
             assert.ok(gsc.diagnostics.length === 0);
 
+            const hover1_include = await GscHoverProvider.getHover(gsc, new vscode.Position(0, 40));
+            tests.checkHover(hover1_include, "File: `" + vscode.workspace.asRelativePath(tests.filePathToUri("GscFileReferences.1/LowerUpperCaseFolder/FunctionReferencesFile.gsc"), true) + "`"); 
+
             // Correct path
             // FunctionReferencesFolder\FunctionReferencesFile::funcName();
             const hover1 = await GscHoverProvider.getHover(gsc, new vscode.Position(5, 57));
             tests.checkHover(hover1, GscFunction.generateMarkdownDescription({name: "funcName", parameters: []}, false, tests.filePathToUri("GscFileReferences.1/LowerUpperCaseFolder/FunctionReferencesFile.gsc").toString()).value);
-            //checkHover(hover1, "\n```\nfuncName()\n```\nFile: ```GscFileReferences.1/LowerUpperCaseFolder/FunctionReferencesFile.gsc```");
-            const locations1 = await GscDefinitionProvider.getFunctionDefinitionLocations(gsc, new vscode.Position(5, 57));
+            const hover1_file = await GscHoverProvider.getHover(gsc, new vscode.Position(5, 40));
+            tests.checkHover(hover1_file, "File: `" + vscode.workspace.asRelativePath(tests.filePathToUri("GscFileReferences.1/LowerUpperCaseFolder/FunctionReferencesFile.gsc"), true) + "`"); 
+            const locations1 = await GscDefinitionProvider.getDefinitionLocations(gsc, new vscode.Position(5, 57));
             tests.checkDefinition(locations1, "GscFileReferences.1/LowerUpperCaseFolder/FunctionReferencesFile.gsc");
 
             // Lowercase path
             // functionreferencesfolder\FunctionReferencesFile::funcName();
             const hover2 = await GscHoverProvider.getHover(gsc, new vscode.Position(8, 57));
             tests.checkHover(hover2, GscFunction.generateMarkdownDescription({name: "funcName", parameters: []}, false, tests.filePathToUri("GscFileReferences.1/LowerUpperCaseFolder/FunctionReferencesFile.gsc").toString()).value);
-            const locations2 = await GscDefinitionProvider.getFunctionDefinitionLocations(gsc, new vscode.Position(8, 57));
+            const hover2_file = await GscHoverProvider.getHover(gsc, new vscode.Position(8, 40));
+            tests.checkHover(hover2_file, "File: `" + vscode.workspace.asRelativePath(tests.filePathToUri("GscFileReferences.1/LowerUpperCaseFolder/FunctionReferencesFile.gsc"), true) + "`"); 
+            const locations2 = await GscDefinitionProvider.getDefinitionLocations(gsc, new vscode.Position(8, 57));
             tests.checkDefinition(locations2, "GscFileReferences.1/LowerUpperCaseFolder/FunctionReferencesFile.gsc");
 
             // Lowercase path + file
             // functionreferencesfolder\functionreferencesfile::funcName();
             const hover3 = await GscHoverProvider.getHover(gsc, new vscode.Position(11, 57));
             tests.checkHover(hover3, GscFunction.generateMarkdownDescription({name: "funcName", parameters: []}, false, tests.filePathToUri("GscFileReferences.1/LowerUpperCaseFolder/FunctionReferencesFile.gsc").toString()).value);
-            const locations3 = await GscDefinitionProvider.getFunctionDefinitionLocations(gsc, new vscode.Position(11, 57));
+            const hover3_file = await GscHoverProvider.getHover(gsc, new vscode.Position(11, 40));
+            tests.checkHover(hover3_file, "File: `" + vscode.workspace.asRelativePath(tests.filePathToUri("GscFileReferences.1/LowerUpperCaseFolder/FunctionReferencesFile.gsc"), true) + "`"); 
+            const locations3 = await GscDefinitionProvider.getDefinitionLocations(gsc, new vscode.Position(11, 57));
             tests.checkDefinition(locations3, "GscFileReferences.1/LowerUpperCaseFolder/FunctionReferencesFile.gsc");
 
             // Lowercase path + file + func name
             // functionreferencesfolder\functionreferencesfile::funcname();
             const hover4 = await GscHoverProvider.getHover(gsc, new vscode.Position(14, 57));
             tests.checkHover(hover4, GscFunction.generateMarkdownDescription({name: "funcName", parameters: []}, false, tests.filePathToUri("GscFileReferences.1/LowerUpperCaseFolder/FunctionReferencesFile.gsc").toString()).value);
-            const locations4 = await GscDefinitionProvider.getFunctionDefinitionLocations(gsc, new vscode.Position(14, 57));
+            const hover4_file = await GscHoverProvider.getHover(gsc, new vscode.Position(14, 40));
+            tests.checkHover(hover4_file, "File: `" + vscode.workspace.asRelativePath(tests.filePathToUri("GscFileReferences.1/LowerUpperCaseFolder/FunctionReferencesFile.gsc"), true) + "`"); 
+            const locations4 = await GscDefinitionProvider.getDefinitionLocations(gsc, new vscode.Position(14, 57));
             tests.checkDefinition(locations4, "GscFileReferences.1/LowerUpperCaseFolder/FunctionReferencesFile.gsc");
+
 
             // Hover over "includedFuncName();" - its case insensitive, external file should be found
             const hover5 = await GscHoverProvider.getHover(gsc, new vscode.Position(17, 8));
             tests.checkHover(hover5, GscFunction.generateMarkdownDescription({name: "includedFuncName", parameters: []}, false, tests.filePathToUri("GscFileReferences.1/LowerUpperCaseFolder/FunctionReferencesFile.gsc").toString(), "Included via '#include'").value);
-            const locations5 = await GscDefinitionProvider.getFunctionDefinitionLocations(gsc, new vscode.Position(17, 8));
+            const locations5 = await GscDefinitionProvider.getDefinitionLocations(gsc, new vscode.Position(17, 8));
             tests.checkDefinition(locations5, "GscFileReferences.1/LowerUpperCaseFolder/FunctionReferencesFile.gsc");
 
             // Hover over "localFunc();" - its case insensitive, local func should be found
             const hover6 = await GscHoverProvider.getHover(gsc, new vscode.Position(20, 8));
             tests.checkHover(hover6, GscFunction.generateMarkdownDescription({name: "LOCALFUNC", parameters: []}, true, undefined, undefined).value);
-            const locations6 = await GscDefinitionProvider.getFunctionDefinitionLocations(gsc, new vscode.Position(20, 8));
+            const locations6 = await GscDefinitionProvider.getDefinitionLocations(gsc, new vscode.Position(20, 8));
             tests.checkDefinition(locations6, "GscFileReferences.1/LowerUpperCase.gsc");
             
             Issues.checkForNewError();
@@ -99,7 +110,7 @@ suite('GscFileReferences', () => {
             var position = new vscode.Position(8, 22);
             var hover = await GscHoverProvider.getHover(gsc, position);
             tests.checkHover(hover, GscFunction.generateMarkdownDescription({name: "main", parameters: []}, true, undefined, undefined).value);     
-            var locations = await GscDefinitionProvider.getFunctionDefinitionLocations(gsc, position);
+            var locations = await GscDefinitionProvider.getDefinitionLocations(gsc, position);
             tests.checkDefinition(locations, "GscFileReferences.1/scripts/file1.gsc");
 
 
@@ -171,7 +182,7 @@ suite('GscFileReferences', () => {
             var position = new vscode.Position(9, 22);
             var hover = await GscHoverProvider.getHover(gsc, position);
             tests.checkHover(hover, GscFunction.generateMarkdownDescription({name: "main", parameters: []}, true, undefined, undefined).value);     
-            var locations = await GscDefinitionProvider.getFunctionDefinitionLocations(gsc, position);
+            var locations = await GscDefinitionProvider.getDefinitionLocations(gsc, position);
             tests.checkDefinition(locations, "GscFileReferences.2/scripts/file2.gsc");
 
 
@@ -238,7 +249,7 @@ suite('GscFileReferences', () => {
             var position = new vscode.Position(10, 22);
             var hover = await GscHoverProvider.getHover(gsc, position);
             tests.checkHover(hover, GscFunction.generateMarkdownDescription({name: "main", parameters: []}, true, undefined, undefined).value);     
-            var locations = await GscDefinitionProvider.getFunctionDefinitionLocations(gsc, position);
+            var locations = await GscDefinitionProvider.getDefinitionLocations(gsc, position);
             tests.checkDefinition(locations, "GscFileReferences.3/scripts/file3.gsc");
 
 

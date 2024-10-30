@@ -140,7 +140,7 @@ export function checkDefinition(locations: vscode.Location[], expectedFileEnd: s
 }
 
 export async function checkDefinitionFunc(gscFile: GscFile, pos: vscode.Position, pathUri: string) {
-    const locations = await GscDefinitionProvider.getFunctionDefinitionLocations(gscFile, pos);
+    const locations = await GscDefinitionProvider.getDefinitionLocations(gscFile, pos);
     checkDefinition(locations, pathUri);
 }
 

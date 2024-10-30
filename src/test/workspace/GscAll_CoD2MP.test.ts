@@ -94,7 +94,7 @@ suite('GscAll.CoD2MP', () => {
             const hover1 = await GscHoverProvider.getHover(gsc, new vscode.Position(3, 6));
             tests.checkHover(hover1, GscFunction.generateMarkdownDescription({name: "func1", parameters: []}, true, tests.filePathToUri("GscAll.CoD2MP/scripts/ItselfInclude.gsc").toString()).value);
 
-            const locations1 = await GscDefinitionProvider.getFunctionDefinitionLocations(gsc, new vscode.Position(3, 6));
+            const locations1 = await GscDefinitionProvider.getDefinitionLocations(gsc, new vscode.Position(3, 6));
             tests.checkDefinition(locations1, "GscAll.CoD2MP/scripts/ItselfInclude.gsc");
 
 

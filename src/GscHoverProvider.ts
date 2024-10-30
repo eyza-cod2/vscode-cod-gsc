@@ -39,11 +39,14 @@ export class GscHoverProvider implements vscode.HoverProvider {
 
 
     public static async getHover(gscFile: GscFile, position: vscode.Position): Promise<vscode.Hover | undefined> {
+        let hoverRange: vscode.Range | undefined = undefined;
         let markdown = new vscode.MarkdownString();
         markdown.isTrusted = true; // enable HTML tags
 
         const gscData = gscFile.data;
         const uri = gscFile.uri;
+        const isUniversalGame = GscConfig.isUniversalGame(gscFile.config.currentGame);
+        const errorDiagnosticsDisabled = gscFile.config.errorDiagnostics === ConfigErrorDiagnostics.Disable;
 
         // Get group before cursor
         var groupAtCursor = gscData.root.findGroupOnLeftAtPosition(position);
@@ -51,9 +54,6 @@ export class GscHoverProvider implements vscode.HoverProvider {
         if (groupAtCursor?.type === GroupType.FunctionName) {
             const funcInfo = groupAtCursor.getFunctionReferenceInfo();
             if (funcInfo !== undefined) {
-
-                const isUniversalGame = GscConfig.isUniversalGame(gscFile.config.currentGame);
-                const errorDiagnosticsDisabled = gscFile.config.errorDiagnostics === ConfigErrorDiagnostics.Disable;
 
                 const res = GscFunctions.getFunctionReferenceState({name: funcInfo.name, path: funcInfo.path}, gscFile);
     
@@ -155,12 +155,27 @@ export class GscHoverProvider implements vscode.HoverProvider {
 
 
             }
+
+        } else if (groupAtCursor?.type === GroupType.Path) {
+            const path = groupAtCursor.getTokensAsString();
+            const fileReference = GscFiles.getReferencedFileForFile(gscFile, path);
+            if (fileReference !== undefined && fileReference.gscFile !== undefined) {
+                markdown.appendMarkdown("File: `" + vscode.workspace.asRelativePath(fileReference.gscFile.uri, true) + "`");
+                hoverRange = groupAtCursor.getRange();
+            } else {
+                // There would be error by diagnostics, unless disabled
+                if (errorDiagnosticsDisabled) {
+                    markdown.appendText(`⚠️ Path '${path}' is not valid!`);
+                    markdown.appendText(`\n\n🛈 Error diagnostics disabled via workspace settings`);
+                }
+            }
+
         }
 
         if (markdown.value === "") {
             return undefined;
         } else {
-            return new vscode.Hover(markdown);
+            return new vscode.Hover(markdown, hoverRange);
         }
     }
 
