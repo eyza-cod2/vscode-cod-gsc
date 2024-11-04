@@ -4,6 +4,7 @@ import * as tests from '../Tests.test';
 import { GscHoverProvider } from '../../GscHoverProvider';
 import { GscFunction } from '../../GscFunctions';
 import { GscDefinitionProvider } from '../../GscDefinitionProvider';
+import { GscMarkdownGenerator } from '../../GscMarkdownGenerator';
 
 
 /*
@@ -90,12 +91,10 @@ suite('GscAll.CoD2MP', () => {
             assert.strictEqual(gsc.diagnostics.length, 1);
 
             // Correct path
-            // FunctionReferencesFolder\FunctionReferencesFile::funcName();
-            const hover1 = await GscHoverProvider.getHover(gsc, new vscode.Position(3, 6));
-            tests.checkHover(hover1, GscFunction.generateMarkdownDescription({name: "func1", parameters: []}, true, tests.filePathToUri("GscAll.CoD2MP/scripts/ItselfInclude.gsc").toString()).value);
+            // FunctionReferencesFolder\FunctionReferencesFile::funcName();    
+            await tests.checkHoverFunction(gsc, new vscode.Position(3, 6), "func1", [], "GscAll.CoD2MP/scripts/ItselfInclude.gsc", "");
 
-            const locations1 = await GscDefinitionProvider.getDefinitionLocations(gsc, new vscode.Position(3, 6));
-            tests.checkDefinition(locations1, "GscAll.CoD2MP/scripts/ItselfInclude.gsc");
+            await tests.checkDefinitionLocation(gsc, new vscode.Position(3, 6), "GscAll.CoD2MP/scripts/ItselfInclude.gsc");
 
 
         } catch (error) {
@@ -124,20 +123,20 @@ suite('GscAll.CoD2MP', () => {
             assert.strictEqual(gsc.diagnostics.length, 8);
 
             var hover = await GscHoverProvider.getHover(gsc, new vscode.Position(10, 7));
-            var md = GscFunction.generateMarkdownDescription({name: "func2", parameters: []}, true, undefined, undefined);
+            var md = GscMarkdownGenerator.generateFunctionDescription({name: "func2", parameters: []}, true, undefined, undefined);
             md.appendMarkdown('\n\r');
             md.appendMarkdown('--------------------------------------------------------------------------  \n\r');
-            md.appendMarkdown(GscFunction.generateMarkdownDescription({name: "func2", parameters: []}, false, tests.filePathToUri("GscAll.CoD2MP/scripts/file2.gsc").toString(), "Included via '#include'").value);
+            md.appendMarkdown(GscMarkdownGenerator.generateFunctionDescription({name: "func2", parameters: []}, false, tests.filePathToUri("GscAll.CoD2MP/scripts/file2.gsc").toString(), "Included via '#include'").value);
             tests.checkHover(hover, md.value);
 
             var hover = await GscHoverProvider.getHover(gsc, new vscode.Position(17, 3));
-            var md = GscFunction.generateMarkdownDescription({name: "func5", parameters: []}, true, undefined, undefined);
+            var md = GscMarkdownGenerator.generateFunctionDescription({name: "func5", parameters: []}, true, undefined, undefined);
             md.appendMarkdown('\n\r');
             md.appendMarkdown('--------------------------------------------------------------------------  \n\r');
-            md.appendMarkdown(GscFunction.generateMarkdownDescription({name: "func5", parameters: []}, false, tests.filePathToUri("GscAll.CoD2MP/scripts/file5.gsc").toString(), "Included via '#include'").value);
+            md.appendMarkdown(GscMarkdownGenerator.generateFunctionDescription({name: "func5", parameters: []}, false, tests.filePathToUri("GscAll.CoD2MP/scripts/file5.gsc").toString(), "Included via '#include'").value);
             md.appendMarkdown('\n\r');
             md.appendMarkdown('--------------------------------------------------------------------------  \n\r');
-            md.appendMarkdown(GscFunction.generateMarkdownDescription({name: "func5", parameters: []}, false, tests.filePathToUri("GscAll.CoD2MP/scripts/file6.gsc").toString(), "Included via '#include'").value);
+            md.appendMarkdown(GscMarkdownGenerator.generateFunctionDescription({name: "func5", parameters: []}, false, tests.filePathToUri("GscAll.CoD2MP/scripts/file6.gsc").toString(), "Included via '#include'").value);
             tests.checkHover(hover, md.value);
 
         } catch (error) {

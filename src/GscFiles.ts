@@ -320,10 +320,9 @@ export class GscFiles {
      * It includes current workspace and included workspace folders via settings.
      * The workspace folders are sorted by their indexes (first being the last workspace folder in editor).
      * @param workspaceFolder Workspace folder from which the reference is made.
-     * @param includeReversedReferences If true, also workspace folders that include the current workspace folder are included.
      * @returns Array of workspace folders where the file can be found.
      */
-    public static loadReferenceableWorkspaceFolders(workspaceFolder: vscode.WorkspaceFolder, includeReversedReferences: boolean): vscode.WorkspaceFolder[] {
+    public static loadReferenceableWorkspaceFolders(workspaceFolder: vscode.WorkspaceFolder): vscode.WorkspaceFolder[] {
 
         /*
             Define all possible locations where the file can be found
@@ -348,13 +347,11 @@ export class GscFiles {
         includedWorkspaceFolders.push(workspaceFolder);
 
         // Find workspace folders that includes this workspace folder
-        if (includeReversedReferences) {
-            for (const workspaceFolder2 of vscode.workspace.workspaceFolders ?? []) {
-                const cfgIncludedWorkspaceFolderNames = GscConfig.getIncludedWorkspaceFolders(workspaceFolder2.uri);
-                // This workspace folder includes the referenced workspace folder
-                if (cfgIncludedWorkspaceFolderNames.includes(workspaceFolder.name)) {
-                    includedWorkspaceFolders.push(workspaceFolder2);
-                }
+        for (const workspaceFolder2 of vscode.workspace.workspaceFolders ?? []) {
+            const cfgIncludedWorkspaceFolderNames = GscConfig.getIncludedWorkspaceFolders(workspaceFolder2.uri);
+            // This workspace folder includes the referenced workspace folder
+            if (cfgIncludedWorkspaceFolderNames.includes(workspaceFolder.name)) {
+                includedWorkspaceFolders.push(workspaceFolder2);
             }
         }
 
@@ -409,13 +406,12 @@ export class GscFiles {
      * Get all possible game root folders where GSC files can be found and referenced. 
      * It includes game root folder from current workspace and game root folders from included workspace folders via settings.
      * @param workspaceFolder Workspace folder from which the game root folders are referenced.
-     * @param includeReversedReferences If true, also workspace folders that include the current workspace folder are included.
      * @returns Array of game root folders where the file can be found. The first item is the game root folder from the workspace where the file is located. Other items are game root folders from included workspace folders sorted by their indexes.
      */
-    public static loadReferenceableGameRootFolders(workspaceFolder: vscode.WorkspaceFolder, includeReversedReferences: boolean): GscGameRootFolder[] {
+    public static loadReferenceableGameRootFolders(workspaceFolder: vscode.WorkspaceFolder): GscGameRootFolder[] {
         
         // Define all possible locations where the file can be found (globally included workspace folders)
-        const includedWorkspaceFolders = GscFiles.loadReferenceableWorkspaceFolders(workspaceFolder, includeReversedReferences);  
+        const includedWorkspaceFolders = GscFiles.loadReferenceableWorkspaceFolders(workspaceFolder);  
 
         // Convert workspace folders to URIs taking game root folder into account
         const uris = includedWorkspaceFolders.map(f => GscConfig.getGameRootFolder(f.uri)!);
@@ -426,48 +422,65 @@ export class GscFiles {
 
     /**
      * Get referenced file in specified file. It tries to find the file in all possible locations where it can be found (workspace folder and included workspace folders).
+     * File must be part of workspace to be found.
      * @param gscFile GSC file where the reference is located.
      * @param referencedFilePath Path in GSC file format (e.g. scripts\scriptName)
-     * @param includeReversedReferences If true, it also checks if the file is replaced by another file in another workspace folder.
      * @returns The reference status and the parsed file data if found
      */
-    public static getReferencedFileForFile(gscFile: GscFile, referencedFilePath: string, includeReversedReferences: boolean = false): GscFileAndReferenceState {
+    public static getReferencedFileForFile(gscFile: GscFile, referencedFilePath: string): GscFileAndReferenceState | undefined {
     
-        const gameRootFolders = includeReversedReferences ? gscFile.config.referenceableGameRootFoldersAll : gscFile.config.referenceableGameRootFolders;
+        const file = this.getReferencedFilesForFile(gscFile, referencedFilePath, true);
 
-        for (const referenceableGameRoot of gameRootFolders) {
+        if (file.length > 0) {
+            return file[0];
+        }
+
+        return undefined;
+    }
+
+
+    /**
+     * Get the referenced file in specified file from all included workspaces.
+     * The first item in the array is the file that should be used. Other items are files that are replaced by the first file.
+     * File must be part of workspace to be found.
+     * @param gscFile GSC file where the reference is located.
+     * @param referencedFilePath Path in GSC file format (e.g. scripts\scriptName)
+     * @returns Array of reference status and the parsed file data if found
+     */
+    public static getReferencedFilesForFile(gscFile: GscFile, referencedFilePath: string, exitOnFirst: boolean = false): GscFileAndReferenceState[] {
+        const referencedFiles: GscFileAndReferenceState[] = [];
+
+        if (!gscFile.workspaceFolder) {
+            return referencedFiles;
+        }
+
+        for (const referenceableGameRoot of gscFile.config.referenceableGameRootFolders) {
             const gscFilePathUri = vscode.Uri.joinPath(referenceableGameRoot.uri, referencedFilePath.replace(/\\/g, '/') + ".gsc");                      
             const gsc = GscFiles.getCachedFile(gscFilePathUri, referenceableGameRoot.workspaceFolder.uri);
 
-            if (gsc === undefined) {
-                continue; // not found, try next workspace folder
-            }
-
-            // File found, check if it is replaced by another file in another workspace folder
-            if (includeReversedReferences === false) {
-                const fileWithReverseReferences = this.getReferencedFileForFile(gscFile, referencedFilePath, true);
-
-                if (gsc !== fileWithReverseReferences.gscFile && fileWithReverseReferences.referenceState !== GscFileReferenceState.NotFound) {
-                    // File is replaced by another file in another workspace folder
-                    if (fileWithReverseReferences.referenceState === GscFileReferenceState.IncludedWorkspaceFolder) {
-                        fileWithReverseReferences.referenceState = GscFileReferenceState.IncludedWorkspaceFolderReversed;
-                    } else if (fileWithReverseReferences.referenceState === GscFileReferenceState.LocalFile) {
-                        // This should not happen
-                        throw new Error("File is replaced by another file in another workspace folder, but it is not included workspace folder");
-                    }
-                    return fileWithReverseReferences;
-                }
+            if (gsc === undefined || !gsc.workspaceFolder) {
+                continue; // not found or not part of workspace, try next workspace folder
             }
 
             var state = GscFileReferenceState.LocalFile;
+            var workspace = gsc.workspaceFolder;
             if (referenceableGameRoot.workspaceFolder !== gscFile.workspaceFolder) {
-                state = GscFileReferenceState.IncludedWorkspaceFolder;
+                if (gsc.workspaceFolder.index > gscFile.workspaceFolder.index) {
+                    state = GscFileReferenceState.IncludedWorkspaceFolderOverwritten;
+                } else {
+                    state = GscFileReferenceState.IncludedWorkspaceFolder;
+                }
+                workspace = referenceableGameRoot.workspaceFolder;
             }
+            
+            referencedFiles.push({gscFile: gsc, referenceState: state, referenceWorkspace: workspace});
 
-            return {gscFile: gsc, referenceState: state};
+            if (exitOnFirst) {
+                break;
+            }
         }
 
-        return {gscFile: undefined, referenceState: GscFileReferenceState.NotFound};
+        return referencedFiles;
     }
 
 
@@ -495,9 +508,20 @@ export class GscFiles {
      */
     public static isFileReplacedByAnotherFile(gscFile: GscFile): boolean {
 
-        const referencedFiles = this.getReferencedFileForFile(gscFile, gscFile.gamePath, true);
+        const referencedFiles = this.getReferencedFileForFile(gscFile, gscFile.gamePath);
 
-        if (referencedFiles.gscFile !== gscFile) {
+        if (referencedFiles && referencedFiles.gscFile !== gscFile) {
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * Check if the GSC file is ignored by settings.
+     */
+    public static isFileIgnoredBySettings(gscFile: GscFile, gamePath: string): boolean {
+        if (gscFile.config.ignoredFilePaths.some(ignoredPath => gamePath.toLowerCase().startsWith(ignoredPath.toLowerCase()))) {
             return true;
         }
         return false;
@@ -1098,13 +1122,13 @@ export class GscFiles {
 
 
 export enum GscFileReferenceState {
-    NotFound,
     LocalFile,
     IncludedWorkspaceFolder,
-    IncludedWorkspaceFolderReversed
+    IncludedWorkspaceFolderOverwritten
 }
 
 export type GscFileAndReferenceState = {
-    gscFile: GscFile | undefined,
+    gscFile: GscFile,
     referenceState: GscFileReferenceState
+    referenceWorkspace: vscode.WorkspaceFolder
 };

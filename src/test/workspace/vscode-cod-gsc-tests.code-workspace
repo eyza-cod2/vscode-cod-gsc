@@ -45,16 +45,32 @@
 			"path": "GscCompletionItemProvider.NonIncludedFolder"
 		},
 		{
+			"name": "GscFiles",
 			"path": "GscFiles"
 		},
 		{
+			"name": "GscFileReferences.1",
 			"path": "GscFileReferences.1"
 		},
 		{
+			"name": "GscFileReferences.2",
 			"path": "GscFileReferences.2"
 		},
 		{
+			"name": "GscFileReferences.3",
 			"path": "GscFileReferences.3"
+		},
+		{
+			"name": "GscRename.1",
+			"path": "GscRename.1"
+		},
+		{
+			"name": "GscRename.2",
+			"path": "GscRename.2"
+		},
+		{
+			"name": "GscRename.3",
+			"path": "GscRename.3"
 		}
 	]
 }

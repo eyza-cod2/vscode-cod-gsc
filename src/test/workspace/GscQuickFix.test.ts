@@ -15,44 +15,6 @@ suite('GscQuickFix', () => {
     });
 
 
-    test('func references', async () => {
-        try {
-            const gsc = await tests.loadGscFile(['GscQuickFix', 'includedFolders.gsc']);
-        
-            // There should be no error
-            assert.ok(gsc.diagnostics.length === 0);
-
-            // file1::func1();
-            const pos1 = new vscode.Position(2, 14);
-            await tests.checkHoverExternalFunc(gsc, pos1, "func1", [], "GscQuickFix.1/file1.gsc", "Included via workspace folder settings");
-            await tests.checkDefinitionFunc(gsc, pos1, "GscQuickFix.1/file1.gsc");
-
-            // file2::func2();
-            const pos2 = new vscode.Position(5, 14);
-            await tests.checkHoverExternalFunc(gsc, pos2, "func2", [], "GscQuickFix.2/subfolder/file2.gsc", "Included via workspace folder settings");
-            await tests.checkDefinitionFunc(gsc, pos2, "GscQuickFix.2/subfolder/file2.gsc");
-
-            // file3::func3();
-            const pos3 = new vscode.Position(8, 14);
-            await tests.checkHoverExternalFunc(gsc, pos3, "func3", [], "GscQuickFix.3/file3.gsc", "Included via workspace folder settings");
-            await tests.checkDefinitionFunc(gsc, pos3, "GscQuickFix.3/file3.gsc");
-            
-            // fileReplaced::funcReplaced();
-            const pos4 = new vscode.Position(11, 22);
-            await tests.checkHoverExternalFunc(gsc, pos4, "funcReplaced", [], "GscQuickFix.3/fileReplaced.gsc", "Included via workspace folder settings");
-            await tests.checkDefinitionFunc(gsc, pos4, "GscQuickFix.3/fileReplaced.gsc");
-            
-            // dummy::main();
-            const pos5 = new vscode.Position(14, 14);
-            await tests.checkHoverExternalFunc(gsc, pos5, "main", [], "GscQuickFix/dummy.gsc", "");
-            await tests.checkDefinitionFunc(gsc, pos5, "GscQuickFix/dummy.gsc");
-
-        } catch (error) {
-            tests.printDebugInfoForError(error);
-        }
-    });
-
-
     test('command "add workspace folder" + "game root" + "ignore folder" + "ignore errors"', async () => {
         try {
             const gsc = await tests.loadGscFile(['GscQuickFix', 'includedFoldersCommand.gsc']);

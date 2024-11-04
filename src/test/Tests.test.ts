@@ -7,13 +7,14 @@ import { GscVariableDefinitionType } from '../GscFileParser';
 import { GscHoverProvider } from '../GscHoverProvider';
 import { GscDefinitionProvider } from '../GscDefinitionProvider';
 import { EXTENSION_ID } from '../extension';
-import { GscFiles } from '../GscFiles';
+import { GscFileAndReferenceState, GscFiles } from '../GscFiles';
 import { GscFile } from '../GscFile';
 import { GscCompletionItemProvider } from '../GscCompletionItemProvider';
 import { GscCodeActionProvider } from '../GscCodeActionProvider';
 import { GscFunction } from '../GscFunctions';
 import { LoggerOutput } from '../LoggerOutput';
 import { Events } from '../Events';
+import { GscMarkdownGenerator } from '../GscMarkdownGenerator';
 
 export const testWorkspaceDir = path.join(os.tmpdir(), 'vscode-test-workspace');
 
@@ -122,13 +123,21 @@ export function checkHover(hover: vscode.Hover | undefined, expected: string) {
     assert.deepStrictEqual(hover.contents[0].value, expected, "Not equal:\n\nCurrent:\n'" + hover.contents[0].value + "'\n\nExpected:\n'" + expected + "'\n\n");
 }
 
-export async function checkHoverExternalFunc(gscFile: GscFile, pos: vscode.Position, name: string, parameters: {name: string, commentBefore?: string}[], pathUri: string, reason: string) {
+export async function checkHoverFunction(gscFile: GscFile, pos: vscode.Position, name: string, parameters: {name: string, commentBefore?: string}[], relativePath: string, reason: string) {
     const hover = await GscHoverProvider.getHover(gscFile, pos);
-    checkHover(hover, GscFunction.generateMarkdownDescription({name: name, parameters: parameters}, false, filePathToUri(pathUri).toString(), reason).value);
+    const pathUri = filePathToUri(relativePath).toString();
+    checkHover(hover, GscMarkdownGenerator.generateFunctionDescription({name: name, parameters: parameters}, gscFile.uri.toString() === pathUri, pathUri, reason).value);
 }
 
-export function getFunctionDescription(name: string, parameters: {name: string, commentBefore?: string}[], isLocal: boolean, pathUri: string, reason: string = "") {
-    return GscFunction.generateMarkdownDescription({name: name, parameters: parameters}, isLocal, filePathToUri(pathUri).toString(), reason).value;
+export async function checkHoverPath(gscFile: GscFile, pos: vscode.Position, fileReferences: GscFileAndReferenceState[], path: string) {
+    const hover = await GscHoverProvider.getHover(gscFile, pos);  
+    const md = GscMarkdownGenerator.generateFilePathDescription(fileReferences, gscFile, path).value;
+    checkHover(hover, md);
+}
+
+export function getFunctionDescription(name: string, parameters: {name: string, commentBefore?: string}[], isLocal: boolean, relativePath: string, reason: string = "") {
+    const pathUri = filePathToUri(relativePath).toString();
+    return GscMarkdownGenerator.generateFunctionDescription({name: name, parameters: parameters}, isLocal, pathUri, reason).value;
 }
 
 
@@ -139,7 +148,7 @@ export function checkDefinition(locations: vscode.Location[], expectedFileEnd: s
     assert.deepStrictEqual(locations[0].uri.path.slice(-expectedFileEnd.length), expectedFileEnd, "Expected file end: " + expectedFileEnd + ". Actual: " + locations[0].uri.path);
 }
 
-export async function checkDefinitionFunc(gscFile: GscFile, pos: vscode.Position, pathUri: string) {
+export async function checkDefinitionLocation(gscFile: GscFile, pos: vscode.Position, pathUri: string) {
     const locations = await GscDefinitionProvider.getDefinitionLocations(gscFile, pos);
     checkDefinition(locations, pathUri);
 }

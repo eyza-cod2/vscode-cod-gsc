@@ -374,7 +374,7 @@ export class GscDiagnosticsCollection {
 
         const referenceData = GscFiles.getReferencedFileForFile(gscFile, path);
 
-        if (!gscFile.config.gameConfig.includeFileItself && referenceData.gscFile?.uri.toString() === gscFile.uri.toString()) {
+        if (!gscFile.config.gameConfig.includeFileItself && referenceData?.gscFile.uri.toString() === gscFile.uri.toString()) {
             return new vscode.Diagnostic(group.getRange(), "File is including itself", vscode.DiagnosticSeverity.Error);
         }
 
@@ -390,7 +390,7 @@ export class GscDiagnosticsCollection {
         }
 
         // Check for duplicated function definitions
-        if (gscFile.config.gameConfig.duplicateFunctionDefinitions === false && referenceData.gscFile) {
+        if (gscFile.config.gameConfig.duplicateFunctionDefinitions === false && referenceData) {
             // Get all function definitions from included file
             const funcDefsInIncludedFile = GscFunctions.getLocalFunctionDefinitions(referenceData.gscFile);
             
@@ -402,7 +402,7 @@ export class GscDiagnosticsCollection {
             for (let j = 0; j < index; j++) {
                 const otherPath = allIncludedPaths[j];
                 const otherReferenceData = GscFiles.getReferencedFileForFile(gscFile, otherPath);
-                if (!otherReferenceData.gscFile) {
+                if (!otherReferenceData) {
                     continue;
                 }
                 const otherFuncDefs = GscFunctions.getLocalFunctionDefinitions(otherReferenceData.gscFile);
@@ -420,10 +420,10 @@ export class GscDiagnosticsCollection {
             }
         }
 
-        if (referenceData.gscFile === undefined) {
+        if (referenceData === undefined) {
 
             // This file path is ignored by configuration
-            if (gscFile.config.ignoredFilePaths.some(ignoredPath => path.toLowerCase().startsWith(ignoredPath.toLowerCase()))) {
+            if (GscFiles.isFileIgnoredBySettings(gscFile, path)) {
                 return;
             }
             const d = new vscode.Diagnostic(
@@ -519,7 +519,7 @@ export class GscDiagnosticsCollection {
                     case GscFunctionState.NotFoundFile:
 
                         // This file path is ignored by configuration
-                        if (gscFile.config.ignoredFilePaths.some(ignoredPath => funcInfo.path.toLowerCase().startsWith(ignoredPath.toLowerCase()))) {
+                        if (GscFiles.isFileIgnoredBySettings(gscFile, funcInfo.path)) {
                             return;
                         }
                         var r = (funcInfo.pathGroup) ? funcInfo.pathGroup.getRange() : group.getRange();

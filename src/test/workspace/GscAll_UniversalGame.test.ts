@@ -4,6 +4,7 @@ import * as tests from '../Tests.test';
 import { GscHoverProvider } from '../../GscHoverProvider';
 import { GscFunction } from '../../GscFunctions';
 import { GscDefinitionProvider } from '../../GscDefinitionProvider';
+import { GscMarkdownGenerator } from '../../GscMarkdownGenerator';
 
 
 /*
@@ -73,7 +74,7 @@ suite('GscAll.UniversalGame', () => {
             // Correct path
             // FunctionReferencesFolder\FunctionReferencesFile::funcName();
             const hover1 = await GscHoverProvider.getHover(gsc, new vscode.Position(3, 6));
-            tests.checkHover(hover1, GscFunction.generateMarkdownDescription({name: "func1", parameters: []}, true, tests.filePathToUri("GscAll.UniversalGame/scripts/ItselfInclude.gsc").toString()).value);
+            tests.checkHover(hover1, GscMarkdownGenerator.generateFunctionDescription({name: "func1", parameters: []}, true, tests.filePathToUri("GscAll.UniversalGame/scripts/ItselfInclude.gsc").toString()).value);
 
             const locations1 = await GscDefinitionProvider.getDefinitionLocations(gsc, new vscode.Position(3, 6));
             tests.checkDefinition(locations1, "GscAll.UniversalGame/scripts/ItselfInclude.gsc");
@@ -100,7 +101,7 @@ suite('GscAll.UniversalGame', () => {
             assert.strictEqual(gsc.diagnostics.length, 4);
 
             var hover1 = await GscHoverProvider.getHover(gsc, new vscode.Position(10, 7));
-            var md = GscFunction.generateMarkdownDescription({name: "func2", parameters: []}, true, undefined, undefined);
+            var md = GscMarkdownGenerator.generateFunctionDescription({name: "func2", parameters: []}, true, undefined, undefined);
             md.appendMarkdown('\n\r');
             md.appendMarkdown('--------------------------------------------------------------------------  \n\r');
             md.appendMarkdown(`Function 'func2' is also defined in this file:  \n\r`);
@@ -108,7 +109,7 @@ suite('GscAll.UniversalGame', () => {
             tests.checkHover(hover1, md.value);
 
             var hover = await GscHoverProvider.getHover(gsc, new vscode.Position(17, 3));
-            var md = GscFunction.generateMarkdownDescription({name: "func5", parameters: []}, true, undefined, undefined);
+            var md = GscMarkdownGenerator.generateFunctionDescription({name: "func5", parameters: []}, true, undefined, undefined);
             md.appendMarkdown('\n\r');
             md.appendMarkdown('--------------------------------------------------------------------------  \n\r');
             md.appendMarkdown(`Function 'func5' is also defined in these files:  \n\r`);

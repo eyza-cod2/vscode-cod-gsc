@@ -7,6 +7,7 @@ import { ConfigErrorDiagnostics, GscConfig } from './GscConfig';
 import { GscFunctions, GscFunctionState } from './GscFunctions';
 import { Issues } from './Issues';
 import { LoggerOutput } from './LoggerOutput';
+import { GscMarkdownGenerator } from './GscMarkdownGenerator';
 
 export class GscHoverProvider implements vscode.HoverProvider {
     
@@ -158,18 +159,13 @@ export class GscHoverProvider implements vscode.HoverProvider {
 
         } else if (groupAtCursor?.type === GroupType.Path) {
             const path = groupAtCursor.getTokensAsString();
-            const fileReference = GscFiles.getReferencedFileForFile(gscFile, path);
-            if (fileReference !== undefined && fileReference.gscFile !== undefined) {
-                markdown.appendMarkdown("File: `" + vscode.workspace.asRelativePath(fileReference.gscFile.uri, true) + "`");
+            const fileReferences = GscFiles.getReferencedFilesForFile(gscFile, path);
+
+            if (fileReferences.length > 0) {
                 hoverRange = groupAtCursor.getRange();
-            } else {
-                // There would be error by diagnostics, unless disabled
-                if (errorDiagnosticsDisabled) {
-                    markdown.appendText(`⚠️ Path '${path}' is not valid!`);
-                    markdown.appendText(`\n\n🛈 Error diagnostics disabled via workspace settings`);
-                }
             }
 
+            markdown = GscMarkdownGenerator.generateFilePathDescription(fileReferences, gscFile, path);
         }
 
         if (markdown.value === "") {
@@ -178,6 +174,8 @@ export class GscHoverProvider implements vscode.HoverProvider {
             return new vscode.Hover(markdown, hoverRange);
         }
     }
+
+
 
     public static markdownAppendFileWasNotFound(md: vscode.MarkdownString, funcName: string, path: string) {
         md.appendText(`⚠️ File '${path}.gsc' was not found!`);

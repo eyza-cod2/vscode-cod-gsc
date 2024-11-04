@@ -47,9 +47,7 @@ export class GscFile {
         } else {
             this.config = {
                 referenceableGameRootFolders: [],
-                referenceableGameRootFoldersAll: [],
                 referenceableWorkspaceFolders: [],
-                referenceableWorkspaceFoldersAll: [],
                 rootFolder: undefined,
                 currentGame: GscGame.UniversalGame,
                 ignoredFunctionNames: [],

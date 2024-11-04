@@ -10,15 +10,10 @@ import { LoggerOutput } from './LoggerOutput';
 
 // Configuration of workspace that applies to all files within the workspace
 export type GscFilesConfig = {
-    /** All possible game root folders where GSC files can be found and referenced. */
-    referenceableGameRootFolders: GscGameRootFolder[];
     /** All possible game root folders where GSC files can be found and referenced, including reverse references */
-    referenceableGameRootFoldersAll: GscGameRootFolder[];
-
-    /** All possible workspace folders where GSC files can be found and referenced */
-    referenceableWorkspaceFolders: vscode.WorkspaceFolder[];
+    referenceableGameRootFolders: GscGameRootFolder[];
     /** All possible workspace folders where GSC files can be found and referenced, including reverse references */
-    referenceableWorkspaceFoldersAll: vscode.WorkspaceFolder[];
+    referenceableWorkspaceFolders: vscode.WorkspaceFolder[];
 
     /** Game root folder */
     rootFolder: GscGameRootFolder | undefined;
@@ -235,10 +230,8 @@ export class GscWorkspaceFileData {
         const currentGame = GscConfig.getSelectedGame(workspaceFolder.uri);
 
         return {
-            referenceableGameRootFolders: GscFiles.loadReferenceableGameRootFolders(workspaceFolder, false), 
-            referenceableGameRootFoldersAll: GscFiles.loadReferenceableGameRootFolders(workspaceFolder, true), 
-            referenceableWorkspaceFolders: GscFiles.loadReferenceableWorkspaceFolders(workspaceFolder, false), 
-            referenceableWorkspaceFoldersAll: GscFiles.loadReferenceableWorkspaceFolders(workspaceFolder, true), 
+            referenceableGameRootFolders: GscFiles.loadReferenceableGameRootFolders(workspaceFolder), 
+            referenceableWorkspaceFolders: GscFiles.loadReferenceableWorkspaceFolders(workspaceFolder), 
             rootFolder: GscConfig.getGameRootFolder(workspaceFolder.uri), 
             currentGame: currentGame, 
             ignoredFunctionNames: GscConfig.getIgnoredFunctionNames(workspaceFolder.uri), 

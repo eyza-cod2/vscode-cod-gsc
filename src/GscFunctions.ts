@@ -3,6 +3,7 @@ import { GroupType, GscGroup, GscToken, GscVariableDefinitionType } from './GscF
 import { GscFiles, GscFileReferenceState } from './GscFiles';
 import { GscFile } from './GscFile';
 import { CodFunctions } from './CodFunctions';
+import { GscMarkdownGenerator } from './GscMarkdownGenerator';
 
 
 export class GscFunction {
@@ -25,53 +26,8 @@ export class GscFunction {
         public rangeScope: vscode.Range,
     ) {}
 
-    public static generateMarkdownDescription(
-        func: GscFunction | {name: string, parameters: {name: string, commentBefore?: string}[]}, 
-        isLocalFunction: boolean, 
-        uri: string | undefined,
-        reason: string = "")
-    : vscode.MarkdownString 
-    {
-		const md = new vscode.MarkdownString();
-		md.isTrusted = true;
-		var text = "";
-
-        // Declaration
-		text += func.name + "(";
-		text += func.parameters.map(p => p.name).join(", ");
-		text += ")";
-		md.appendCodeblock(text);
-
-        // Description
-		//md.appendMarkdown("" + func.desc + "\n\n");
-
-        // Parameters
-		func.parameters.forEach(p => {
-			text = "@param ```" + p.name + "```";
-            if (p.commentBefore !== undefined && p.commentBefore !== "") {
-                text += " — " + p.commentBefore;
-            }
-            text += "  \n";
-			md.appendMarkdown(text);
-		});
-
-        if (!isLocalFunction && uri !== undefined) {
-            const uri2 = vscode.Uri.parse(uri);
-            const relativePath = vscode.workspace.asRelativePath(uri2);
-            md.appendMarkdown("\nFile: `" + relativePath + "`");
-        } else if (isLocalFunction) {
-            md.appendMarkdown("\n`Local function`");
-        }
-
-        if (reason !== "") {
-            md.appendMarkdown("\n\n" + reason);
-        }
-
-		return md;
-    }
-
 	public generateMarkdownDescription(isLocalFunction: boolean, uri: string | undefined, reason: string): vscode.MarkdownString {
-        return GscFunction.generateMarkdownDescription(this, isLocalFunction, uri, reason);
+        return GscMarkdownGenerator.generateFunctionDescription(this, isLocalFunction, uri, reason);
 	}	
 };
 
@@ -145,7 +101,7 @@ export class GscFunctions {
         // File not found
         if (definitions === undefined) {
             // This file path is ignored by configuration
-            if (funcInfo && gscFile.config.ignoredFilePaths.some(ignoredPath => funcInfo.path.toLowerCase().startsWith(ignoredPath.toLowerCase()))) {
+            if (funcInfo && GscFiles.isFileIgnoredBySettings(gscFile, funcInfo.path)) {
                 return ret(GscFunctionState.NotFoundFileButIgnored, []);
             }
             return ret(GscFunctionState.NotFoundFile, []);           
@@ -217,20 +173,20 @@ export class GscFunctions {
         if (funcInfo && funcInfo.path.length > 0) 
         {
             const referenceData = GscFiles.getReferencedFileForFile(gscFile, funcInfo.path);
-            const referencedGscFile = referenceData.gscFile;
-            if (referencedGscFile === undefined) {
+            if (referenceData === undefined) {
                 return undefined;
             }
+            const referencedGscFile = referenceData.gscFile;
 
             let reason = "";
-            switch (referenceData.referenceState) {
+            /*switch (referenceData.referenceState) {
                 case GscFileReferenceState.IncludedWorkspaceFolder:
                     reason = "Included via workspace folder settings";
                     break;
-                case GscFileReferenceState.IncludedWorkspaceFolderReversed:
+                case GscFileReferenceState.IncludedWorkspaceFolderOverwritten:
                     reason = "Included via other workspace folder settings.  \nFile in current workspace is being overwritten.";
                     break;
-            }
+            }*/
 
             for (const f of referencedGscFile.data.functions) {
                 if (!funcInfo || f.nameId === funcNameId) {
@@ -264,10 +220,11 @@ export class GscFunctions {
             // Loop through all included files
             for (const includedPath of gscFile.data.includes) {
 
-                const referencedFile = GscFiles.getReferencedFileForFile(gscFile, includedPath).gscFile;
-                if (referencedFile === undefined) {
+                const referenceData = GscFiles.getReferencedFileForFile(gscFile, includedPath);
+                if (referenceData === undefined) {
                     continue; // File not found
                 }
+                const referencedFile = referenceData.gscFile;
                 if (referencedFile.uri.toString() === gscFile.uri.toString()) {
                     continue; // This includes itself, functions are already added
                 }
@@ -310,7 +267,7 @@ export class GscFunctions {
         funcReferences.push(...funcDefs.map(f => {return {func: f.func.groupFunctionName, uri: f.uri};}));
 
         // Find all function references in all files
-        const allFiles = gscFile.workspaceFolder ? GscFiles.getReferenceableCachedFiles(gscFile.workspaceFolder.uri, false) : [gscFile];
+        const allFiles = gscFile.workspaceFolder ? GscFiles.getReferenceableCachedFiles(gscFile.workspaceFolder.uri, true) : [gscFile];
 
         for (const gscFile2 of allFiles) {
             gscFile2.data.root.walk((group) => {
