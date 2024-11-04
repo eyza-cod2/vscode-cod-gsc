@@ -50,7 +50,7 @@ export class GscHoverProvider implements vscode.HoverProvider {
         const errorDiagnosticsDisabled = gscFile.config.errorDiagnostics === ConfigErrorDiagnostics.Disable;
 
         // Get group before cursor
-        var groupAtCursor = gscData.root.findGroupOnLeftAtPosition(position);
+        var groupAtCursor = gscData.root.findKeywordAtPosition(position);
 
         if (groupAtCursor?.type === GroupType.FunctionName) {
             const funcInfo = groupAtCursor.getFunctionReferenceInfo();

@@ -2887,6 +2887,52 @@ export class GscGroup {
     }
 
 
+
+
+    public findKeywordAtPosition(position: vscode.Position, token?: GscToken): GscGroup | undefined {
+
+        if (token === undefined) {
+            // Loop all tokens
+            for (const t of this.tokensAll) {
+                const t2 = this.tokensAll.at(t.index + 1);
+
+                if (position.isBefore(t.range.start)) {
+                    return undefined;
+                }
+
+                // Next is keyword, make this range check smaller
+                if (t2?.type === TokenType.Keyword) {
+                    if (position.isAfterOrEqual(t.range.start) && position.isBefore(t.range.end)) {
+                        token = t;
+                        break;
+                    }
+                } else {
+                    if (position.isAfterOrEqual(t.range.start) && position.isBeforeOrEqual(t.range.end)) {
+                        token = t;
+                        break;
+                    }
+                }
+
+            }
+        }
+        if (token === undefined) {
+            return undefined;
+        }
+
+        // Find the group owning the token
+        for (const group of this.items) {
+            if (token.index >= group.tokenIndexStart && token.index <= group.tokenIndexEnd) {
+                const group2 = group.findKeywordAtPosition(position);
+                if (group2 === undefined) {
+                    return group;
+                }
+                return group2;
+            }
+        }
+    }
+
+
+
     /**
      * Find parent group of current group that contains given range.
      */

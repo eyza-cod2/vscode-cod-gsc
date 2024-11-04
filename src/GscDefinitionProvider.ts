@@ -40,7 +40,7 @@ export class GscDefinitionProvider implements vscode.DefinitionProvider {
         const gscData = gscFile.data;
         
         // Get group before cursor
-        var groupAtCursor = gscData.root.findGroupOnLeftAtPosition(position);
+        var groupAtCursor = gscData.root.findKeywordAtPosition(position);
         if (groupAtCursor === undefined || groupAtCursor.parent === undefined) {
             return locations;
         }
