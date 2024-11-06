@@ -282,6 +282,10 @@ export class GscFunctions {
                         return; // not the function we are looking for
                     }
 
+                    if (GscFiles.isFileReplacedByAnotherFile(gscFile2)) {
+                        return; // file is replaced by another file
+                    }
+
                     const funcDefs2 = GscFunctions.getFunctionDefinitions(gscFile2, funcInfo2);
                     if (funcDefs2 === undefined || funcDefs2.length === 0) {
                         return; // file not found
