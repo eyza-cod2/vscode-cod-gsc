@@ -340,6 +340,12 @@ export function printDebugInfoForError(err: unknown) {
 
         appendToBuffer(` `);
         appendToBuffer(` `);
+        appendToBuffer(`Error:`);
+        appendToBuffer(`-----------------------------------------------------------------`);
+        appendToBuffer(`${err}`);
+        appendToBuffer(`-----------------------------------------------------------------`);
+        appendToBuffer(` `);
+        appendToBuffer(` `);
         appendToBuffer(`Debug info for failed test:`);
         appendToBuffer(`-----------------------------------------------------------------`);
 
@@ -428,6 +434,6 @@ export function printDebugInfoForError(err: unknown) {
     console.log(buildOutputBuffer());
 
     // Re-throw the error
-    throw normalizeError(err);
+    throw new Error(`Test failed: ${err}`);
 }
 
