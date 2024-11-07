@@ -11,6 +11,7 @@ import { GscConfig } from './GscConfig';
 import { GscCodeActionProvider } from './GscCodeActionProvider';
 import { Issues } from './Issues';
 import { GscSidePanel } from './GscSidePanel';
+import { GscRenameProvider } from './GscRenameProvider';
 import { LoggerOutput } from './LoggerOutput';
 import { Events } from './Events';
 
@@ -34,6 +35,7 @@ export class Gsc {
             await GscReferenceProvider.activate(context);
             await GscDefinitionProvider.activate(context);
             await GscHoverProvider.activate(context);
+            await GscRenameProvider.activate(context);
             await GscStatusBar.activate(context);
 
             Events.GscActivated();
