@@ -4,6 +4,26 @@ All notable changes to the "gsc" extension will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
+## [0.3.0] - 2024-11-08
+- Added definition provider and hover provider for GSC paths
+- Added reference provider for GSC function definitions
+- Added: When GSC file is replaced by another GSC file in multi-root workspace because of the same game path (e.g. maps\mp\gametypes\script), the code in text editor is shown as semi-transparent (unreachable code)
+- Added rename provider that supports GSC function rename
+- Added GSC side panel with "Workspace", "File" and "Other" views. It shows information about workspace setup, parsed GSC files and available commands to run.
+- Added new Output window "GSC File Logs" to diagnose changes to file system.
+- Improved detection of GSC file and folder changes, moving, renaming, etc...
+- Improved Issues, cached exception now appears in status bar, source code is included into report
+- Improved GSC file references when two or more workspace folders are referenced for each other. When there are 2 workspaces where in each there is one file with the same "game" path (e.q. maps\mp\gametypes\script.gsc), only the last file is used (according to the workspace folder order in explorer). It applies for function and variable definitions in hover provider, auto-completion etc.
+- Changed function precedence for universal game to prioritize local functions, then included functions, then built-in functions; if a function is defined multiple times, the first one found is used and others are ignored without error - unlike CoD2, where duplicate function names in local or included files cause an error.
+- Change: the extension activate function now does not wait for all GSC files to be parsed
+- Fixed error "'range' cannot span multiple lines" - when typing file path in GSC file.
+- Fixed a bug where the status bar item was not displayed when parsing all files again
+- Fixed LoggerOutput to show local time in logs instead of ISO time
+- Fixed diagnostic errors for GSC file references on Linux systems
+- Fixed hover and go to definition not working when cursor is right at start of the function name / keyword 
+- Fixed CoD2 function 'getBrushModelCenter(entity)' - missing argument           
+
+
 ## [0.2.0] - 2024-10-01
 - Added support for global variable definitions (CONST_VAR1 = 1;)
 - Added support for array initializers, like "arr = [10, 20, 30]"

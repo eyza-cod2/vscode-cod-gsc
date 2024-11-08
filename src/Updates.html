@@ -90,6 +90,75 @@
         </ul>
     </div>
 
+    <div ${VERSION_0.3.0}>
+        <h2>Version [0.3.0] - 2024-11-08</h2>
+
+        <p>This update focuses on the user experience with GSC files and functions.</p>
+        <br>
+
+        <h3>Hover provider for GSC paths</h3>
+        <p>
+            Hover over a path (e.g. "maps\mp\gametypes\script") will show the paths used for searching the file.<br>
+            When multi-root workspace is used, the paths are shown for each workspace folder.
+        </p>
+        <img src="../images/vscode-hover-path.png">
+
+
+        <h3>Reference provider for GSC function definitions</h3>
+        <p>
+            Now its possible to show references of a function via right-click on the function name and selecting "Go to References" or "Find all References" in the context menu.
+        </p>
+        <img src="../images/vscode-references-function.png">
+
+
+        <h3>Visualization of replaced (unreachable) files</h3>
+        <p>
+            When GSC file is replaced by another GSC file in multi-root workspace because of the same game path, the code in text editor is shown as semi-transparent (unreachable code)<br>
+            Example:
+        </p>
+        <img src="../images/vscode-workspace-replaced-file-code.png">
+
+
+        <h3>Rename provider</h3>
+        <p>
+            Function names can be renamed across all GSC files.
+        </p>
+        <img src="../images/vscode-rename-function.png">
+
+
+        <h3>Side panel</h3>
+        <p>
+            GSC side panel with "Workspace", "File" and "Other" views. <br>
+            It shows information about workspace setup, parsed GSC files and available commands to run.<br>
+            In future version it will allow to change settings more interactively.
+        </p>
+        <img src="../images/vscode-sidebar.png">
+
+
+        <h3>All changes:</h3>
+        <p class="lines">
+            - Added definition provider and hover provider for GSC paths
+            - Added reference provider for GSC function definitions
+            - Added: When GSC file is replaced by another GSC file in multi-root workspace because of the same game path (e.g. maps\mp\gametypes\script), the code in text editor is shown as semi-transparent (unreachable code)
+            - Added rename provider that supports GSC function rename
+            - Added GSC side panel with "Workspace", "File" and "Other" views. It shows information about workspace setup, parsed GSC files and available commands to run.
+            - Added new Output window "GSC File Logs" to diagnose changes to file system.
+            - Improved detection of GSC file and folder changes, moving, renaming, etc...
+            - Improved Issues, cached exception now appears in status bar, source code is included into report
+            - Improved GSC file references when two or more workspace folders are referenced for each other. When there are 2 workspaces where in each there is one file with the same "game" path (e.q. maps\mp\gametypes\script.gsc), only the last file is used (according to the workspace folder order in explorer). It applies for function and variable definitions in hover provider, auto-completion etc.
+            - Changed function precedence for universal game to prioritize local functions, then included functions, then built-in functions; if a function is defined multiple times, the first one found is used and others are ignored without error - unlike CoD2, where duplicate function names in local or included files cause an error.
+            - Change: the extension activate function now does not wait for all GSC files to be parsed
+            - Fixed error "'range' cannot span multiple lines" - when typing file path in GSC file.
+            - Fixed a bug where the status bar item was not displayed when parsing all files again
+            - Fixed LoggerOutput to show local time in logs instead of ISO time
+            - Fixed diagnostic errors for GSC file references on Linux systems
+            - Fixed hover and go to definition not working when cursor is right at start of the function name / keyword 
+            - Fixed CoD2 function 'getBrushModelCenter(entity)' - missing argument           
+        </p>
+    </div>
+
+
+
 
 
     <div ${VERSION_0.2.0}>

@@ -226,88 +226,159 @@ This extension adds language support for the GSC scripts used in Call of Duty ga
 
 ## Features
 
-Syntax highlighting
+### Syntax highlighting
 
 ![Syntax highlight](images/vscode-syntax-highlight-1.png)
 
+<br><br>
 
-
-Completion items (local functions)
+### Completion items
+#### Completion items - local functions
 
 ![Completion](images/vscode-completion-4.png)
 
-Completion items (included functions)
+#### Completion items - included functions via #include
 
 ![Completion](images/vscode-completion-5.png)
 
-Completion items (with CoD2 MP functions)
+#### Completion items - with CoD2 MP functions
 
 ![Completion](images/vscode-completion-3.png)
 
-Completion items (variables)
+#### Completion items - variables
 
 ![Completion](images/vscode-completion-2.gif)
 
-Completion items (variables with recognized variable type)
+#### Completion items - variables with recognized variable type
 
 ![Completion](images/vscode-completion-1.png)
 
-Completion items (variables from included workspace folders)
+#### Completion items - variables from included workspace folders
 
 ![Completion](images/vscode-completion-6.png)
 
 
 
-Diagnostics
+<br><br>
+
+### Diagnostics
+
+#### Diagnostics - error messages
 
 ![Completion](images/vscode-diagnostics-1.png)
 
-Diagnostics - invalid file for #include
+#### Diagnostics - invalid file for #include
 
 ![Completion](images/vscode-diagnostics-include.png)
 
-Diagnostics - possible missing semicolon indication
+#### Diagnostics - possible missing semicolon indication
 
 ![Completion](images/vscode-diagnostics-single-line.png)
 
 
 
-Function definition
+
+<br><br>
+
+### Functions
+
+#### Function - go to definition
 
 ![Function definition](images/vscode-function-definition.gif)
 
-Function hover info
+#### Function - hover info
 
 ![Function hover](images/vscode-function-hover.gif)
 
-Function hover info over CoD2 MP function spawn:
+#### Function - hover info over CoD2 MP function spawn:
 
 ![Function hover](images/vscode-function-hover-spawn.png)
 
+#### Function - hover over path
+
+![Function hover](images/vscode-hover-path.png)
+
+#### Function - references
+
+![Function hover](images/vscode-references-function.png)
+
+#### Function - rename
+
+![Function hover](images/vscode-rename-function.png)
 
 
-Code actions (include folder for file references)
+
+<br><br>
+
+### Workspace folders
+VSCode multi-root workspace can be used to "join" your mod folders as they get loaded into the game.
+
+The order of how files are being searched is now determined by how the workspace folder appears in explorer tab. 
+The last folder is searched first.
+
+![Function hover](images/vscode-workspace-order.png)
+
+It can simulate your .IWD files - their file name determines which files gets loaded first in the game.
+
+For example, this is typical setup:
+- raw
+- mod1
+- mappack
+
+From game perspective, it could represents these files:
+- iw_00.iwd - iw15.iwd (original game files for CoD2)
+- z_mod1.iwd
+- zzz_mappack.iwd
+
+The alphabetical order of .IWD is important to correctly replace original files.
+The order of the workspace folders must be the same!
+
+
+
+
+<br><br>
+
+### Code actions
+#### Code actions - include folder for file references
 
 ![Function hover](images/vscode-workspace-folder-include.gif)
 
-Code actions (ignore missing files)
+#### Code actions - ignore missing files
 
 ![Function hover](images/vscode-quick-fix.png)
 
 
 
-Workspace folders
 
-![Function hover](images/vscode-workspace-order.png)
+<br><br>
+
+### GSC Files
+
+#### Visualization of replaced (unreachable) files.
+
+When GSC file is replaced by another GSC file in multi-root workspace because of the same game path, the code in text editor is shown as semi-transparent (unreachable code)<br>
+Example:
+
+![Function hover](images/vscode-workspace-replaced-file-code.png)
 
 
 
+<br><br>
 
-Status bar
+### Other
+
+#### Status bar
+Allows quickly change the targeted game or open settings.
 
 ![Function hover](images/vscode-statusbar-game.png)
 
 
+#### Side panel
+GSC side panel with "Workspace", "File" and "Other" views.
+It shows information about workspace setup, parsed GSC files and available commands to run.
+In future version it will allow to change settings more interactively.
+
+![Function hover](images/vscode-sidebar.png)
 
 
 
@@ -343,29 +414,39 @@ Status bar
   - Invalid numbers of function parameters
 - Semantics token provider 
   - Proper colorization of tokens
-- Definition provider
+- Definition and Reference provider
   - Local functions (`funcName()`)
   - External functions (`maps\mp\gametypes\file::funcName()`)
   - Included functions (via `#include`)
 - Hover provider
   - Function info
+  - Path info
 - Code action provider
   - Adding missing files into ignored list
   - Adding undefined functions into ignored list
+- Rename provider
+  - Function rename
 
+<br><br>
 
-
-## TODO
+## TODO list
+### Priority
+- Add custom global include list of GSC function
+- Support for default function parameter value - supported in newer COD games
+- Support for 'chilthread' and 'call' keywords - supported in newer COD games
+- Improve auto-suggestion for files
+- When renaming GSC file, ask for reference update in other GSC files
+### Non priority
+- Code action - implement unknown function
 - Add .csc files (client side scripts)
 - Parser for .menu files
 - Integrate list of built-in functions for CoD4
 - Improve detection of variable types - now it's detected only by explicitly assigned constant value
-- Show available function names in completion item provider
 - Show available string constants for `notify` `waittill` `waittillmatch` `endon` in completion item provider
 - Check for unreachable code
 - Implement "Go to definition" for variables
 - Implement some kind of JSDoc comments to improve function and variable description
-- Implement rename function / variable functionality
+- Implement rename variable functionality
 - Detection of undefined variables
 
 
