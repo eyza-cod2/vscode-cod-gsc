@@ -8007,7 +8007,16 @@ defs.push(new CodFunction({
     module: "Level",
     supportedAt: "",
     games: ['CoD2 SP', 'CoD2 MP'],
-    parameters: []
+    parameters: [
+        {
+            name: "entity",
+            desc: "Entity",
+            type: "",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: false
+        }
+    ]
 }));
 
 defs.push(new CodFunction({
