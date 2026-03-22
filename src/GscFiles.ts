@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { GscFileParser, GscData, GroupType } from './GscFileParser';
-import { GscCachedFilesPerWorkspace } from './GscFileCache';
+import { GscCachedFilesPerWorkspace, GscWorkspaceFileData } from './GscFileCache';
 import { GscFile } from './GscFile';
 import { GscConfig, GscGameRootFolder } from './GscConfig';
 import { LoggerOutput } from './LoggerOutput';
@@ -79,8 +79,21 @@ export class GscFiles {
         // Get workspace folder where the file is located
         const workspaceFolder = vscode.workspace.getWorkspaceFolder(fileUri);
 
+        // Check if the file is excluded by excludePaths before doing any work
+        if (workspaceFolder) {
+            const excludePaths = GscConfig.getExcludePaths(workspaceFolder.uri);
+            if (excludePaths.length > 0) {
+                const relativePath = vscode.workspace.asRelativePath(fileUri, false);
+                if (GscWorkspaceFileData.isFileExcluded(relativePath, excludePaths)) {
+                    LoggerOutput.log("[GscFiles] File excluded via excludePaths, skipping", vscode.workspace.asRelativePath(fileUri));
+                    const gsc = GscFileParser.parse("");
+                    return new GscFile(gsc, fileUri, workspaceFolder, -1);
+                }
+            }
+        }
+
         LoggerOutput.log("[GscFiles] Getting parsed data of file... (" + reason + ")", vscode.workspace.asRelativePath(fileUri));
-        
+
 
         // This file is not part of workspace, return it and do not cache it
         if (workspaceFolder === undefined) {
@@ -173,6 +186,22 @@ export class GscFiles {
 
         // Find all GSC files in the specified workspace folder or in the entire repository
         var files = await vscode.workspace.findFiles(searchPattern);
+
+        // Filter out files matching excludePaths glob patterns
+        const totalBeforeExclude = files.length;
+        files = files.filter(file => {
+            const ws = vscode.workspace.getWorkspaceFolder(file);
+            if (!ws) { return true; }
+            const excludePaths = GscConfig.getExcludePaths(ws.uri);
+            if (excludePaths.length === 0) { return true; }
+            const relativePath = vscode.workspace.asRelativePath(file, false);
+            const excluded = GscWorkspaceFileData.isFileExcluded(relativePath, excludePaths);
+            if (excluded) {
+                LoggerOutput.log("[GscFiles] Excluded by excludePaths: " + relativePath);
+            }
+            return !excluded;
+        });
+        LoggerOutput.log("[GscFiles] excludePaths filter: " + totalBeforeExclude + " found, " + (totalBeforeExclude - files.length) + " excluded, " + files.length + " will be parsed");
 
         const poolSize = 4; // Number of files to parse concurrently
         let i = 0;
@@ -697,6 +726,21 @@ export class GscFiles {
             // Notify about change
             Events.FileSystemChanged(type, uri, manual);
 
+            // Skip excluded files early (but allow deletes so cache stays clean)
+            if (type !== "delete") {
+                const ws = vscode.workspace.getWorkspaceFolder(uri);
+                if (ws) {
+                    const excludePaths = GscConfig.getExcludePaths(ws.uri);
+                    if (excludePaths.length > 0) {
+                        const relativePath = vscode.workspace.asRelativePath(uri, false);
+                        if (GscWorkspaceFileData.isFileExcluded(relativePath, excludePaths)) {
+                            LoggerOutput.logFile("[GscFiles] File excluded via excludePaths, ignoring " + type, vscode.workspace.asRelativePath(uri));
+                            return;
+                        }
+                    }
+                }
+            }
+
             // Delete of file / directory
             if (type === "delete") {
                 LoggerOutput.logFile("[GscFiles] Detected '" + type + "' of file / folder", vscode.workspace.asRelativePath(uri));
@@ -853,6 +897,18 @@ export class GscFiles {
         // Check if the file is GSC file
         if (!GscFiles.isValidGscFile(uri.fsPath)) {
             return;
+        }
+
+        // Check if the file is excluded via excludePaths
+        const ws = vscode.workspace.getWorkspaceFolder(uri);
+        if (ws) {
+            const excludePaths = GscConfig.getExcludePaths(ws.uri);
+            if (excludePaths.length > 0) {
+                const relativePath = vscode.workspace.asRelativePath(uri, false);
+                if (GscWorkspaceFileData.isFileExcluded(relativePath, excludePaths)) {
+                    return;
+                }
+            }
         }
 
         LoggerOutput.log("[GscFiles] Document changed", vscode.workspace.asRelativePath(uri));

@@ -156,6 +156,15 @@
           "description": "An array of file paths that will be ignored during error diagnostics (case insensitive). For example: `maps\\mp\\gametypes\\ignoredScript`",
           "scope": "resource"
         },
+        "gsc.excludePaths": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "description": "An array of glob patterns for file paths that should be completely excluded from parsing. Matched files are never loaded into memory. Useful for large workspaces where you want to skip entire folders. For example: `**/raw/animtrees/**`, `**/raw/xanim/**`",
+          "scope": "resource"
+        },
         "gsc.includedWorkspaceFolders": {
           "type": "array",
           "default": [],
@@ -177,6 +186,7 @@
     "test": "vscode-test"
   },
   "devDependencies": {
+    "@types/minimatch": "^5.1.2",
     "@types/mocha": "^10.0.9",
     "@types/node": "20.x",
     "@types/semver": "^7.5.8",
@@ -189,6 +199,7 @@
     "typescript": "^5.6.3"
   },
   "dependencies": {
+    "minimatch": "^10.2.4",
     "semver": "^7.6.3"
   }
 }

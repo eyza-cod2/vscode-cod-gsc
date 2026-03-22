@@ -128,7 +128,10 @@ export class GscConfig {
 		if (e.affectsConfiguration('gsc')) {
 			LoggerOutput.log("[GscConfig] GSC configuration changed.");
 
+			const excludePathsChanged = e.affectsConfiguration('gsc.excludePaths');
+
 			// 1. Load new configuration for each workspace and assign it to cached files
+			// This also evicts now-excluded files from cache
 			GscFiles.updateConfigurationOfCachedFiles();
 
 			// 2. Update tree view
@@ -137,8 +140,14 @@ export class GscConfig {
 			// 3. Update status bar in case the game has changed
 			await GscStatusBar.updateStatusBar("configChanged");
 
-			// 4. Update diagnostics for all files with new configuration
-			await GscDiagnosticsCollection.updateDiagnosticsForAll("config changed");
+			// 4. If excludePaths changed, re-parse all files to pick up newly un-excluded files
+			if (excludePathsChanged) {
+				LoggerOutput.log("[GscConfig] excludePaths changed, re-parsing all files.");
+				await GscFiles.parseAllFiles();
+			} else {
+				// 5. Update diagnostics for all files with new configuration
+				await GscDiagnosticsCollection.updateDiagnosticsForAll("config changed");
+			}
 		}
 	}
 
@@ -213,6 +222,15 @@ export class GscConfig {
 		return config.update('ignoredFilePaths', ignoredFilePaths, vscode.ConfigurationTarget.WorkspaceFolder);
 	}
 
+
+	/**
+	 * Get array of exclude path glob patterns
+	 */
+	public static getExcludePaths(uri: vscode.Uri): string[] {
+		const config = vscode.workspace.getConfiguration('gsc', uri);
+		const excludePaths: string[] = config.get('excludePaths', []);
+		return excludePaths;
+	}
 
 	public static getErrorDiagnostics(uri: vscode.Uri): ConfigErrorDiagnostics {
 		// Load ignored function names

@@ -52,6 +52,7 @@ export class GscFile {
                 currentGame: GscGame.UniversalGame,
                 ignoredFunctionNames: [],
                 ignoredFilePaths: [],
+                excludePaths: [],
                 errorDiagnostics: ConfigErrorDiagnostics.Enable,
                 gameConfig: GscConfig.gamesConfigs.get(GscGame.UniversalGame)!
             };
