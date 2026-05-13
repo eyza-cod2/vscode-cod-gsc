@@ -11,6 +11,7 @@ export enum GscGame {
 	CoD1 = "CoD1",
 	CoD2SP = "CoD2 SP",
 	CoD2MP = "CoD2 MP",
+	CoD2MPZkLibcod = "CoD2 MP + zk_libcod",
 }
 
 // These must match with package.json settings
@@ -106,6 +107,19 @@ export class GscConfig {
 				foreach: false, 
 				doWhile: false, 
 				arrayInitializer: false, 
+				ternary: false,
+				cvarString: false
+			}],
+			[GscGame.CoD2MPZkLibcod, {
+				game: GscGame.CoD2MPZkLibcod,
+				includeFileItself: false,
+				globalVariables: false,
+				developerBlocks: true,
+				developerBlocksRecursive: false,
+				duplicateFunctionDefinitions: false,
+				foreach: false,
+				doWhile: false,
+				arrayInitializer: false,
 				ternary: false,
 				cvarString: false
 			}],
@@ -303,7 +317,8 @@ export class GscConfig {
 		const options: vscode.QuickPickItem[] = [
 			{ label: GscGame.UniversalGame },
 			{ label: GscGame.CoD2SP },
-			{ label: GscGame.CoD2MP }
+			{ label: GscGame.CoD2MP },
+			{ label: GscGame.CoD2MPZkLibcod }
 		];
 	
 		const selection = await vscode.window.showQuickPick(options, {
