@@ -1,0 +1,3 @@
+alsoIncludedFunc() {
+    error_also
+}

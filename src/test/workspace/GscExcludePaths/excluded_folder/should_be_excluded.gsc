@@ -1,0 +1,3 @@
+excludedFunc() {
+    error_excluded
+}
