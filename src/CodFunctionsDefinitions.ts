@@ -16597,12 +16597,20 @@ defs.push(new CodFunction({
     name: "getVmax",
     desc: "Returns the maximum boundary coordinates (vector) of an entity.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/getvmax.htm)",
     example: "maxs = ent getVmax();",
-    callOn: "",
+    callOn: "<entity> An entity",
     returnType: "",
     module: "Entity",
     supportedAt: "",
     games: ['CoD2 MP + zk_libcod'],
     parameters: [
+        {
+            name: "entity",
+            desc: "An entity",
+            type: "",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: true
+        }
     ]
 }));
 
@@ -16610,12 +16618,20 @@ defs.push(new CodFunction({
     name: "getVmin",
     desc: "Returns the minimum boundary coordinates (vector) of an entity.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/getvmin.htm)",
     example: "mins = ent getVmin();",
-    callOn: "",
+    callOn: "<entity> An entity",
     returnType: "",
     module: "Entity",
     supportedAt: "",
     games: ['CoD2 MP + zk_libcod'],
     parameters: [
+        {
+            name: "entity",
+            desc: "An entity",
+            type: "",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: true
+        }
     ]
 }));
 
@@ -16781,12 +16797,20 @@ defs.push(new CodFunction({
     name: "setBounds",
     desc: "Sets the collision bounds of a model. Each of the three parameters extends into both positive and negative offset on the respective axis, with the model's origin in the middle.\n\n*libcod note:* now requires three parameters, instead of two\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/setbounds.htm)",
     example: "model setBounds(16, 16, 16);",
-    callOn: "",
+    callOn: "<entity> An entity (script_model)",
     returnType: "",
     module: "Entity",
     supportedAt: "",
     games: ['CoD2 MP + zk_libcod'],
     parameters: [
+        {
+            name: "entity",
+            desc: "An entity (script_model)",
+            type: "",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: true
+        },
         {
             name: "length",
             desc: "Length of the bounds",
@@ -16818,12 +16842,20 @@ defs.push(new CodFunction({
     name: "setClipmask",
     desc: "Sets the entity's clip mask.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/setclipmask.htm)",
     example: "e setClipmask(1); // Solid only",
-    callOn: "",
+    callOn: "<entity> An entity",
     returnType: "",
     module: "Entity",
     supportedAt: "",
     games: ['CoD2 MP + zk_libcod'],
     parameters: [
+        {
+            name: "entity",
+            desc: "An entity",
+            type: "",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: true
+        },
         {
             name: "clipMask",
             desc: "Brushes/entities with this content mask value (integer) will be collided against",
@@ -16926,12 +16958,20 @@ defs.push(new CodFunction({
     name: "setLight",
     desc: "Sets the dynamic light value for entities of type script_model. Visible in DirectX 9 mode only and with dynamic lights enabled (see the r_rendererInUse, r_rendererPreference and r_dlightLimit client dvars).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/setlight.htm)",
     example: "// If self is a player: e = spawn(\"script_model\", self.origin); e linkTo(self); e setLight(255, 0, 0, 255); // Red light",
-    callOn: "",
+    callOn: "<entity> An entity (script_model)",
     returnType: "",
     module: "Entity",
     supportedAt: "",
     games: ['CoD2 MP + zk_libcod'],
     parameters: [
+        {
+            name: "entity",
+            desc: "An entity (script_model)",
+            type: "",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: true
+        },
         {
             name: "red",
             desc: "Amount of red color (0-255)",
@@ -16949,7 +16989,7 @@ defs.push(new CodFunction({
             isCallOn: false
         },
         {
-            name: "green",
+            name: "blue",
             desc: "Amount of blue color (0-255)",
             type: "",
             isOptional: false,
@@ -18830,12 +18870,20 @@ defs.push(new CodFunction({
     name: "earthquakeForPlayer",
     desc: "Create an earthquake at the given point, for the given player.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/earthquakeforplayer.htm)",
     example: "player earthquakeForPlayer(0.3, 3, player.origin, 850);",
-    callOn: "",
+    callOn: "<player> The player",
     returnType: "",
     module: "Player",
     supportedAt: "",
     games: ['CoD2 MP + zk_libcod'],
     parameters: [
+        {
+            name: "player",
+            desc: "The player",
+            type: "",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: true
+        },
         {
             name: "scale",
             desc: "The scale of the earthquake",
@@ -23282,9 +23330,9 @@ defs.push(new CodFunction({
 }));
 
 defs.push(new CodFunction({
-    name: "getWeaponDamageMelee",
-    desc: "Returns the weapon's melee damage.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweapondamagemelee.htm)",
-    example: "dmg = getWeaponDamageMelee(weaponName);",
+    name: "getWeaponMeleeDamage",
+    desc: "Returns the weapon's melee damage.\n\n*Note:* the libcod doc page labels this `getWeaponDamageMelee`, but the engine registers it as `getWeaponMeleeDamage` — this is the name to call.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweapondamagemelee.htm)",
+    example: "dmg = getWeaponMeleeDamage(weaponName);",
     callOn: "",
     returnType: "",
     module: "Weapons",
@@ -23705,9 +23753,9 @@ defs.push(new CodFunction({
 }));
 
 defs.push(new CodFunction({
-    name: "setWeaponDamageMelee",
-    desc: "Set new melee damage for the given weapon (on the server side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweapondamagemelee.htm)",
-    example: "setWeaponDamageMelee(weaponName, dmg);",
+    name: "setWeaponMeleeDamage",
+    desc: "Set new melee damage for the given weapon (on the server side).\n\n*Note:* the libcod doc page labels this `setWeaponDamageMelee`, but the engine registers it as `setWeaponMeleeDamage` — this is the name to call.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweapondamagemelee.htm)",
+    example: "setWeaponMeleeDamage(weaponName, dmg);",
     callOn: "",
     returnType: "",
     module: "Weapons",
