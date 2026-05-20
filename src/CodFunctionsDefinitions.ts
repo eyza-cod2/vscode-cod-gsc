@@ -15460,7 +15460,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getTagAngles",
-    desc: "Gets the angles of a particular tag on this model\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/animation/gettagangles.htm)",
+    desc: "Gets the angles of a particular tag on this model\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/animation/gettagangles.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/animation/gettagangles.htm)",
     example: "headang = self getTagAngles(\"j_head\");",
     callOn: "<entity> An entity",
     returnType: "",
@@ -15489,7 +15489,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getTagOrigin",
-    desc: "Gets the origin of a particular tag on this model\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/animation/gettagorigin.htm)",
+    desc: "Gets the origin of a particular tag on this model\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/animation/gettagorigin.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/animation/gettagorigin.htm)",
     example: "headorg = self getTagOrigin(\"j_head\");",
     callOn: "<entity> An entity",
     returnType: "",
@@ -15518,7 +15518,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "playScriptAnimation",
-    desc: "Plays an animation on the player, based on the current player state. Returns the animation time or -1 if invalid. The animation is interrupted by other animations (e.g., when the player moves).\n\n*libcod note:* libcod renamed `runScriptAnimation()` → `playScriptAnimation()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/animation/playscriptanimation.htm)",
+    desc: "Plays an animation on the player, based on the current player state. Returns the animation time or -1 if invalid. The animation is interrupted by other animations (e.g., when the player moves).\n\n*libcod note:* libcod renamed `runScriptAnimation()` → `playScriptAnimation()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/animation/playscriptanimation.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/animation/playscriptanimation.htm)",
     example: "deathAnimDuration = self playScriptAnimation(1, 0, 1); self [[level.callbackPlayerKilled]](eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, psOffsetTime, deathAnimDuration);",
     callOn: "<player> The player",
     returnType: "",
@@ -15563,7 +15563,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setAnimation",
-    desc: "Forces a 3rd-person (world model) animation to be played on the player. Valid animation names can be found in mp\\playeranim.script and animtrees\\multiplayer.atr (see iw_07.iwd). Use 'none' to reset.\n\n*libcod note:* libcod renamed `play_anim()` → `setAnimation()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/animation/setanimation.htm)",
+    desc: "Forces a 3rd-person (world model) animation to be played on the player. Valid animation names can be found in mp\\playeranim.script and animtrees\\multiplayer.atr (see iw_07.iwd). Use 'none' to reset.\n\n*libcod note:* libcod renamed `play_anim()` → `setAnimation()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/animation/setanimation.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/animation/setanimation.htm)",
     example: "player setAnimation(\"pb_crouch_run_forward\");",
     callOn: "<entity> An entity",
     returnType: "",
@@ -15594,7 +15594,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "fireWeapon",
-    desc: "Order the bot to shoot.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/bots/fireweapon.htm)",
+    desc: "Order the bot to shoot.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/bots/fireweapon.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/bots/fireweapon.htm)",
     example: "bot fireWeapon(true);",
     callOn: "<entity> An entity",
     returnType: "",
@@ -15623,7 +15623,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "meleeWeapon",
-    desc: "Order the bot to melee.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/bots/meleeweapon.htm)",
+    desc: "Order the bot to melee.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/bots/meleeweapon.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/bots/meleeweapon.htm)",
     example: "bot meleeWeapon(true);",
     callOn: "<entity> An entity",
     returnType: "",
@@ -15652,7 +15652,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "reloadWeapon",
-    desc: "Order the bot to reload the weapon.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/bots/reloadweapon.htm)",
+    desc: "Order the bot to reload the weapon.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/bots/reloadweapon.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/bots/reloadweapon.htm)",
     example: "bot reloadWeapon(true);",
     callOn: "<entity> An entity",
     returnType: "",
@@ -15681,7 +15681,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "resetTestClientNaming",
-    desc: "Reenables the stock test client naming scheme after the use of setNextTestClientName().\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/bots/resettestclientnaming.htm)",
+    desc: "Reenables the stock test client naming scheme after the use of setNextTestClientName().\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/bots/resettestclientnaming.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/bots/resettestclientnaming.htm)",
     example: "setNextTestClientName(\"Unknown Soldier\"); ent = addTestClient(); resetTestClientNaming();",
     callOn: "",
     returnType: "",
@@ -15694,7 +15694,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setAim",
-    desc: "Order the bot to simulate a right mouse-click. Keep it set to true until the bot should zoom out again.\n\n*libcod note:* libcod renamed `adsAim()` → `setAim()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/bots/setaim.htm)",
+    desc: "Order the bot to simulate a right mouse-click. Keep it set to true until the bot should zoom out again.\n\n*libcod note:* libcod renamed `adsAim()` → `setAim()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/bots/setaim.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/bots/setaim.htm)",
     example: "bot setAim(true);",
     callOn: "<entity> An entity",
     returnType: "",
@@ -15723,7 +15723,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setBotStance",
-    desc: "Set the bot's stance.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/bots/setbotstance.htm)",
+    desc: "Set the bot's stance.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/bots/setbotstance.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/bots/setbotstance.htm)",
     example: "bot setBotStance(\"stand\");",
     callOn: "<entity> An entity",
     returnType: "",
@@ -15752,7 +15752,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setLean",
-    desc: "Order the bot to lean in the specified direction.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/bots/setlean.htm)",
+    desc: "Order the bot to lean in the specified direction.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/bots/setlean.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/bots/setlean.htm)",
     example: "bot setLean(\"left\");",
     callOn: "<entity> An entity",
     returnType: "",
@@ -15781,7 +15781,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setNextTestClientName",
-    desc: "Defines the name of the next test client. Must be called before calling addTestClient() to take effect. Use resetTestClientNaming() to revert to the stock naming scheme.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/bots/setnexttestclientname.htm)",
+    desc: "Defines the name of the next test client. Must be called before calling addTestClient() to take effect. Use resetTestClientNaming() to revert to the stock naming scheme.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/bots/setnexttestclientname.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/bots/setnexttestclientname.htm)",
     example: "setNextTestClientName(\"Unknown Soldier\"); ent = addTestClient();",
     callOn: "",
     returnType: "",
@@ -15802,7 +15802,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setWalkDir",
-    desc: "Order the bot to move in the specified direction.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/bots/setwalkdir.htm)",
+    desc: "Order the bot to move in the specified direction.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/bots/setwalkdir.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/bots/setwalkdir.htm)",
     example: "bot setWalkDir(\"forward\");",
     callOn: "<entity> An entity",
     returnType: "",
@@ -15831,7 +15831,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setWalkValues",
-    desc: "Order the bot to move in the specified direction.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/bots/setwalkvalues.htm)",
+    desc: "Order the bot to move in the specified direction.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/bots/setwalkvalues.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/bots/setwalkvalues.htm)",
     example: "bot setWalkValues(127, 127);",
     callOn: "<entity> An entity",
     returnType: "",
@@ -15868,7 +15868,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "switchToWeaponId",
-    desc: "Order the bot to switch its weapon to the weapon with the specified ID.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/bots/switchtoweaponid.htm)",
+    desc: "Order the bot to switch its weapon to the weapon with the specified ID.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/bots/switchtoweaponid.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/bots/switchtoweaponid.htm)",
     example: "bot switchToWeaponId(0);",
     callOn: "<entity> An entity",
     returnType: "",
@@ -15897,7 +15897,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "throwGrenade",
-    desc: "Order the bot to throw a grenade. Requires the bot to have a grenade available in its inventory.\n\n*libcod note:* libcod renamed `throwNade()` → `throwGrenade()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/bots/throwgrenade.htm)",
+    desc: "Order the bot to throw a grenade. Requires the bot to have a grenade available in its inventory.\n\n*libcod note:* libcod renamed `throwNade()` → `throwGrenade()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/bots/throwgrenade.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/bots/throwgrenade.htm)",
     example: "bot throwGrenade(true);",
     callOn: "<entity> An entity",
     returnType: "",
@@ -15926,7 +15926,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "throwSmokeGrenade",
-    desc: "Order the bot to throw a smoke grenade. Requires the bot to have a smoke grenade available in its inventory.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/bots/throwsmokegrenade.htm)",
+    desc: "Order the bot to throw a smoke grenade. Requires the bot to have a smoke grenade available in its inventory.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/bots/throwsmokegrenade.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/bots/throwsmokegrenade.htm)",
     example: "bot throwSmokeGrenade(true);",
     callOn: "<entity> An entity",
     returnType: "",
@@ -15957,7 +15957,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "finishPlayerDamage",
-    desc: "Does damage to a player - usually as part of the damage callback. In comparison to the stock method, the last (optional) parameter is new.\n\n*libcod note:* got one more parameter to toggle bullet impact events\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/damage/finishplayerdamage.htm)",
+    desc: "Does damage to a player - usually as part of the damage callback. In comparison to the stock method, the last (optional) parameter is new.\n\n*libcod note:* got one more parameter to toggle bullet impact events\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/damage/finishplayerdamage.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/damage/finishplayerdamage.htm)",
     example: "self finishPlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, psOffsetTime, bulletImpacts);",
     callOn: "<entity> A client",
     returnType: "",
@@ -16068,7 +16068,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getCallStack",
-    desc: "Returns the current call stack, which is an array consisting of filename and line number pairs. The first two elements describe the call to getCallStack() itself.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/debug/getcallstack.htm)",
+    desc: "Returns the current call stack, which is an array consisting of filename and line number pairs. The first two elements describe the call to getCallStack() itself.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/debug/getcallstack.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/debug/getcallstack.htm)",
     example: "stack = getCallStack(); logPrintConsole(\"Call stack:\\n\"); for(i = 0; i Line \" + stack[i + 1] + \" in \" + stack[i] + \"\\n\");",
     callOn: "",
     returnType: "",
@@ -16083,7 +16083,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "playFxForPlayer",
-    desc: "Play this effect, visible for this player only. Returns the (temporary) effect entity.\n\n*libcod note:* now returns the (temporary) effect entity\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/effects/playfxforplayer.htm)",
+    desc: "Play this effect, visible for this player only. Returns the (temporary) effect entity.\n\n*libcod note:* now returns the (temporary) effect entity\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/effects/playfxforplayer.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/effects/playfxforplayer.htm)",
     example: "self playFxForPlayer(game[\"fire\"], origin);",
     callOn: "<player> The player",
     returnType: "",
@@ -16136,7 +16136,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "playFxOnTagForPlayer",
-    desc: "Play this effect on the entity and tag, visible for this player only.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/effects/playfxontagforplayer.htm)",
+    desc: "Play this effect on the entity and tag, visible for this player only.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/effects/playfxontagforplayer.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/effects/playfxontagforplayer.htm)",
     example: "self playFxOnTagForPlayer(game[\"fire\"], ent, tag);",
     callOn: "<player> The player",
     returnType: "",
@@ -16181,7 +16181,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setCullFogForPlayer",
-    desc: "Sets the amount of fog in the distance, for the given player only. The fog will increase linearly. Please note that visibility traces through fog only take the global fog settings (see SetCullFog) into account.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/effects/setcullfogforplayer.htm)",
+    desc: "Sets the amount of fog in the distance, for the given player only. The fog will increase linearly. Please note that visibility traces through fog only take the global fog settings (see SetCullFog) into account.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/effects/setcullfogforplayer.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/effects/setcullfogforplayer.htm)",
     example: "self setCullFogForPlayer(0, 16500, 0.7, 0.85, 1.0, 0);",
     callOn: "<player> The player",
     returnType: "",
@@ -16250,7 +16250,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setExpFogForPlayer",
-    desc: "Creates an exponential fog, for the given player only. Density must be greater than 0 and less than 1, and typically less than .001. For example, .0002 means the fog gets .02% more dense for every 1 unit of distance (about 1% thicker every 50 units of distance). Please note that visibility traces through fog only take the global fog settings (see SetExpFog) into account.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/effects/setexpfogforplayer.htm)",
+    desc: "Creates an exponential fog, for the given player only. Density must be greater than 0 and less than 1, and typically less than .001. For example, .0002 means the fog gets .02% more dense for every 1 unit of distance (about 1% thicker every 50 units of distance). Please note that visibility traces through fog only take the global fog settings (see SetExpFog) into account.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/effects/setexpfogforplayer.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/effects/setexpfogforplayer.htm)",
     example: "self setExpFogForPlayer(0.0001144, 131/255, 116/255, 71/255, 0);",
     callOn: "<player> The player",
     returnType: "",
@@ -16313,7 +16313,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "addEntityVelocity",
-    desc: "Add velocity to the entity's velocity. Requires the use of enableGravity prior to the use of this method. Returns true on success, false if gravity is not enabled and undefined if the entity is not a script_model.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/addentityvelocity.htm)",
+    desc: "Add velocity to the entity's velocity. Requires the use of enableGravity prior to the use of this method. Returns true on success, false if gravity is not enabled and undefined if the entity is not a script_model.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/addentityvelocity.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/entity/addentityvelocity.htm)",
     example: "e addEntityVelocity((0, 0, 100));",
     callOn: "<entity> script_model",
     returnType: "",
@@ -16342,7 +16342,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "disablebounce",
-    desc: "Disables bouncing for a gravity-enabled entity. Requires the use of enableGravity prior to the use of this method. Returns true on success, else false (gravity not enabled) or undefined if the entity is not a script_model.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/disablebounce.htm)",
+    desc: "Disables bouncing for a gravity-enabled entity. Requires the use of enableGravity prior to the use of this method. Returns true on success, else false (gravity not enabled) or undefined if the entity is not a script_model.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/disablebounce.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/entity/disablebounce.htm)",
     example: "e disablebounce();",
     callOn: "<entity> script_model",
     returnType: "",
@@ -16363,7 +16363,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "disableGravity",
-    desc: "Disables gravity for a gravity-enabled script_model (see enableGravity). Sets the entity clip mask to zero. Returns true on success, false if gravity is not enabled and undefined if the entity is not a script_model.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/disablegravity.htm)",
+    desc: "Disables gravity for a gravity-enabled script_model (see enableGravity). Sets the entity clip mask to zero. Returns true on success, false if gravity is not enabled and undefined if the entity is not a script_model.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/disablegravity.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/entity/disablegravity.htm)",
     example: "e disableGravity();",
     callOn: "<entity> script_model",
     returnType: "",
@@ -16384,7 +16384,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "enableBounce",
-    desc: "Enables gravity bouncing like grenades. Requires the use of enableGravity prior to the use of this method. A script notify with string 'bounce' is emit for the entity when bouncing, with the surface type as first and the ground entity as second parameter. Returns true on success, else false (gravity not enabled) or undefined if the entity is not a script_model.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/enablebounce.htm)",
+    desc: "Enables gravity bouncing like grenades. Requires the use of enableGravity prior to the use of this method. A script notify with string 'bounce' is emit for the entity when bouncing, with the surface type as first and the ground entity as second parameter. Returns true on success, else false (gravity not enabled) or undefined if the entity is not a script_model.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/enablebounce.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/entity/enablebounce.htm)",
     example: "// If self is a player: e = spawn(\"script_model\", self.origin + (0, 0, 256)); e setModel(\"xmodel/prop_bear_detail_sitting\"); // Needs to be precached e enableGravity(); e enableBounce();",
     callOn: "<entity> script_model",
     returnType: "",
@@ -16437,7 +16437,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "enableGravity",
-    desc: "Enables gravity similar to MoveGravity, but continuously and with collision. The initial maximum entity velocity is 8192 units per second (see setMaxEntityVelocity). A script notify with string 'land' is emit for the entity when landing, with the surface type as first and the ground entity as second parameter. Returns true on success or undefined if the entity is not a script_model. The following script methods will disable gravity (see disableGravity) automatically if called on the entity:\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/enablegravity.htm)",
+    desc: "Enables gravity similar to MoveGravity, but continuously and with collision. The initial maximum entity velocity is 8192 units per second (see setMaxEntityVelocity). A script notify with string 'land' is emit for the entity when landing, with the surface type as first and the ground entity as second parameter. Returns true on success or undefined if the entity is not a script_model. The following script methods will disable gravity (see disableGravity) automatically if called on the entity:\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/enablegravity.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/entity/enablegravity.htm)",
     example: "// If self is a player: e = spawn(\"script_model\", self.origin + (0, 0, 256)); e setModel(\"xmodel/prop_bear_detail_sitting\"); // Needs to be precached e enableGravity();",
     callOn: "<entity> script_model",
     returnType: "",
@@ -16490,7 +16490,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getClipmask",
-    desc: "Returns the entity's clip mask (integer).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/getclipmask.htm)",
+    desc: "Returns the entity's clip mask (integer).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/getclipmask.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/entity/getclipmask.htm)",
     example: "clipmask = self getClipmask();",
     callOn: "<entity> An entity",
     returnType: "",
@@ -16511,7 +16511,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getContents",
-    desc: "Returns the contents mask (integer) of an entity. If present, returns overriden player contents mask set via overrideContents.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/getcontents.htm)",
+    desc: "Returns the contents mask (integer) of an entity. If present, returns overriden player contents mask set via overrideContents.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/getcontents.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/entity/getcontents.htm)",
     example: "contents = self getContents();",
     callOn: "<entity> An entity",
     returnType: "",
@@ -16532,7 +16532,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getEntityVelocity",
-    desc: "Gets the entity's velocity (vector). Requires the use of enableGravity prior to the use of this method, else, or if the entity is not a script_model, returns undefined.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/getentityvelocity.htm)",
+    desc: "Gets the entity's velocity (vector). Requires the use of enableGravity prior to the use of this method, else, or if the entity is not a script_model, returns undefined.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/getentityvelocity.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/entity/getentityvelocity.htm)",
     example: "vel = e getEntityVelocity();",
     callOn: "<entity> script_model",
     returnType: "",
@@ -16553,7 +16553,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getItemQuantity",
-    desc: "Returns the quantity of an ammo or health entity.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/getitemquantity.htm)",
+    desc: "Returns the quantity of an ammo or health entity.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/getitemquantity.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/entity/getitemquantity.htm)",
     example: "ent = spawn(\"item_health_small\", origin); // Precached item quantity = ent getItemQuantity();",
     callOn: "<entity> An entity",
     returnType: "",
@@ -16574,7 +16574,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getMaxEntityVelocity",
-    desc: "Gets the entity's maximum velocity in units per second. Requires the use of enableGravity prior to the use of this method, else, or if the entity is not a script_model, returns undefined.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/getmaxentityvelocity.htm)",
+    desc: "Gets the entity's maximum velocity in units per second. Requires the use of enableGravity prior to the use of this method, else, or if the entity is not a script_model, returns undefined.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/getmaxentityvelocity.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/entity/getmaxentityvelocity.htm)",
     example: "vel = e getMaxEntityVelocity();",
     callOn: "<entity> script_model",
     returnType: "",
@@ -16595,7 +16595,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getVmax",
-    desc: "Returns the maximum boundary coordinates (vector) of an entity.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/getvmax.htm)",
+    desc: "Returns the maximum boundary coordinates (vector) of an entity.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/getvmax.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/entity/getvmax.htm)",
     example: "maxs = ent getVmax();",
     callOn: "<entity> An entity",
     returnType: "",
@@ -16616,7 +16616,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getVmin",
-    desc: "Returns the minimum boundary coordinates (vector) of an entity.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/getvmin.htm)",
+    desc: "Returns the minimum boundary coordinates (vector) of an entity.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/getvmin.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/entity/getvmin.htm)",
     example: "mins = ent getVmin();",
     callOn: "<entity> An entity",
     returnType: "",
@@ -16637,7 +16637,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "hasTag",
-    desc: "Returns whether the entity has the specified tag or not. Also returns zero if the entity has an invalid or no model.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/hastag.htm)",
+    desc: "Returns whether the entity has the specified tag or not. Also returns zero if the entity has an invalid or no model.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/hastag.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/entity/hastag.htm)",
     example: "tag = \"tag_flash\"; if(ent hasTag(tag)) playFxOnTag(game[\"muzzleflash\"], ent, tag);",
     callOn: "<entity> An entity",
     returnType: "",
@@ -16666,7 +16666,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "hideFromPlayer",
-    desc: "Hide the entity from a given client.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/hidefromplayer.htm)",
+    desc: "Hide the entity from a given client.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/hidefromplayer.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/entity/hidefromplayer.htm)",
     example: "",
     callOn: "<entity> An entity",
     returnType: "",
@@ -16695,7 +16695,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "isGravityEnabled",
-    desc: "Returns whether the given entity is a gravity-enabled script_model (see enableGravity).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/isgravityenabled.htm)",
+    desc: "Returns whether the given entity is a gravity-enabled script_model (see enableGravity).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/isgravityenabled.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/entity/isgravityenabled.htm)",
     example: "with_gravity = e isGravityEnabled();",
     callOn: "<entity> script_model",
     returnType: "",
@@ -16716,7 +16716,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "isLinkedTo",
-    desc: "Returns the parent entity to which self is linked. Returns undefined if self is not linked.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/islinkedto.htm)",
+    desc: "Returns the parent entity to which self is linked. Returns undefined if self is not linked.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/islinkedto.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/entity/islinkedto.htm)",
     example: "if(isDefined(self isLinkedTo())) self iprintLnBold(\"Already linked!\");",
     callOn: "<entity> An entity",
     returnType: "",
@@ -16737,7 +16737,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "notSolidForPlayer",
-    desc: "Unsets the solid flag so that this object is no longer collidable, for the specified player. Requires the brush model collision tweak system to be enabled using the g_brushModelCollisionTweaks dvar. Resets on map load or a fast_restart.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/notsolidforplayer.htm)",
+    desc: "Unsets the solid flag so that this object is no longer collidable, for the specified player. Requires the brush model collision tweak system to be enabled using the g_brushModelCollisionTweaks dvar. Resets on map load or a fast_restart.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/notsolidforplayer.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/entity/notsolidforplayer.htm)",
     example: "platform = getEnt(\"platform\", \"targetname\"); platform notSolidForPlayer(player);",
     callOn: "<entity> An entity",
     returnType: "",
@@ -16766,7 +16766,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setAlive",
-    desc: "Enables damage feedback for non-player entities.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/setalive.htm)",
+    desc: "Enables damage feedback for non-player entities.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/setalive.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/entity/setalive.htm)",
     example: "self setAlive(1); self waittill(\"damage\", dmg, attacker);",
     callOn: "<entity> An entity",
     returnType: "",
@@ -16795,7 +16795,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setBounds",
-    desc: "Sets the collision bounds of a model. Each of the three parameters extends into both positive and negative offset on the respective axis, with the model's origin in the middle.\n\n*libcod note:* now requires three parameters, instead of two\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/setbounds.htm)",
+    desc: "Sets the collision bounds of a model. Each of the three parameters extends into both positive and negative offset on the respective axis, with the model's origin in the middle.\n\n*libcod note:* now requires three parameters, instead of two\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/setbounds.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/entity/setbounds.htm)",
     example: "model setBounds(16, 16, 16);",
     callOn: "<entity> An entity (script_model)",
     returnType: "",
@@ -16840,7 +16840,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setClipmask",
-    desc: "Sets the entity's clip mask.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/setclipmask.htm)",
+    desc: "Sets the entity's clip mask.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/setclipmask.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/entity/setclipmask.htm)",
     example: "e setClipmask(1); // Solid only",
     callOn: "<entity> An entity",
     returnType: "",
@@ -16869,7 +16869,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setEntityVelocity",
-    desc: "Set the entity's velocity. Requires the use of enableGravity prior to the use of this method. Returns true on success, false if gravity is not enabled and undefined if the entity is not a script_model.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/setentityvelocity.htm)",
+    desc: "Set the entity's velocity. Requires the use of enableGravity prior to the use of this method. Returns true on success, false if gravity is not enabled and undefined if the entity is not a script_model.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/setentityvelocity.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/entity/setentityvelocity.htm)",
     example: "e setEntityVelocity((-400, 0, 100));",
     callOn: "<entity> script_model",
     returnType: "",
@@ -16898,7 +16898,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setHintString",
-    desc: "Sets the hint string for a usable entity. Calling this on a trigger_radius entity will transform it to a trigger_use_touch entity that also triggers on touch only.\n\n*libcod note:* now also supports trigger_radius entities\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/sethintstring.htm)",
+    desc: "Sets the hint string for a usable entity. Calling this on a trigger_radius entity will transform it to a trigger_use_touch entity that also triggers on touch only.\n\n*libcod note:* now also supports trigger_radius entities\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/sethintstring.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/entity/sethintstring.htm)",
     example: "fuel_lever setHintString( &\"ROCKET_FUEL_LEVER\" );",
     callOn: "<trigger> A trigger",
     returnType: "",
@@ -16927,7 +16927,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setItemQuantity",
-    desc: "Sets the quantity for an ammo or health entity.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/setitemquantity.htm)",
+    desc: "Sets the quantity for an ammo or health entity.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/setitemquantity.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/entity/setitemquantity.htm)",
     example: "quantity = 10; ent = spawn(\"item_health_small\", origin); // Precached item ent setItemQuantity(quantity);",
     callOn: "<entity> An entity",
     returnType: "",
@@ -16956,7 +16956,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setLight",
-    desc: "Sets the dynamic light value for entities of type script_model. Visible in DirectX 9 mode only and with dynamic lights enabled (see the r_rendererInUse, r_rendererPreference and r_dlightLimit client dvars).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/setlight.htm)",
+    desc: "Sets the dynamic light value for entities of type script_model. Visible in DirectX 9 mode only and with dynamic lights enabled (see the r_rendererInUse, r_rendererPreference and r_dlightLimit client dvars).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/setlight.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/entity/setlight.htm)",
     example: "// If self is a player: e = spawn(\"script_model\", self.origin); e linkTo(self); e setLight(255, 0, 0, 255); // Red light",
     callOn: "<entity> An entity (script_model)",
     returnType: "",
@@ -17009,7 +17009,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setMaxEntityVelocity",
-    desc: "Set the entity's maximum velocity in units per second. Requires the use of enableGravity prior to the use of this method. Returns true on success, false if gravity is not enabled and undefined if the entity is not a script_model.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/setmaxentityvelocity.htm)",
+    desc: "Set the entity's maximum velocity in units per second. Requires the use of enableGravity prior to the use of this method. Returns true on success, false if gravity is not enabled and undefined if the entity is not a script_model.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/setmaxentityvelocity.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/entity/setmaxentityvelocity.htm)",
     example: "e setMaxEntityVelocity(200);",
     callOn: "<entity> script_model",
     returnType: "",
@@ -17038,7 +17038,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "solidForPlayer",
-    desc: "Sets the solid flag so that this object is collidable again, for the specified player. This method is meant to be used in conjunction with notSolidForPlayer and not to enable collision for a brush model that is not collidable in the first place (e.g., brush models with zero contents).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/solidforplayer.htm)",
+    desc: "Sets the solid flag so that this object is collidable again, for the specified player. This method is meant to be used in conjunction with notSolidForPlayer and not to enable collision for a brush model that is not collidable in the first place (e.g., brush models with zero contents).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/entity/solidforplayer.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/entity/solidforplayer.htm)",
     example: "platform = getEnt(\"platform\", \"targetname\"); platform solidForPlayer(player);",
     callOn: "<entity> An entity",
     returnType: "",
@@ -17069,7 +17069,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "execute",
-    desc: "Executes a shell command (via popen using /bin/sh as shell) and returns the result of it. If the call to popen fails, an error is printed to console and undefined is returned.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/exec/execute.htm)",
+    desc: "Executes a shell command (via popen using /bin/sh as shell) and returns the result of it. If the call to popen fails, an error is printed to console and undefined is returned.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/exec/execute.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/exec/execute.htm)",
     example: "result = execute(\"ls\");",
     callOn: "",
     returnType: "",
@@ -17090,7 +17090,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "execute_async_checkdone",
-    desc: "Should be used once every server frame if you use execute_async_create or execute_async_create_nosave.\n\n*libcod note:* libcod renamed `exec_async_checkdone()` → `execute_async_checkdone()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/exec/execute_async_checkdone.htm)",
+    desc: "Should be used once every server frame if you use execute_async_create or execute_async_create_nosave.\n\n*libcod note:* libcod renamed `exec_async_checkdone()` → `execute_async_checkdone()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/exec/execute_async_checkdone.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/exec/execute_async_checkdone.htm)",
     example: "execute_async_checkdone();",
     callOn: "",
     returnType: "",
@@ -17103,7 +17103,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "execute_async_create",
-    desc: "Executes a shell command (via popen using /bin/sh as shell) in another thread and returns the result of it. Requires to use execute_async_checkdone once every server frame to poll the result. If the call to popen fails, an error is printed to console and the script callback function (if defined) is not called.\n\n*libcod note:* libcod renamed `exec_async_create()` → `execute_async_create()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/exec/execute_async_create.htm)",
+    desc: "Executes a shell command (via popen using /bin/sh as shell) in another thread and returns the result of it. Requires to use execute_async_checkdone once every server frame to poll the result. If the call to popen fails, an error is printed to console and the script callback function (if defined) is not called.\n\n*libcod note:* libcod renamed `exec_async_create()` → `execute_async_create()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/exec/execute_async_create.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/exec/execute_async_create.htm)",
     example: "execLoop() { while(true) { execute_async_checkdone(); wait 0.05; } } execRun() { execute_async_create(\"ls\", ::execCallback, 123); } execCallback(output, parameter) { if(isDefined(output)) // Type ARRAY logPrintConsole(\"Exec async thread returned with parameter \" + parameter + \" and output\\n\"); else logPrintConsole(\"Exec async thread returned with parameter \" + parameter + \"\\n\"); }",
     callOn: "",
     returnType: "",
@@ -17140,7 +17140,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "execute_async_create_nosave",
-    desc: "Executes a shell command (via popen using /bin/sh as shell) in another thread. The command's output is not saved. Requires to use execute_async_checkdone once every server frame to poll the result. If the call to popen fails, an error is printed to console and the script callback function (if defined) is not called.\n\n*libcod note:* libcod renamed `exec_async_create_nosave()` → `execute_async_create_nosave()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/exec/execute_async_create_nosave.htm)",
+    desc: "Executes a shell command (via popen using /bin/sh as shell) in another thread. The command's output is not saved. Requires to use execute_async_checkdone once every server frame to poll the result. If the call to popen fails, an error is printed to console and the script callback function (if defined) is not called.\n\n*libcod note:* libcod renamed `exec_async_create_nosave()` → `execute_async_create_nosave()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/exec/execute_async_create_nosave.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/exec/execute_async_create_nosave.htm)",
     example: "execLoop() { while(true) { execute_async_checkdone(); wait 0.05; } } execRun() { execute_async_create_nosave(\"ls\", ::execCallback, 123); } execCallback(parameter) { logPrintConsole(\"Exec async thread returned with parameter \" + parameter + \"\\n\"); }",
     callOn: "",
     returnType: "",
@@ -17179,7 +17179,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getClientHudElemCount",
-    desc: "Returns the number of hud elements the player currently has.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/hud/getclienthudelemcount.htm)",
+    desc: "Returns the number of hud elements the player currently has.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/hud/getclienthudelemcount.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/hud/getclienthudelemcount.htm)",
     example: "num = self getClientHudElemCount();",
     callOn: "<player> The player",
     returnType: "",
@@ -17200,7 +17200,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "obituary",
-    desc: "Create an obituary for a character. Returns the (temporary) obituary entity. The optional parameters allow the obituary hud to be shown for a specific set of teams only, and/or to players that are in a certain range of a defined position only. Valid teams are:\n\n*libcod note:* now returns the (temporary) obituary entity\n\n*libcod note:* got three more parameters\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/hud/obituary.htm)",
+    desc: "Create an obituary for a character. Returns the (temporary) obituary entity. The optional parameters allow the obituary hud to be shown for a specific set of teams only, and/or to players that are in a certain range of a defined position only. Valid teams are:\n\n*libcod note:* now returns the (temporary) obituary entity\n\n*libcod note:* got three more parameters\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/hud/obituary.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/hud/obituary.htm)",
     example: "obituary(self, attacker, sWeapon, sMeansOfDeath, \"allies\", self.origin, 512);",
     callOn: "",
     returnType: "",
@@ -17271,7 +17271,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getEntityCount",
-    desc: "Get the number of currently present entities, including temporary entities. This does not include entities that are rendered/handled on the client side only (e.g., entities spawned for effects). The returned number may not change on each call of spawn(), as the server may use pre-allocated entities before creating new ones. To return the number of entities in use, set the first parameter to true.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/level/getentitycount.htm)",
+    desc: "Get the number of currently present entities, including temporary entities. This does not include entities that are rendered/handled on the client side only (e.g., entities spawned for effects). The returned number may not change on each call of spawn(), as the server may use pre-allocated entities before creating new ones. To return the number of entities in use, set the first parameter to true.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/level/getentitycount.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/level/getentitycount.htm)",
     example: "if(getEntityCount(true) >= 1000) iprintLnBold(\"Warning: Server is close to entity limit!\"); ent = spawn(\"script_model\", origin);",
     callOn: "",
     returnType: "",
@@ -17300,7 +17300,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getMovers",
-    desc: "Returns an array containing all script mover entities (e.g., script_brushmodel entities used for custom doors or elevators).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/level/getmovers.htm)",
+    desc: "Returns an array containing all script mover entities (e.g., script_brushmodel entities used for custom doors or elevators).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/level/getmovers.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/level/getmovers.htm)",
     example: "ents = getMovers();",
     callOn: "",
     returnType: "",
@@ -17313,7 +17313,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getNumberOfStaticModels",
-    desc: "Get the number of static models in the map.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/level/getnumberofstaticmodels.htm)",
+    desc: "Get the number of static models in the map.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/level/getnumberofstaticmodels.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/level/getnumberofstaticmodels.htm)",
     example: "models = getNumberOfStaticModels();",
     callOn: "",
     returnType: "",
@@ -17326,7 +17326,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getSavePersist",
-    desc: "Returns whether player info (player.pers script variable contents, excluding object references) will be retained when the current level is exited. This is commonly defined via the respective parameter provided to the stock map and map_restart script functions, or via setSavePersist.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/level/getsavepersist.htm)",
+    desc: "Returns whether player info (player.pers script variable contents, excluding object references) will be retained when the current level is exited. This is commonly defined via the respective parameter provided to the stock map and map_restart script functions, or via setSavePersist.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/level/getsavepersist.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/level/getsavepersist.htm)",
     example: "save = getSavePersist();",
     callOn: "",
     returnType: "",
@@ -17339,7 +17339,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getStaticModelName",
-    desc: "Gets the static model name from the model list.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/level/getstaticmodelname.htm)",
+    desc: "Gets the static model name from the model list.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/level/getstaticmodelname.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/level/getstaticmodelname.htm)",
     example: "modelName = getStaticModelName(i)",
     callOn: "",
     returnType: "",
@@ -17360,7 +17360,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getStaticModelOrigin",
-    desc: "Gets the static model origin from the model list.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/level/getstaticmodelorigin.htm)",
+    desc: "Gets the static model origin from the model list.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/level/getstaticmodelorigin.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/level/getstaticmodelorigin.htm)",
     example: "modelOrigin = getStaticModelOrigin(i)",
     callOn: "",
     returnType: "",
@@ -17381,7 +17381,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setNorthYaw",
-    desc: "Sets the yaw value of north.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/level/setnorthyaw.htm)",
+    desc: "Sets the yaw value of north.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/level/setnorthyaw.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/level/setnorthyaw.htm)",
     example: "setNorthYaw(90.0); // Compass north becomes east wait 1; setNorthYaw(0); // Compass north is reset to actual north",
     callOn: "",
     returnType: "",
@@ -17402,7 +17402,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setSavePersist",
-    desc: "Defines whether player info (player.pers script variable contents, excluding object references) should be retained when the current level is exited. This is overriden (always set to false) if the g_gametype or sv_maxclients dvars change. Also, it is overriden by the respective parameter provided to the stock map and map_restart script functions. Also, player info is also dropped for clients that disconnect due to file downloads.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/level/setsavepersist.htm)",
+    desc: "Defines whether player info (player.pers script variable contents, excluding object references) should be retained when the current level is exited. This is overriden (always set to false) if the g_gametype or sv_maxclients dvars change. Also, it is overriden by the respective parameter provided to the stock map and map_restart script functions. Also, player info is also dropped for clients that disconnect due to file downloads.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/level/setsavepersist.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/level/setsavepersist.htm)",
     example: "setSavePersist(true);",
     callOn: "",
     returnType: "",
@@ -17425,7 +17425,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "abs",
-    desc: "Returns the absolute (positive) value of the input value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/math/abs.htm)",
+    desc: "Returns the absolute (positive) value of the input value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/math/abs.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/math/abs.htm)",
     example: "num = abs(-42);",
     callOn: "",
     returnType: "",
@@ -17446,7 +17446,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "atan2",
-    desc: "Returns the arcus (inverse) tangent of y / x using the signs of the arguments to determine the correct quadrant.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/math/atan2.htm)",
+    desc: "Returns the arcus (inverse) tangent of y / x using the signs of the arguments to determine the correct quadrant.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/math/atan2.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/math/atan2.htm)",
     example: "num = atan2(-45, 45);",
     callOn: "",
     returnType: "",
@@ -17475,7 +17475,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "ceil",
-    desc: "Returns the least integer value not less than the given value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/math/ceil.htm)",
+    desc: "Returns the least integer value not less than the given value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/math/ceil.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/math/ceil.htm)",
     example: "num = ceil(3.1415);",
     callOn: "",
     returnType: "",
@@ -17496,7 +17496,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "float",
-    desc: "Attempts to convert a variable to one of type float (decimal). Can take a variable of type float, integer, or string as argument.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/math/float.htm)",
+    desc: "Attempts to convert a variable to one of type float (decimal). Can take a variable of type float, integer, or string as argument.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/math/float.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/math/float.htm)",
     example: "num = float(\"3.14159265359\");",
     callOn: "",
     returnType: "",
@@ -17517,7 +17517,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "floor",
-    desc: "Returns the largest integer value not greater than the given value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/math/floor.htm)",
+    desc: "Returns the largest integer value not greater than the given value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/math/floor.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/math/floor.htm)",
     example: "num = floor(3.1415);",
     callOn: "",
     returnType: "",
@@ -17538,7 +17538,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "pow",
-    desc: "Returns the result of the first argument (basis) raised to the power of the second argument (exponent).\n\n*libcod note:* libcod renamed `exponent()` → `pow()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/math/pow.htm)",
+    desc: "Returns the result of the first argument (basis) raised to the power of the second argument (exponent).\n\n*libcod note:* libcod renamed `exponent()` → `pow()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/math/pow.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/math/pow.htm)",
     example: "num = pow(5, 3);",
     callOn: "",
     returnType: "",
@@ -17567,7 +17567,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "round",
-    desc: "Returns the nearest integer value to the given value (in floating-point format), rounding halfway cases away from zero.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/math/round.htm)",
+    desc: "Returns the nearest integer value to the given value (in floating-point format), rounding halfway cases away from zero.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/math/round.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/math/round.htm)",
     example: "num = round(3.1415);",
     callOn: "",
     returnType: "",
@@ -17588,7 +17588,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "roundTo",
-    desc: "Returns the nearest integer value to the given value (in floating-point format), rounding halfway cases away from zero, and with the given precision.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/math/roundto.htm)",
+    desc: "Returns the nearest integer value to the given value (in floating-point format), rounding halfway cases away from zero, and with the given precision.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/math/roundto.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/math/roundto.htm)",
     example: "num = roundTo(3.1415, 2.0);",
     callOn: "",
     returnType: "",
@@ -17617,7 +17617,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "sqrt",
-    desc: "Returns the square root of the given value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/math/sqrt.htm)",
+    desc: "Returns the square root of the given value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/math/sqrt.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/math/sqrt.htm)",
     example: "root = sqrt(16);",
     callOn: "",
     returnType: "",
@@ -17638,7 +17638,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "sqrtInv",
-    desc: "Returns the square root inverse of the given value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/math/sqrtInv.htm)",
+    desc: "Returns the square root inverse of the given value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/math/sqrtInv.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/math/sqrtInv.htm)",
     example: "inv = sqrtInv(16);",
     callOn: "",
     returnType: "",
@@ -17659,7 +17659,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "vectorScale",
-    desc: "Scales the given vector by the given factor (2nd parameter).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/math/vectorscale.htm)",
+    desc: "Scales the given vector by the given factor (2nd parameter).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/math/vectorscale.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/math/vectorscale.htm)",
     example: "v = vectorScale((1, 2, 3), 2.0);",
     callOn: "",
     returnType: "",
@@ -17690,7 +17690,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "memory_free",
-    desc: "Deallocates a memory block.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/memory/memory_free.htm)",
+    desc: "Deallocates a memory block.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/memory/memory_free.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/memory/memory_free.htm)",
     example: "memory_free( address );",
     callOn: "",
     returnType: "",
@@ -17711,7 +17711,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "memory_int_get",
-    desc: "Gets the value of a memory block.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/memory/memory_int_get.htm)",
+    desc: "Gets the value of a memory block.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/memory/memory_int_get.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/memory/memory_int_get.htm)",
     example: "value = memory_int_get( address );",
     callOn: "",
     returnType: "",
@@ -17732,7 +17732,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "memory_int_set",
-    desc: "Sets the value of a memory block.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/memory/memory_int_set.htm)",
+    desc: "Sets the value of a memory block.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/memory/memory_int_set.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/memory/memory_int_set.htm)",
     example: "memory_int_set( address, 4 );",
     callOn: "",
     returnType: "",
@@ -17761,7 +17761,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "memory_malloc",
-    desc: "Allocates a block of size bytes of memory and returns a pointer to the beginning of the block.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/memory/memory_malloc.htm)",
+    desc: "Allocates a block of size bytes of memory and returns a pointer to the beginning of the block.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/memory/memory_malloc.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/memory/memory_malloc.htm)",
     example: "memory = memory_malloc( 16 );",
     callOn: "",
     returnType: "",
@@ -17782,7 +17782,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "memory_memset",
-    desc: "Sets the first num bytes of the block of memory pointed to the specified value. It's expecting an integer, so you need at least 4 bytes to be memset'd.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/memory/memory_memset.htm)",
+    desc: "Sets the first num bytes of the block of memory pointed to the specified value. It's expecting an integer, so you need at least 4 bytes to be memset'd.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/memory/memory_memset.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/memory/memory_memset.htm)",
     example: "memory_memset( address, 4, 4 );",
     callOn: "",
     returnType: "",
@@ -17821,7 +17821,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "mysql_affected_rows",
-    desc: "Returns the number of rows changed, deleted, or inserted by the last statement if it was an UPDATE, DELETE, or INSERT.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_affected_rows.htm)",
+    desc: "Returns the number of rows changed, deleted, or inserted by the last statement if it was an UPDATE, DELETE, or INSERT.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_affected_rows.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/mysql/mysql_affected_rows.htm)",
     example: "rows = mysql_affected_rows(mysql_handler);",
     callOn: "",
     returnType: "",
@@ -17842,7 +17842,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "mysql_async_create_query",
-    desc: "Adds a MySQL query to the async query handler queue. The result will be stored. Returns a referencing ID (32-bit signed integer), or undefined if not called correctly. Should be used with the wrapper functions for async MySQL. [source]\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_async_create_query.htm)",
+    desc: "Adds a MySQL query to the async query handler queue. The result will be stored. Returns a referencing ID (32-bit signed integer), or undefined if not called correctly. Should be used with the wrapper functions for async MySQL. [source]\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_async_create_query.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/mysql/mysql_async_create_query.htm)",
     example: "async_id = mysql_async_create_query(\"SELECT column1 FROM table\");",
     callOn: "",
     returnType: "",
@@ -17863,7 +17863,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "mysql_async_create_query_nosave",
-    desc: "Adds a MySQL query to the async query handler queue. The result will not be stored. Returns a referencing ID (32-bit signed integer), or undefined if not called correctly. Should be used with the wrapper functions for async MySQL. [source]\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_async_create_query_nosave.htm)",
+    desc: "Adds a MySQL query to the async query handler queue. The result will not be stored. Returns a referencing ID (32-bit signed integer), or undefined if not called correctly. Should be used with the wrapper functions for async MySQL. [source]\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_async_create_query_nosave.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/mysql/mysql_async_create_query_nosave.htm)",
     example: "async_id = mysql_async_create_query(\"INSERT value INTO table\");",
     callOn: "",
     returnType: "",
@@ -17884,7 +17884,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "mysql_async_getdone_list",
-    desc: "Returns a list of completed query-IDs (see the unique ID in mysql_async_create_query() and mysql_async_create_query()). Should be combined with a call to mysql_async_getresult_and_free() for each ID returned. Returns an array of integers. Should be used with the wrapper functions for async MySQL.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_async_getdone_list.htm)",
+    desc: "Returns a list of completed query-IDs (see the unique ID in mysql_async_create_query() and mysql_async_create_query()). Should be combined with a call to mysql_async_getresult_and_free() for each ID returned. Returns an array of integers. Should be used with the wrapper functions for async MySQL.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_async_getdone_list.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/mysql/mysql_async_getdone_list.htm)",
     example: "mysql_async_getdone_list();",
     callOn: "",
     returnType: "",
@@ -17897,7 +17897,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "mysql_async_getresult_and_free",
-    desc: "Returns the result of an async query and frees the internal pointer so the same ID will not be put on the mysql_async_getdone_list(). Returns 0 for nosave queries (mysql_async_create_query_nosave), and the mysql_store_result(connection) for save queries (mysql_async_create_query).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_async_getresult_and_free.htm)",
+    desc: "Returns the result of an async query and frees the internal pointer so the same ID will not be put on the mysql_async_getdone_list(). Returns 0 for nosave queries (mysql_async_create_query_nosave), and the mysql_store_result(connection) for save queries (mysql_async_create_query).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_async_getresult_and_free.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/mysql/mysql_async_getresult_and_free.htm)",
     example: "async_id = mysql_async_create_query(\"SELECT column1 FROM table\"); mysql_async_getresult_and_free(async_id);",
     callOn: "",
     returnType: "",
@@ -17918,7 +17918,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "mysql_async_initializer",
-    desc: "Sets up the asynchronous MySQL module. Only needs to be called once per server-start, will not do anything if called subsequently. Returns a list of MySQL handles. Invalid handles (e.g., due to invalid credentials) have the value 0. Advise: Use a relatively low connectioncount (e.g., 4) for normal usage, go up to 10 if the server is busy (30+ players or a lot of queries) or if the game server is located far (in terms of ping) from the MySQL server.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_async_initializer.htm)",
+    desc: "Sets up the asynchronous MySQL module. Only needs to be called once per server-start, will not do anything if called subsequently. Returns a list of MySQL handles. Invalid handles (e.g., due to invalid credentials) have the value 0. Advise: Use a relatively low connectioncount (e.g., 4) for normal usage, go up to 10 if the server is busy (30+ players or a lot of queries) or if the game server is located far (in terms of ping) from the MySQL server.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_async_initializer.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/mysql/mysql_async_initializer.htm)",
     example: "mysql_async_initializer(hostname, username, password, database, port_is_int, connectioncount);",
     callOn: "",
     returnType: "",
@@ -17979,7 +17979,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "mysql_close",
-    desc: "Closes a previously opened MySQL connection.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_close.htm)",
+    desc: "Closes a previously opened MySQL connection.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_close.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/mysql/mysql_close.htm)",
     example: "mysql_close(mysql_handler);",
     callOn: "",
     returnType: "",
@@ -18000,7 +18000,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "mysql_errno",
-    desc: "Returns the error code for the most recently invoked API function that can succeed or fail.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_errno.htm)",
+    desc: "Returns the error code for the most recently invoked API function that can succeed or fail.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_errno.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/mysql/mysql_errno.htm)",
     example: "error = mysql_errno(mysql_handler);",
     callOn: "",
     returnType: "",
@@ -18021,7 +18021,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "mysql_error",
-    desc: "Returns a string containing the error message for the most recently invoked API function that failed.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_error.htm)",
+    desc: "Returns a string containing the error message for the most recently invoked API function that failed.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_error.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/mysql/mysql_error.htm)",
     example: "error = mysql_error(mysql_handler);",
     callOn: "",
     returnType: "",
@@ -18042,7 +18042,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "mysql_fetch_field",
-    desc: "Returns the definition of one column of a result set as string.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_fetch_field.htm)",
+    desc: "Returns the definition of one column of a result set as string.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_fetch_field.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/mysql/mysql_fetch_field.htm)",
     example: "field = mysql_fetch_field(result);",
     callOn: "",
     returnType: "",
@@ -18063,7 +18063,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "mysql_fetch_row",
-    desc: "Retrieves the next row of a result set.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_fetch_row.htm)",
+    desc: "Retrieves the next row of a result set.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_fetch_row.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/mysql/mysql_fetch_row.htm)",
     example: "row = mysql_fetch_row(result);",
     callOn: "",
     returnType: "",
@@ -18084,7 +18084,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "mysql_field_seek",
-    desc: "Sets the field cursor to the given offset and returns the previous value of the field cursor.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_field_seek.htm)",
+    desc: "Sets the field cursor to the given offset and returns the previous value of the field cursor.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_field_seek.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/mysql/mysql_field_seek.htm)",
     example: "prevoffset = mysql_field_seek(result, offset);",
     callOn: "",
     returnType: "",
@@ -18113,7 +18113,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "mysql_free_result",
-    desc: "Frees the memory allocated for a result set by mysql_store_result().\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_free_result.htm)",
+    desc: "Frees the memory allocated for a result set by mysql_store_result().\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_free_result.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/mysql/mysql_free_result.htm)",
     example: "mysql_free_result(result);",
     callOn: "",
     returnType: "",
@@ -18134,7 +18134,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "mysql_init",
-    desc: "Allocates and initializes a MySQL object suitable for mysql_real_connect(). Returns an initialized MySQL handle or 0 if there was insufficient memory to allocate a new object.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_init.htm)",
+    desc: "Allocates and initializes a MySQL object suitable for mysql_real_connect(). Returns an initialized MySQL handle or 0 if there was insufficient memory to allocate a new object.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_init.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/mysql/mysql_init.htm)",
     example: "mysql_handler = mysql_init();",
     callOn: "",
     returnType: "",
@@ -18147,7 +18147,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "mysql_num_fields",
-    desc: "Returns the number of columns in a result set.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_num_fields.htm)",
+    desc: "Returns the number of columns in a result set.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_num_fields.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/mysql/mysql_num_fields.htm)",
     example: "fields = mysql_num_fields(result);",
     callOn: "",
     returnType: "",
@@ -18168,7 +18168,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "mysql_num_rows",
-    desc: "Returns the number of rows in the result set.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_num_rows.htm)",
+    desc: "Returns the number of rows in the result set.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_num_rows.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/mysql/mysql_num_rows.htm)",
     example: "rows = mysql_num_rows(result);",
     callOn: "",
     returnType: "",
@@ -18189,7 +18189,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "mysql_query",
-    desc: "Executes the SQL statement. Returns 0 for success or an error code.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_query.htm)",
+    desc: "Executes the SQL statement. Returns 0 for success or an error code.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_query.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/mysql/mysql_query.htm)",
     example: "query = mysql_query(mysql_handler, \"SELECT * FROM table\");",
     callOn: "",
     returnType: "",
@@ -18218,7 +18218,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "mysql_real_connect",
-    desc: "Attempts to establish a connection to a MySQL database engine. Returns a connection handle if the connection was successful, otherwise 0. Remember to call mysql_close once the connection is no longer required, or before a map (re)load to avoid leaking TCP sockets. Furthermore, mysql_reuse_connection can be used instead of closing and reopening a connection on each new map.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_real_connect.htm)",
+    desc: "Attempts to establish a connection to a MySQL database engine. Returns a connection handle if the connection was successful, otherwise 0. Remember to call mysql_close once the connection is no longer required, or before a map (re)load to avoid leaking TCP sockets. Furthermore, mysql_reuse_connection can be used instead of closing and reopening a connection on each new map.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_real_connect.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/mysql/mysql_real_connect.htm)",
     example: "connection_handler = mysql_real_connect( mysql_handler, \"localhost\", \"username\", \"password\", \"database\", 3306);",
     callOn: "",
     returnType: "",
@@ -18279,7 +18279,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "mysql_real_escape_string",
-    desc: "Escapes special characters in a string for use in an SQL statement.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_real_escape_string.htm)",
+    desc: "Escapes special characters in a string for use in an SQL statement.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_real_escape_string.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/mysql/mysql_real_escape_string.htm)",
     example: "escapedtext = mysql_real_escape_string(mysql, self.name);",
     callOn: "",
     returnType: "",
@@ -18308,7 +18308,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "mysql_reuse_connection",
-    desc: "When calling mysql_real_connect for the first time, this connection will be stored in a global (libcod) variable. This function retrieves said variable, or undefined if no connection has been set up yet. Useful when trying to keep the number of MySQL connections to a minimum.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_reuse_connection.htm)",
+    desc: "When calling mysql_real_connect for the first time, this connection will be stored in a global (libcod) variable. This function retrieves said variable, or undefined if no connection has been set up yet. Useful when trying to keep the number of MySQL connections to a minimum.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_reuse_connection.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/mysql/mysql_reuse_connection.htm)",
     example: "level.mysql = mysql_reuse_connection();",
     callOn: "",
     returnType: "",
@@ -18321,7 +18321,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "mysql_store_result",
-    desc: "Produces a result set after invoking mysql_query().\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_store_result.htm)",
+    desc: "Produces a result set after invoking mysql_query().\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/mysql/mysql_store_result.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/mysql/mysql_store_result.htm)",
     example: "result = mysql_store_result(mysql_handler);",
     callOn: "",
     returnType: "",
@@ -18344,7 +18344,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "objective_player_add",
-    desc: "Adds a new objective, visible for the player only. Overrides global objectives that use the same objective_number.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/objective/objective_player_add.htm)",
+    desc: "Adds a new objective, visible for the player only. Overrides global objectives that use the same objective_number.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/objective/objective_player_add.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/objective/objective_player_add.htm)",
     example: "self objective_player_add(objective_number, \"current\", origin);",
     callOn: "<player> The player",
     returnType: "",
@@ -18397,7 +18397,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "objective_player_delete",
-    desc: "Removes an objective that was created via objective_player_add.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/objective/objective_player_delete.htm)",
+    desc: "Removes an objective that was created via objective_player_add.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/objective/objective_player_delete.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/objective/objective_player_delete.htm)",
     example: "self objective_player_delete(1);",
     callOn: "<player> The player",
     returnType: "",
@@ -18426,7 +18426,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "objective_player_icon",
-    desc: "Set the compass icon for an objective that was created via objective_player_add.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/objective/objective_player_icon.htm)",
+    desc: "Set the compass icon for an objective that was created via objective_player_add.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/objective/objective_player_icon.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/objective/objective_player_icon.htm)",
     example: "self objective_player_icon(0, game[\"radio_none\"]);",
     callOn: "<player> The player",
     returnType: "",
@@ -18463,7 +18463,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "objective_player_position",
-    desc: "Set the position of an objective that was created via objective_player_add.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/objective/objective_player_position.htm)",
+    desc: "Set the position of an objective that was created via objective_player_add.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/objective/objective_player_position.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/objective/objective_player_position.htm)",
     example: "self objective_player_position(4, get_objective_position(\"plant_boilerbomb_trigger\"));",
     callOn: "<player> The player",
     returnType: "",
@@ -18500,7 +18500,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "objective_player_state",
-    desc: "Sets the state of an objective that was created via objective_player_add.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/objective/objective_player_state.htm)",
+    desc: "Sets the state of an objective that was created via objective_player_add.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/objective/objective_player_state.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/objective/objective_player_state.htm)",
     example: "self objective_player_state(8, \"done\");",
     callOn: "<player> The player",
     returnType: "",
@@ -18539,7 +18539,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "addEntToSnapshots",
-    desc: "Adds the specified entity to the list of entities to send to the client. Effective only if the sv_autoAddSnapshotEntities dvar is set to 0 and if archived server snapshots are disabled (see SetArchive). Entities missing in this list are not rendered on the client side, including players.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/addenttosnapshots.htm)",
+    desc: "Adds the specified entity to the list of entities to send to the client. Effective only if the sv_autoAddSnapshotEntities dvar is set to 0 and if archived server snapshots are disabled (see SetArchive). Entities missing in this list are not rendered on the client side, including players.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/addenttosnapshots.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/addenttosnapshots.htm)",
     example: "player addEntToSnapshots(grenade);",
     callOn: "<player> The player",
     returnType: "",
@@ -18568,7 +18568,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "addVelocity",
-    desc: "Add velocity to the player's velocity.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/addvelocity.htm)",
+    desc: "Add velocity to the player's velocity.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/addvelocity.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/addvelocity.htm)",
     example: "player addVelocity((0, 0, 100));",
     callOn: "<player> The player",
     returnType: "",
@@ -18597,7 +18597,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "aimButtonPressed",
-    desc: "Returns whether the player presses the aim button.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/aimbuttonpressed.htm)",
+    desc: "Returns whether the player presses the aim button.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/aimbuttonpressed.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/aimbuttonpressed.htm)",
     example: "if(player aimButtonPressed()) ...",
     callOn: "<player> The player",
     returnType: "",
@@ -18618,7 +18618,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "backButtonPressed",
-    desc: "Returns whether the player presses the backward movement button.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/backbuttonpressed.htm)",
+    desc: "Returns whether the player presses the backward movement button.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/backbuttonpressed.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/backbuttonpressed.htm)",
     example: "if(player backButtonPressed()) ...",
     callOn: "<player> The player",
     returnType: "",
@@ -18639,7 +18639,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "canMantle",
-    desc: "Returns whether the player can mantle (i.e., when the hint string appears).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/canmantle.htm)",
+    desc: "Returns whether the player can mantle (i.e., when the hint string appears).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/canmantle.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/canmantle.htm)",
     example: "climb = player canMantle();",
     callOn: "<player> The player",
     returnType: "",
@@ -18660,7 +18660,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "clearJumpState",
-    desc: "Resets the player's jump (slowdown) and slide state, as if the player did not jump. Note: By default, when jumping repeatedly, only the first jump yields the max. height, and subsequent jumps are slowed down.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/clearjumpstate.htm)",
+    desc: "Resets the player's jump (slowdown) and slide state, as if the player did not jump. Note: By default, when jumping repeatedly, only the first jump yields the max. height, and subsequent jumps are slowed down.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/clearjumpstate.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/clearjumpstate.htm)",
     example: "player clearJumpState();",
     callOn: "<player> The player",
     returnType: "",
@@ -18681,7 +18681,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "connectionlessPacketToClient",
-    desc: "Sends a packet containing commands (e.g., print, error, disconnect) to the client.\n\n*libcod note:* libcod renamed `printOutOfBand()` → `connectionlessPacketToClient()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/connectionlesspackettoclient.htm)",
+    desc: "Sends a packet containing commands (e.g., print, error, disconnect) to the client.\n\n*libcod note:* libcod renamed `printOutOfBand()` → `connectionlessPacketToClient()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/connectionlesspackettoclient.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/connectionlesspackettoclient.htm)",
     example: "player connectionlessPacketToClient(\"print\\nHello player console\\n\");",
     callOn: "<player> The player",
     returnType: "",
@@ -18710,7 +18710,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "connectionlessPacketToServer",
-    desc: "Creates a packet that is processed as if it would come from the client to the server. However, the client does not actually see the command or send a packet.\n\n*libcod note:* libcod renamed `connectionlesspacket()` → `connectionlessPacketToServer()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/connectionlesspackettoserver.htm)",
+    desc: "Creates a packet that is processed as if it would come from the client to the server. However, the client does not actually see the command or send a packet.\n\n*libcod note:* libcod renamed `connectionlesspacket()` → `connectionlessPacketToServer()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/connectionlesspackettoserver.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/connectionlesspackettoserver.htm)",
     example: "player connectionlessPacketToServer(\"rcon \" + getCvar(\"rcon_password\") + \" status\");",
     callOn: "<player> The player",
     returnType: "",
@@ -18739,7 +18739,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "disableBulletDrop",
-    desc: "Disables gravity for bullets (see enableBulletDrop), thus returning to stock behavior.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/disablebulletdrop.htm)",
+    desc: "Disables gravity for bullets (see enableBulletDrop), thus returning to stock behavior.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/disablebulletdrop.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/disablebulletdrop.htm)",
     example: "player disableBulletDrop();",
     callOn: "<player> The player",
     returnType: "",
@@ -18760,7 +18760,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "disableBulletImpacts",
-    desc: "Disables bullet impact events (sound + effect) caused by the player's shots. Note that player body hits are not covered by this, as these are controlled via finishPlayerDamage and the g_corpseHit dvar.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/disablebulletimpacts.htm)",
+    desc: "Disables bullet impact events (sound + effect) caused by the player's shots. Note that player body hits are not covered by this, as these are controlled via finishPlayerDamage and the g_corpseHit dvar.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/disablebulletimpacts.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/disablebulletimpacts.htm)",
     example: "player disableBulletImpacts();",
     callOn: "<player> The player",
     returnType: "",
@@ -18781,7 +18781,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "disableEarthquakes",
-    desc: "Enables a player's immunity against earthquakes.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/disableearthquakes.htm)",
+    desc: "Enables a player's immunity against earthquakes.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/disableearthquakes.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/disableearthquakes.htm)",
     example: "player disableEarthquakes();",
     callOn: "<player> The player",
     returnType: "",
@@ -18802,7 +18802,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "disableItemPickup",
-    desc: "Disables item pickup, including weapons. Allows to toggle display of item hint strings.\n\n*libcod note:* now also supports to hide hint strings\n\n*libcod note:* and `<player> enableItemPickup()` were merged into `<player> itemPickup(<enabled>)`\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/disableitempickup.htm)",
+    desc: "Disables item pickup, including weapons. Allows to toggle display of item hint strings.\n\n*libcod note:* now also supports to hide hint strings\n\n*libcod note:* and `<player> enableItemPickup()` were merged into `<player> itemPickup(<enabled>)`\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/disableitempickup.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/disableitempickup.htm)",
     example: "player disableItemPickup(true);",
     callOn: "<player> The player",
     returnType: "",
@@ -18839,7 +18839,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "disableTalkerIcon",
-    desc: "Disables the talker icon for the specified player if previously enabled via enableTalkerIcon.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/disabletalkericon.htm)",
+    desc: "Disables the talker icon for the specified player if previously enabled via enableTalkerIcon.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/disabletalkericon.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/disabletalkericon.htm)",
     example: "player1 disableTalkerIcon(player2);",
     callOn: "<player> The player",
     returnType: "",
@@ -18868,7 +18868,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "earthquakeForPlayer",
-    desc: "Create an earthquake at the given point, for the given player.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/earthquakeforplayer.htm)",
+    desc: "Create an earthquake at the given point, for the given player.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/earthquakeforplayer.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/earthquakeforplayer.htm)",
     example: "player earthquakeForPlayer(0.3, 3, player.origin, 850);",
     callOn: "<player> The player",
     returnType: "",
@@ -18921,7 +18921,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "enableBulletDrop",
-    desc: "Enables gravity for bullets, making them fall over time. Requires the bullet drop system to be enabled using the g_bulletDrop dvar. Gravity is fixed to 9.81 meters per square seconds. The default initial bullet velocity is about 800 meters per second (see setBulletVelocity). The default bullet drag is one percent of velocity per server frame (see setBulletDrag).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/enablebulletdrop.htm)",
+    desc: "Enables gravity for bullets, making them fall over time. Requires the bullet drop system to be enabled using the g_bulletDrop dvar. Gravity is fixed to 9.81 meters per square seconds. The default initial bullet velocity is about 800 meters per second (see setBulletVelocity). The default bullet drag is one percent of velocity per server frame (see setBulletDrag).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/enablebulletdrop.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/enablebulletdrop.htm)",
     example: "player enableBulletDrop();",
     callOn: "<player> The player",
     returnType: "",
@@ -18942,7 +18942,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "enableBulletImpacts",
-    desc: "Enables bullet impact events (sound + effect) caused by the player's shots. They are enabled by default. Note that player body hits are not covered by this, as these are controlled via finishPlayerDamage and the g_corpseHit dvar.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/enablebulletimpacts.htm)",
+    desc: "Enables bullet impact events (sound + effect) caused by the player's shots. They are enabled by default. Note that player body hits are not covered by this, as these are controlled via finishPlayerDamage and the g_corpseHit dvar.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/enablebulletimpacts.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/enablebulletimpacts.htm)",
     example: "player enableBulletImpacts();",
     callOn: "<player> The player",
     returnType: "",
@@ -18963,7 +18963,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "enableEarthquakes",
-    desc: "Disables a player's immunity against earthquakes.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/enableearthquakes.htm)",
+    desc: "Disables a player's immunity against earthquakes.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/enableearthquakes.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/enableearthquakes.htm)",
     example: "player enableEarthquakes();",
     callOn: "<player> The player",
     returnType: "",
@@ -18984,7 +18984,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "enableItemPickup",
-    desc: "Enables item pickup, including weapons.\n\n*libcod note:* and `disableItemPickup()` into `itemPickup()`\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/enableitempickup.htm)",
+    desc: "Enables item pickup, including weapons.\n\n*libcod note:* and `disableItemPickup()` into `itemPickup()`\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/enableitempickup.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/enableitempickup.htm)",
     example: "player enableItemPickup();",
     callOn: "<player> The player",
     returnType: "",
@@ -19005,7 +19005,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "enableTalkerIcon",
-    desc: "Enables the talker icon for the specified player on the scoreboard and UI (as defined in ui_mp/hud.menu). Also works if the sv_voice dvar is set to \"0\". Does not interfere with sound streamed via playSoundFile.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/enabletalkericon.htm)",
+    desc: "Enables the talker icon for the specified player on the scoreboard and UI (as defined in ui_mp/hud.menu). Also works if the sv_voice dvar is set to \"0\". Does not interfere with sound streamed via playSoundFile.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/enabletalkericon.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/enabletalkericon.htm)",
     example: "player1 enableTalkerIcon(player2);",
     callOn: "<player> The player",
     returnType: "",
@@ -19034,7 +19034,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "executeClientCommand",
-    desc: "Executes a text command on the client like via console input. However, there is some side effects for the player:\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/executeclientcommand.htm)",
+    desc: "Executes a text command on the client like via console input. However, there is some side effects for the player:\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/executeclientcommand.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/executeclientcommand.htm)",
     example: "player executeClientCommand(\"screenshotJPEG\");",
     callOn: "<player> The player",
     returnType: "",
@@ -19063,7 +19063,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "forceShot",
-    desc: "Forces the player to shoot, even during reloading or when out of ammo. Ignores fire delays. Does not reduce ammo. Works for weapons of type bullet and projectile.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/forceshot.htm)",
+    desc: "Forces the player to shoot, even during reloading or when out of ammo. Ignores fire delays. Does not reduce ammo. Works for weapons of type bullet and projectile.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/forceshot.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/forceshot.htm)",
     example: "player forceShot();",
     callOn: "<player> The player",
     returnType: "",
@@ -19100,7 +19100,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "forwardButtonPressed",
-    desc: "Returns whether the player presses the forward movement button.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/forwardbuttonpressed.htm)",
+    desc: "Returns whether the player presses the forward movement button.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/forwardbuttonpressed.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/forwardbuttonpressed.htm)",
     example: "if(player forwardButtonPressed()) ...",
     callOn: "<player> The player",
     returnType: "",
@@ -19121,7 +19121,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "fragButtonPressed",
-    desc: "Returns whether the player presses the frag grenade button.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/fragbuttonpressed.htm)",
+    desc: "Returns whether the player presses the frag grenade button.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/fragbuttonpressed.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/fragbuttonpressed.htm)",
     example: "if(player fragButtonPressed()) ...",
     callOn: "<player> The player",
     returnType: "",
@@ -19142,7 +19142,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getAddressType",
-    desc: "Gets the address type of a player as integer (0 = bot, 1 = bad, 2 = loopback, 3 = broadcast, 4 = IP).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getaddresstype.htm)",
+    desc: "Gets the address type of a player as integer (0 = bot, 1 = bad, 2 = loopback, 3 = broadcast, 4 = IP).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getaddresstype.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getaddresstype.htm)",
     example: "addresstype = player getAddressType();",
     callOn: "<player> The player",
     returnType: "",
@@ -19163,7 +19163,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getBulletMask",
-    desc: "Returns the player's current bullet mask. By default, that is MASK_SHOT, unless overriden by setFireThroughWalls or setBulletMask. Note: Valid bullet mask values can be found in declarations.hpp, starting with CONTENTS_SOLID.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getbulletmask.htm)",
+    desc: "Returns the player's current bullet mask. By default, that is MASK_SHOT, unless overriden by setFireThroughWalls or setBulletMask. Note: Valid bullet mask values can be found in declarations.hpp, starting with CONTENTS_SOLID.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getbulletmask.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getbulletmask.htm)",
     example: "player getBulletMask();",
     callOn: "<player> The player",
     returnType: "",
@@ -19184,7 +19184,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getClientConnectState",
-    desc: "Gets the player's client connect state as integer (2 = connected, 3 = primed, 4 = active).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getclientconnectstate.htm)",
+    desc: "Gets the player's client connect state as integer (2 = connected, 3 = primed, 4 = active).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getclientconnectstate.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getclientconnectstate.htm)",
     example: "state = player getClientConnectState();",
     callOn: "<player> The player",
     returnType: "",
@@ -19205,7 +19205,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getCollisionTeam",
-    desc: "Returns the team(s) which the player has character collision with. Possible return values are 'axis', 'allies', 'none' or 'axis_allies'. Default is 'axis_allies'.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getcollisionteam.htm)",
+    desc: "Returns the team(s) which the player has character collision with. Possible return values are 'axis', 'allies', 'none' or 'axis_allies'. Default is 'axis_allies'.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getcollisionteam.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getcollisionteam.htm)",
     example: "team = player getCollisionTeam();",
     callOn: "<player> The player",
     returnType: "",
@@ -19226,7 +19226,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getCookTime",
-    desc: "Gets the time left until the player's grenade explodes.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getcooktime.htm)",
+    desc: "Gets the time left until the player's grenade explodes.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getcooktime.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getcooktime.htm)",
     example: "cookTime = player getCookTime();",
     callOn: "<player> The player",
     returnType: "",
@@ -19247,7 +19247,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getCurrentWeaponAmmo",
-    desc: "Returns the player's ammo count of the currently held weapon, or zero if no weapon is held (this includes situations like when climbing ladders).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getcurrentweaponammo.htm)",
+    desc: "Returns the player's ammo count of the currently held weapon, or zero if no weapon is held (this includes situations like when climbing ladders).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getcurrentweaponammo.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getcurrentweaponammo.htm)",
     example: "ammo = player getCurrentWeaponAmmo();",
     callOn: "<player> The player",
     returnType: "",
@@ -19268,7 +19268,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getCurrentWeaponClipAmmo",
-    desc: "Returns the player's clip ammo count of the currently held weapon, or zero if no weapon is held (this includes situations like when climbing ladders).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getcurrentweaponclipammo.htm)",
+    desc: "Returns the player's clip ammo count of the currently held weapon, or zero if no weapon is held (this includes situations like when climbing ladders).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getcurrentweaponclipammo.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getcurrentweaponclipammo.htm)",
     example: "clipAmmo = player getCurrentWeaponClipAmmo();",
     callOn: "<player> The player",
     returnType: "",
@@ -19289,7 +19289,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getCurrentWeaponSlot",
-    desc: "Returns the name of the currently used weapon slot (\"none\", \"primary\", or \"primaryb\").\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getcurrentweaponslot.htm)",
+    desc: "Returns the name of the currently used weapon slot (\"none\", \"primary\", or \"primaryb\").\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getcurrentweaponslot.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getcurrentweaponslot.htm)",
     example: "slot = player getCurrentWeaponSlot();",
     callOn: "<player> The player",
     returnType: "",
@@ -19310,7 +19310,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getEnterTime",
-    desc: "Returns the player's enter time.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getentertime.htm)",
+    desc: "Returns the player's enter time.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getentertime.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getentertime.htm)",
     example: "time = player getEnterTime();",
     callOn: "<player> The player",
     returnType: "",
@@ -19331,7 +19331,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getFps",
-    desc: "Returns the player's frames per second.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getfps.htm)",
+    desc: "Returns the player's frames per second.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getfps.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getfps.htm)",
     example: "ping = player getFPS();",
     callOn: "<player> The player",
     returnType: "",
@@ -19352,7 +19352,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getGravity",
-    desc: "Returns the player's individual gravity (integer). Returns zero if the player uses the game's base gravity (see g_gravity dvar).\n\n*libcod note:* libcod renamed `getg_gravity()` → `getGravity()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getgravity.htm)",
+    desc: "Returns the player's individual gravity (integer). Returns zero if the player uses the game's base gravity (see g_gravity dvar).\n\n*libcod note:* libcod renamed `getg_gravity()` → `getGravity()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getgravity.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getgravity.htm)",
     example: "player getGravity();",
     callOn: "<player> The player",
     returnType: "",
@@ -19373,7 +19373,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getGroundEntity",
-    desc: "Returns the entity the player is standing on, or undefined if there is none.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getgroundentity.htm)",
+    desc: "Returns the entity the player is standing on, or undefined if there is none.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getgroundentity.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getgroundentity.htm)",
     example: "ent = player getGroundEntity();",
     callOn: "<player> The player",
     returnType: "",
@@ -19394,7 +19394,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getInactivityTime",
-    desc: "Returns the time when the player was active the last time. Requires the g_inactivity dvar to have a non-zero value. Further notes:\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getinactivitytime.htm)",
+    desc: "Returns the time when the player was active the last time. Requires the g_inactivity dvar to have a non-zero value. Further notes:\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getinactivitytime.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getinactivitytime.htm)",
     example: "time = player getInactivityTime();",
     callOn: "<player> The player",
     returnType: "",
@@ -19415,7 +19415,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getIP",
-    desc: "Gets the IP address of a player.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getip.htm)",
+    desc: "Gets the IP address of a player.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getip.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getip.htm)",
     example: "ip = player getIP();",
     callOn: "<player> The player",
     returnType: "",
@@ -19436,7 +19436,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getJumpSlowdownTimer",
-    desc: "Returns the player's jump slowdown time in ms. The default is 1800 ms. Note: By default, when jumping repeatedly, only the first jump yields the max. height, and subsequent jumps are slowed down.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getjumpslowdowntimer.htm)",
+    desc: "Returns the player's jump slowdown time in ms. The default is 1800 ms. Note: By default, when jumping repeatedly, only the first jump yields the max. height, and subsequent jumps are slowed down.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getjumpslowdowntimer.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getjumpslowdowntimer.htm)",
     example: "time = player getJumpSlowdownTimer();",
     callOn: "<player> The player",
     returnType: "",
@@ -19457,7 +19457,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getLastConnectTime",
-    desc: "Gets the last connect time of a player.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getlastconnecttime.htm)",
+    desc: "Gets the last connect time of a player.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getlastconnecttime.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getlastconnecttime.htm)",
     example: "connecttime = player getLastConnectTime();",
     callOn: "<player> The player",
     returnType: "",
@@ -19478,7 +19478,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getLastGamestateSize",
-    desc: "Gets the player's last gamestate size in bytes (integer).\n\n*libcod note:* libcod renamed `getLastGamestate()` → `getLastGamestateSize()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getlastgamestatesize.htm)",
+    desc: "Gets the player's last gamestate size in bytes (integer).\n\n*libcod note:* libcod renamed `getLastGamestate()` → `getLastGamestateSize()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getlastgamestatesize.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getlastgamestatesize.htm)",
     example: "gamestateSize = player getLastGamestateSize();",
     callOn: "<player> The player",
     returnType: "",
@@ -19499,7 +19499,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getLastMsg",
-    desc: "Gets the last message time of a player, as shown via rcon status.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getlastmsg.htm)",
+    desc: "Gets the last message time of a player, as shown via rcon status.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getlastmsg.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getlastmsg.htm)",
     example: "lastmsg = player getLastMsg();",
     callOn: "<player> The player",
     returnType: "",
@@ -19520,7 +19520,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getNumberOfEntsInSnapshot",
-    desc: "Returns the number of entities in the list of entities to send to the client (see addEntToSnapshots and removeEntFromSnapshots).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getnumberofentsinsnapshot.htm)",
+    desc: "Returns the number of entities in the list of entities to send to the client (see addEntToSnapshots and removeEntFromSnapshots).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getnumberofentsinsnapshot.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getnumberofentsinsnapshot.htm)",
     example: "num = player getNumberOfEntsInSnapshot();",
     callOn: "<player> The player",
     returnType: "",
@@ -19541,7 +19541,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getPing",
-    desc: "Gets the ping of a player.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getping.htm)",
+    desc: "Gets the ping of a player.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getping.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getping.htm)",
     example: "ping = player getPing();",
     callOn: "<player> The player",
     returnType: "",
@@ -19562,7 +19562,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getPlayerstateFlags",
-    desc: "Returns the player's playerState pm_flags.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getplayerstateflags.htm)",
+    desc: "Returns the player's playerState pm_flags.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getplayerstateflags.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getplayerstateflags.htm)",
     example: "flags = player getPlayerstateFlags();",
     callOn: "<player> The player",
     returnType: "",
@@ -19583,7 +19583,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getProtocol",
-    desc: "Returns the player's game protocol version of type integer (115 for version 1.0, 117 for version 1.2, 118 for version 1.3, 119 for version 1.3 via Game Pass).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getprotocol.htm)",
+    desc: "Returns the player's game protocol version of type integer (115 for version 1.0, 117 for version 1.2, 118 for version 1.3, 119 for version 1.3 via Game Pass).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getprotocol.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getprotocol.htm)",
     example: "protocolVersion = player getProtocol();",
     callOn: "<player> The player",
     returnType: "",
@@ -19604,7 +19604,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getProtocolString",
-    desc: "Returns the player's game protocol version as string (\"1.0\", \"1.2\", or \"1.3\").\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getprotocolstring.htm)",
+    desc: "Returns the player's game protocol version as string (\"1.0\", \"1.2\", or \"1.3\").\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getprotocolstring.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getprotocolstring.htm)",
     example: "version = player getProtocolString();",
     callOn: "<player> The player",
     returnType: "",
@@ -19625,7 +19625,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getServerCommandQueueSize",
-    desc: "Returns the number of the player's not yet acknowledged server commands. If a player has more than 128 such commands pending (e.g., due to lag), the player will be disconnected with a server command overflow error (EXE_SERVERCOMMANDOVERFLOW).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getservercommandqueuesize.htm)",
+    desc: "Returns the number of the player's not yet acknowledged server commands. If a player has more than 128 such commands pending (e.g., due to lag), the player will be disconnected with a server command overflow error (EXE_SERVERCOMMANDOVERFLOW).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getservercommandqueuesize.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getservercommandqueuesize.htm)",
     example: "numPendingCommands = player getServerCommandQueueSize();",
     callOn: "<player> The player",
     returnType: "",
@@ -19646,7 +19646,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getSpectatorClient",
-    desc: "Returns the player being following as spectator.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getspectatorclient.htm)",
+    desc: "Returns the player being following as spectator.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getspectatorclient.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getspectatorclient.htm)",
     example: "following = player getSpectatorClient();",
     callOn: "<player> The player",
     returnType: "",
@@ -19667,7 +19667,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getSpeed",
-    desc: "Returns the player's individual speed (integer). Returns zero if the player uses the game's base speed (see g_speed dvar).\n\n*libcod note:* libcod renamed `getg_speed()` → `getSpeed()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getspeed.htm)",
+    desc: "Returns the player's individual speed (integer). Returns zero if the player uses the game's base speed (see g_speed dvar).\n\n*libcod note:* libcod renamed `getg_speed()` → `getSpeed()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getspeed.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getspeed.htm)",
     example: "player getSpeed();",
     callOn: "<player> The player",
     returnType: "",
@@ -19688,7 +19688,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getStance",
-    desc: "Gets the stance of the player. Possible return values are \"stand\", \"crouch\", and \"prone\".\n\n*libcod note:* with those expected by `setStance()`\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getstance.htm)",
+    desc: "Gets the stance of the player. Possible return values are \"stand\", \"crouch\", and \"prone\".\n\n*libcod note:* with those expected by `setStance()`\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getstance.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getstance.htm)",
     example: "if(player getStance() == \"crouch\") ...",
     callOn: "<player> The player",
     returnType: "",
@@ -19709,7 +19709,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getUserinfo",
-    desc: "Gets the value (string) in the player's userinfo string for the given key.\n\n*libcod note:* libcod renamed `get_userinfo()` → `getUserinfo()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getuserinfo.htm)",
+    desc: "Gets the value (string) in the player's userinfo string for the given key.\n\n*libcod note:* libcod renamed `get_userinfo()` → `getUserinfo()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getuserinfo.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getuserinfo.htm)",
     example: "player getUserinfo(\"name\");",
     callOn: "<player> The player",
     returnType: "",
@@ -19738,7 +19738,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getVelocity",
-    desc: "Gets the player's velocity (vector).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getvelocity.htm)",
+    desc: "Gets the player's velocity (vector).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getvelocity.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getvelocity.htm)",
     example: "vel = player getVelocity();",
     callOn: "<player> The player",
     returnType: "",
@@ -19759,7 +19759,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getViewOrigin",
-    desc: "Gets the position of the player's point of view (eye) in first-person mode, returning more precise results than getEye due to the inclusion of internal stance and lean offsets.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getvieworigin.htm)",
+    desc: "Gets the position of the player's point of view (eye) in first-person mode, returning more precise results than getEye due to the inclusion of internal stance and lean offsets.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getvieworigin.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getvieworigin.htm)",
     example: "eyePos = player getViewOrigin();",
     callOn: "<player> The player",
     returnType: "",
@@ -19780,7 +19780,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getWeaponAnimation",
-    desc: "Gets the currently played first-person weapon animation (type integer, see weapAnimNumber_t).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getweaponanimation.htm)",
+    desc: "Gets the currently played first-person weapon animation (type integer, see weapAnimNumber_t).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/getweaponanimation.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/getweaponanimation.htm)",
     example: "anim = player getWeaponAnimation();",
     callOn: "<player> The player",
     returnType: "",
@@ -19801,7 +19801,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "holdBreathButtonPressed",
-    desc: "Returns whether the player presses the hold breath button.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/holdbreathbuttonpressed.htm)",
+    desc: "Returns whether the player presses the hold breath button.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/holdbreathbuttonpressed.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/holdbreathbuttonpressed.htm)",
     example: "if(player holdBreathButtonPressed()) ...",
     callOn: "<player> The player",
     returnType: "",
@@ -19822,7 +19822,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "isAllowingSpectators",
-    desc: "Returns whether the player can be spectated in first-person mode.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/isallowingspectators.htm)",
+    desc: "Returns whether the player can be spectated in first-person mode.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/isallowingspectators.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/isallowingspectators.htm)",
     example: "canBeSpectated = player isAllowingSpectators();",
     callOn: "<player> The player",
     returnType: "",
@@ -19843,7 +19843,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "isBot",
-    desc: "Returns true if the player is a bot.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/isbot.htm)",
+    desc: "Returns true if the player is a bot.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/isbot.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/isbot.htm)",
     example: "if(player isBot()) ...",
     callOn: "<player> The player",
     returnType: "",
@@ -19864,7 +19864,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "isChatting",
-    desc: "Returns true if the player is typing into global or team chat. Also returns true, if the player has a menu open that takes ingame inputs.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/ischatting.htm)",
+    desc: "Returns true if the player is typing into global or team chat. Also returns true, if the player has a menu open that takes ingame inputs.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/ischatting.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/ischatting.htm)",
     example: "if(player isChatting()) ...",
     callOn: "<player> The player",
     returnType: "",
@@ -19885,7 +19885,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "isFiring",
-    desc: "Returns true if the player is currently using a weapon.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/isfiring.htm)",
+    desc: "Returns true if the player is currently using a weapon.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/isfiring.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/isfiring.htm)",
     example: "player isFiring();",
     callOn: "<player> The player",
     returnType: "",
@@ -19906,7 +19906,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "isHiddenFromScoreboard",
-    desc: "Returns whether the player is being listed in the scoreboard or not (hidden).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/ishiddenfromscroreboard.htm)",
+    desc: "Returns whether the player is being listed in the scoreboard or not (hidden).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/ishiddenfromscroreboard.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/ishiddenfromscroreboard.htm)",
     example: "notVisible = player isHiddenFromScoreboard();",
     callOn: "<player> The player",
     returnType: "",
@@ -19927,7 +19927,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "isHiddenFromServerStatus",
-    desc: "Returns whether the player is excluded from server status responses or not.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/ishiddenfromserverstatus.htm)",
+    desc: "Returns whether the player is excluded from server status responses or not.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/ishiddenfromserverstatus.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/ishiddenfromserverstatus.htm)",
     example: "notVisible = player isHiddenFromServerStatus();",
     callOn: "<player> The player",
     returnType: "",
@@ -19948,7 +19948,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "isHoldingWeaponDown",
-    desc: "Returns true if the player is currently holding a weapon down, no matter if triggered by the player or through setHoldingWeaponDown.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/isholdingweapondown.htm)",
+    desc: "Returns true if the player is currently holding a weapon down, no matter if triggered by the player or through setHoldingWeaponDown.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/isholdingweapondown.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/isholdingweapondown.htm)",
     example: "player isHoldingWeaponDown();",
     callOn: "<player> The player",
     returnType: "",
@@ -19969,7 +19969,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "isMantling",
-    desc: "Returns true if the player is currently mantling (on/over).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/ismantling.htm)",
+    desc: "Returns true if the player is currently mantling (on/over).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/ismantling.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/ismantling.htm)",
     example: "if(player isMantling()) ...",
     callOn: "<player> The player",
     returnType: "",
@@ -19990,7 +19990,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "isMeleeing",
-    desc: "Returns true if the player is currently meleeing.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/ismeleeing.htm)",
+    desc: "Returns true if the player is currently meleeing.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/ismeleeing.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/ismeleeing.htm)",
     example: "player isMeleeing();",
     callOn: "<player> The player",
     returnType: "",
@@ -20011,7 +20011,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "isOnLadder",
-    desc: "Returns true if the player is on a ladder.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/isonladder.htm)",
+    desc: "Returns true if the player is on a ladder.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/isonladder.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/isonladder.htm)",
     example: "if(player isOnLadder()) ...",
     callOn: "<player> The player",
     returnType: "",
@@ -20032,7 +20032,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "isRechambering",
-    desc: "Returns true if the player is currently rechambering a weapon. The weapon slot parameter is optional, by default the currently used weapon slot is checked. Returns false if the current weapon slot is \"none\" or if the specified weapon has boltAction disabled.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/isrechambering.htm)",
+    desc: "Returns true if the player is currently rechambering a weapon. The weapon slot parameter is optional, by default the currently used weapon slot is checked. Returns false if the current weapon slot is \"none\" or if the specified weapon has boltAction disabled.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/isrechambering.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/isrechambering.htm)",
     example: "if(player isRechambering()) ...",
     callOn: "<player> The player",
     returnType: "",
@@ -20069,7 +20069,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "isReloading",
-    desc: "Returns true if the player is currently reloading a weapon.\n\n*libcod note:* no longer includes rechambering, see `isRechambering()` for that\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/isreloading.htm)",
+    desc: "Returns true if the player is currently reloading a weapon.\n\n*libcod note:* no longer includes rechambering, see `isRechambering()` for that\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/isreloading.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/isreloading.htm)",
     example: "if(player isReloading()) ...",
     callOn: "<player> The player",
     returnType: "",
@@ -20090,7 +20090,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "isShellShocked",
-    desc: "Returns true if the player is currently affected by shell shock.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/isshellshocked.htm)",
+    desc: "Returns true if the player is currently affected by shell shock.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/isshellshocked.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/isshellshocked.htm)",
     example: "if(player isShellShocked()) ...",
     callOn: "<player> The player",
     returnType: "",
@@ -20111,7 +20111,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "isThrowingGrenade",
-    desc: "Returns true if the player is currently in the process of throwing a grenade.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/isthrowinggrenade.htm)",
+    desc: "Returns true if the player is currently in the process of throwing a grenade.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/isthrowinggrenade.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/isthrowinggrenade.htm)",
     example: "if(player isThrowingGrenade()) ...",
     callOn: "<player> The player",
     returnType: "",
@@ -20132,7 +20132,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "isUseTouching",
-    desc: "Returns true if the player is located close to an activatable entity (e.g., triggers, turrets, dropped weapons).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/isusetouching.htm)",
+    desc: "Returns true if the player is located close to an activatable entity (e.g., triggers, turrets, dropped weapons).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/isusetouching.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/isusetouching.htm)",
     example: "if(player isUseTouching()) ...",
     callOn: "<player> The player",
     returnType: "",
@@ -20153,7 +20153,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "isUsingBinoculars",
-    desc: "Returns true if the player is currently using binoculars.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/isusingbinoculars.htm)",
+    desc: "Returns true if the player is currently using binoculars.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/isusingbinoculars.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/isusingbinoculars.htm)",
     example: "if(player isUsingBinoculars()) ...",
     callOn: "<player> The player",
     returnType: "",
@@ -20174,7 +20174,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "jumpButtonPressed",
-    desc: "Returns whether the player presses the jump button.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/jumpbuttonpressed.htm)",
+    desc: "Returns whether the player presses the jump button.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/jumpbuttonpressed.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/jumpbuttonpressed.htm)",
     example: "if(player jumpButtonPressed()) ...",
     callOn: "<player> The player",
     returnType: "",
@@ -20195,7 +20195,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "leanLeftButtonPressed",
-    desc: "Returns whether the player presses the lean left button.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/leanleftbuttonpressed.htm)",
+    desc: "Returns whether the player presses the lean left button.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/leanleftbuttonpressed.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/leanleftbuttonpressed.htm)",
     example: "if(player leanLeftButtonPressed()) ...",
     callOn: "<player> The player",
     returnType: "",
@@ -20216,7 +20216,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "leanRightButtonPressed",
-    desc: "Returns whether the player presses the lean right button.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/leanrightbuttonpressed.htm)",
+    desc: "Returns whether the player presses the lean right button.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/leanrightbuttonpressed.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/leanrightbuttonpressed.htm)",
     example: "if(player leanRightButtonPressed()) ...",
     callOn: "<player> The player",
     returnType: "",
@@ -20237,7 +20237,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "leftButtonPressed",
-    desc: "Returns whether the player presses the left movement button.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/leftbuttonpressed.htm)",
+    desc: "Returns whether the player presses the left movement button.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/leftbuttonpressed.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/leftbuttonpressed.htm)",
     example: "if(player leftButtonPressed()) ...",
     callOn: "<player> The player",
     returnType: "",
@@ -20258,7 +20258,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "lookAtKiller",
-    desc: "An experimental attempt to make a Team Fortress 2 alike killer camera.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/lookatkiller.htm)",
+    desc: "An experimental attempt to make a Team Fortress 2 alike killer camera.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/lookatkiller.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/lookatkiller.htm)",
     example: "player lookAtKiller(inflictor, attacker);",
     callOn: "<player> The player",
     returnType: "",
@@ -20295,7 +20295,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "noclip",
-    desc: "Sets the player's no-clipping mode.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/noclip.htm)",
+    desc: "Sets the player's no-clipping mode.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/noclip.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/noclip.htm)",
     example: "player noclip(\"on\");",
     callOn: "<player> The player",
     returnType: "",
@@ -20324,7 +20324,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "overrideContents",
-    desc: "Forces the contents mask of a player to the provided value, applied automatically on every server frame. Overrides values set via setContents. Unset the overriden contents mask by setting the first argument to undefined. Returns the previously set contents mask, or undefined on error.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/overridecontents.htm)",
+    desc: "Forces the contents mask of a player to the provided value, applied automatically on every server frame. Overrides values set via setContents. Unset the overriden contents mask by setting the first argument to undefined. Returns the previously set contents mask, or undefined on error.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/overridecontents.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/overridecontents.htm)",
     example: "player overrideContents(fromHex(\"0x1\")); // Player contents mask forced to CONTENTS_SOLID",
     callOn: "<player> The player",
     returnType: "",
@@ -20353,7 +20353,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "processClientCommand",
-    desc: "Processes the client command (e.g., a chat message) that is passed to CodeCallback_PlayerCommand(args), if present in maps\\mp\\gametypes\\_callbacksetup.gsc. Omitting this call causes the client command to be ignored.\n\n*libcod note:* libcod renamed `clientCommand()` → `processClientCommand()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/processclientcommand.htm)",
+    desc: "Processes the client command (e.g., a chat message) that is passed to CodeCallback_PlayerCommand(args), if present in maps\\mp\\gametypes\\_callbacksetup.gsc. Omitting this call causes the client command to be ignored.\n\n*libcod note:* libcod renamed `clientCommand()` → `processClientCommand()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/processclientcommand.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/processclientcommand.htm)",
     example: "player processClientCommand();",
     callOn: "<player> The player",
     returnType: "",
@@ -20374,7 +20374,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "processClientUserinfoChange",
-    desc: "Processes the client's userinfo string update that is passed to CodeCallback_UserInfoChanged(), if present in maps\\mp\\gametypes\\_callbacksetup.gsc. Omitting this call causes the userinfo update to be ignored.\n\n*libcod note:* libcod renamed `clientUserinfoChanged()` → `processClientUserinfoChange()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/processclientuserinfochange.htm)",
+    desc: "Processes the client's userinfo string update that is passed to CodeCallback_UserInfoChanged(), if present in maps\\mp\\gametypes\\_callbacksetup.gsc. Omitting this call causes the userinfo update to be ignored.\n\n*libcod note:* libcod renamed `clientUserinfoChanged()` → `processClientUserinfoChange()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/processclientuserinfochange.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/processclientuserinfochange.htm)",
     example: "player processClientUserinfoChange();",
     callOn: "<player> The player",
     returnType: "",
@@ -20395,7 +20395,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "processSuicide",
-    desc: "Kills the player immediately as a suicide, without going through the CodeCallback_Suicide() callback.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/processsuicide.htm)",
+    desc: "Kills the player immediately as a suicide, without going through the CodeCallback_Suicide() callback.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/processsuicide.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/processsuicide.htm)",
     example: "player processSuicide();",
     callOn: "<player> The player",
     returnType: "",
@@ -20416,7 +20416,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "reloadButtonPressed",
-    desc: "Returns whether the player presses the reload button\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/reloadbuttonpressed.htm)",
+    desc: "Returns whether the player presses the reload button\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/reloadbuttonpressed.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/reloadbuttonpressed.htm)",
     example: "if(player reloadButtonPressed()) ...",
     callOn: "<player> The player",
     returnType: "",
@@ -20437,7 +20437,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "removeEntFromSnapshots",
-    desc: "Removes the specified entity from the list of entities to send to the client. Effective only if the sv_autoAddSnapshotEntities dvar is set to 0 and if archived server snapshots are disabled (see SetArchive). Entities missing in this list are not rendered on the client side, including players.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/removeentfromsnapshots.htm)",
+    desc: "Removes the specified entity from the list of entities to send to the client. Effective only if the sv_autoAddSnapshotEntities dvar is set to 0 and if archived server snapshots are disabled (see SetArchive). Entities missing in this list are not rendered on the client side, including players.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/removeentfromsnapshots.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/removeentfromsnapshots.htm)",
     example: "player removeEntFromSnapshots(ent);",
     callOn: "<player> The player",
     returnType: "",
@@ -20466,7 +20466,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "renameClient",
-    desc: "Renames a client.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/renameclient.htm)",
+    desc: "Renames a client.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/renameclient.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/renameclient.htm)",
     example: "player renameClient(\"Wellknown Soldier\");",
     callOn: "<player> The player",
     returnType: "",
@@ -20495,7 +20495,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "resetNextReliableTime",
-    desc: "Resets the player's flood protection timer. Allows the next client command to be processed without any delay.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/resetnextreliabletime.htm)",
+    desc: "Resets the player's flood protection timer. Allows the next client command to be processed without any delay.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/resetnextreliabletime.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/resetnextreliabletime.htm)",
     example: "player resetNextReliableTime();",
     callOn: "<player> The player",
     returnType: "",
@@ -20516,7 +20516,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "rightButtonPressed",
-    desc: "Returns whether the player presses the right movement button.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/rightbuttonpressed.htm)",
+    desc: "Returns whether the player presses the right movement button.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/rightbuttonpressed.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/rightbuttonpressed.htm)",
     example: "if(player rightButtonPressed()) ...",
     callOn: "<player> The player",
     returnType: "",
@@ -20537,7 +20537,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setActivateOnUseButtonRelease",
-    desc: "Enables/disables whether the activation of entities (e.g., triggers, turrets, dropped weapons) is done on release of the use button, or otherwise already when it is pressed.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setactivateonusebuttonrelease.htm)",
+    desc: "Enables/disables whether the activation of entities (e.g., triggers, turrets, dropped weapons) is done on release of the use button, or otherwise already when it is pressed.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setactivateonusebuttonrelease.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setactivateonusebuttonrelease.htm)",
     example: "player setActivateOnUseButtonRelease(true);",
     callOn: "<player> The player",
     returnType: "",
@@ -20566,7 +20566,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setAllowSpectators",
-    desc: "Enables/disables whether the player can be spectated in first-person mode. If set to false, all other players that currently spectate the player switch to free spectate (third-person) mode.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setallowspectators.htm)",
+    desc: "Enables/disables whether the player can be spectated in first-person mode. If set to false, all other players that currently spectate the player switch to free spectate (third-person) mode.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setallowspectators.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setallowspectators.htm)",
     example: "player setAllowSpectators(false);",
     callOn: "<player> The player",
     returnType: "",
@@ -20595,7 +20595,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setBulletDrag",
-    desc: "Sets the player's bullet slowdown (see enableBulletDrop). The default value is 0.01 (one percent per server frame). Returns the previous drag value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setbulletdrag.htm)",
+    desc: "Sets the player's bullet slowdown (see enableBulletDrop). The default value is 0.01 (one percent per server frame). Returns the previous drag value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setbulletdrag.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setbulletdrag.htm)",
     example: "player setBulletDrag(0.01);",
     callOn: "<player> The player",
     returnType: "",
@@ -20624,7 +20624,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setBulletMask",
-    desc: "Allows to give a player a custom bullet mask for fine-grained definition which surface types bullets should collide with. Does not affect activation of damage triggers. Overrides enabled setFireThroughWalls. Returns the previous bullet mask on success, else undefined. Note: Valid bullet mask values can be found in declarations.hpp, starting with CONTENTS_SOLID.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setbulletmask.htm)",
+    desc: "Allows to give a player a custom bullet mask for fine-grained definition which surface types bullets should collide with. Does not affect activation of damage triggers. Overrides enabled setFireThroughWalls. Returns the previous bullet mask on success, else undefined. Note: Valid bullet mask values can be found in declarations.hpp, starting with CONTENTS_SOLID.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setbulletmask.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setbulletmask.htm)",
     example: "player setBulletMask(fromHex(\"0x2000000\")); // Hits player bodies only",
     callOn: "<player> The player",
     returnType: "",
@@ -20653,7 +20653,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setBulletModel",
-    desc: "Enables visual representation of dropping bullets (see enableBulletDrop) by attaching a model to each bullet. Requires the model to be precached. The optional time parameter defines how long that model remains visible after hitting something (default: 1000 milliseconds). Returns true on success, else undefined.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setbulletmodel.htm)",
+    desc: "Enables visual representation of dropping bullets (see enableBulletDrop) by attaching a model to each bullet. Requires the model to be precached. The optional time parameter defines how long that model remains visible after hitting something (default: 1000 milliseconds). Returns true on success, else undefined.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setbulletmodel.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setbulletmodel.htm)",
     example: "player setBulletModel(\"xmodel/weapon_temp_panzershreck_rocket\", 1000); // Needs to be precached",
     callOn: "<player> The player",
     returnType: "",
@@ -20690,7 +20690,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setBulletVelocity",
-    desc: "Sets the player's initial bullet velocity (see enableBulletDrop). The default value is 31500 units per second (about 800 meters per second). Returns the previous velocity value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setbulletvelocity.htm)",
+    desc: "Sets the player's initial bullet velocity (see enableBulletDrop). The default value is 31500 units per second (about 800 meters per second). Returns the previous velocity value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setbulletvelocity.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setbulletvelocity.htm)",
     example: "player setBulletVelocity(31500);",
     callOn: "<player> The player",
     returnType: "",
@@ -20719,7 +20719,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setCollisionTeam",
-    desc: "Set the team(s) which the player should have character collision with. No collision has precedence in case two players with different settings would collide with each other. Crosshair names (see cg_drawCrosshairNames client dvar) disappear for players that have a different setting than 'axis_allies'.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setcollisionteam.htm)",
+    desc: "Set the team(s) which the player should have character collision with. No collision has precedence in case two players with different settings would collide with each other. Crosshair names (see cg_drawCrosshairNames client dvar) disappear for players that have a different setting than 'axis_allies'.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setcollisionteam.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setcollisionteam.htm)",
     example: "player setCollisionTeam(\"axis\");",
     callOn: "<player> The player",
     returnType: "",
@@ -20748,7 +20748,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setConfigStringForPlayer",
-    desc: "Sets a configstring, but only for the specified player.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setconfigstringforplayer.htm)",
+    desc: "Sets a configstring, but only for the specified player.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setconfigstringforplayer.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setconfigstringforplayer.htm)",
     example: "player setConfigStringForPlayer(index, \"New Text\");",
     callOn: "<player> The player",
     returnType: "",
@@ -20785,7 +20785,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setCurrentWeaponAmmo",
-    desc: "Sets the player's ammo count of the currently held weapon. Returns true on success, or false when no weapon is held (this includes situations like when climbing ladders) or the player is not in an active session state, or undefined on parameter misuse.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setcurrentweaponammo.htm)",
+    desc: "Sets the player's ammo count of the currently held weapon. Returns true on success, or false when no weapon is held (this includes situations like when climbing ladders) or the player is not in an active session state, or undefined on parameter misuse.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setcurrentweaponammo.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setcurrentweaponammo.htm)",
     example: "player setCurrentWeaponAmmo(42);",
     callOn: "<player> The player",
     returnType: "",
@@ -20814,7 +20814,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setCurrentWeaponClipAmmo",
-    desc: "Sets the player's clip ammo count of the currently held weapon. Returns true on success, or false when no weapon is held (this includes situations like when climbing ladders) or the player is not in an active session state, or undefined on parameter misuse.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setcurrentweaponclipammo.htm)",
+    desc: "Sets the player's clip ammo count of the currently held weapon. Returns true on success, or false when no weapon is held (this includes situations like when climbing ladders) or the player is not in an active session state, or undefined on parameter misuse.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setcurrentweaponclipammo.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setcurrentweaponclipammo.htm)",
     example: "player setCurrentWeaponClipAmmo(42);",
     callOn: "<player> The player",
     returnType: "",
@@ -20843,7 +20843,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setFireRangeScale",
-    desc: "Scales the player's fire range. Applies to weapons with weaponType bullet only. Base value is the minDamageRange value for weapons with weaponClass spread, and 8192 for other weapons. The default scale value is 1.0. Returns the previous scale value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setfirerangescale.htm)",
+    desc: "Scales the player's fire range. Applies to weapons with weaponType bullet only. Base value is the minDamageRange value for weapons with weaponClass spread, and 8192 for other weapons. The default scale value is 1.0. Returns the previous scale value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setfirerangescale.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setfirerangescale.htm)",
     example: "player setFireRangeScale(2.0);",
     callOn: "<player> The player",
     returnType: "",
@@ -20872,7 +20872,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setFireThroughWalls",
-    desc: "Enables/disables firing through walls (including other surface types except player bodies), without range limitations. Does not affect activation of damage triggers. Is overriden by setBulletMask. Returns the previous setting.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setfirethroughwalls.htm)",
+    desc: "Enables/disables firing through walls (including other surface types except player bodies), without range limitations. Does not affect activation of damage triggers. Is overriden by setBulletMask. Returns the previous setting.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setfirethroughwalls.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setfirethroughwalls.htm)",
     example: "player setFireThroughWalls(true);",
     callOn: "<player> The player",
     returnType: "",
@@ -20901,7 +20901,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setGravity",
-    desc: "Set the player's individual gravity.\n\n*libcod note:* libcod renamed `setg_gravity()` → `setGravity()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setgravity.htm)",
+    desc: "Set the player's individual gravity.\n\n*libcod note:* libcod renamed `setg_gravity()` → `setGravity()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setgravity.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setgravity.htm)",
     example: "player setGravity(400);",
     callOn: "<player> The player",
     returnType: "",
@@ -20930,7 +20930,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setGuid",
-    desc: "Sets the player's guid.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setguid.htm)",
+    desc: "Sets the player's guid.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setguid.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setguid.htm)",
     example: "player setGuid(123456);",
     callOn: "<player> The player",
     returnType: "",
@@ -20959,7 +20959,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setHiddenFromScoreboard",
-    desc: "Enables/disables whether the player should be listed in the scoreboard. If the hidden player is the only player on the server, team scores in the scoreboard are invisible too.\n\n*libcod note:* no longer affects player visibility in server status responses, added `setHiddenFromServerStatus()` for that\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/sethiddenfromscroreboard.htm)",
+    desc: "Enables/disables whether the player should be listed in the scoreboard. If the hidden player is the only player on the server, team scores in the scoreboard are invisible too.\n\n*libcod note:* no longer affects player visibility in server status responses, added `setHiddenFromServerStatus()` for that\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/sethiddenfromscroreboard.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/sethiddenfromscroreboard.htm)",
     example: "player setHiddenFromScoreboard(true);",
     callOn: "<player> The player",
     returnType: "",
@@ -20988,7 +20988,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setHiddenFromServerStatus",
-    desc: "Enables/disables whether the player should be excluded from server status responses.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/sethiddenfromserverstatus.htm)",
+    desc: "Enables/disables whether the player should be excluded from server status responses.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/sethiddenfromserverstatus.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/sethiddenfromserverstatus.htm)",
     example: "player setHiddenFromServerStatus(true);",
     callOn: "<player> The player",
     returnType: "",
@@ -21017,7 +21017,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setHoldingWeaponDown",
-    desc: "Enables/disables the weapon put away state (visually holding the current weapon down) for the player. Sets the weapon put away animation and blocks other weapon actions (e.g., shooting, switching weapons) until the state is disabled or the player dies. Turrets can be entered, the state is reinstated after leaving the turret. Prevents the player from picking up a weapon (ammo is still picked up). Returns true on success, otherwise (i.e., if the put away state is already enabled or if the player currently holds no weapon) false.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setholdingweapondown.htm)",
+    desc: "Enables/disables the weapon put away state (visually holding the current weapon down) for the player. Sets the weapon put away animation and blocks other weapon actions (e.g., shooting, switching weapons) until the state is disabled or the player dies. Turrets can be entered, the state is reinstated after leaving the turret. Prevents the player from picking up a weapon (ammo is still picked up). Returns true on success, otherwise (i.e., if the put away state is already enabled or if the player currently holds no weapon) false.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setholdingweapondown.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setholdingweapondown.htm)",
     example: "player setHoldingWeaponDown(true);",
     callOn: "<player> The player",
     returnType: "",
@@ -21046,7 +21046,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setJumpHeight",
-    desc: "Sets the player's max. jump height. A negative height parameter value will reset it to the default value of 39.0 units, as defined via the jump_height cheat dvar. Note: By default, when jumping repeatedly, only the first jump yields the max. height, and subsequent jumps are slowed down.\n\n*libcod note:* libcod renamed `setjump_height()` → `setJumpHeight()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setjumpheight.htm)",
+    desc: "Sets the player's max. jump height. A negative height parameter value will reset it to the default value of 39.0 units, as defined via the jump_height cheat dvar. Note: By default, when jumping repeatedly, only the first jump yields the max. height, and subsequent jumps are slowed down.\n\n*libcod note:* libcod renamed `setjump_height()` → `setJumpHeight()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setjumpheight.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setjumpheight.htm)",
     example: "player setJumpHeight(39.0);",
     callOn: "<player> The player",
     returnType: "",
@@ -21075,7 +21075,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setJumpSlowdownEnable",
-    desc: "Toggles the jump slowdown mechanism for the player. An enable parameter value of -1 will reset it to the default mode, as defined via the jump_slowdownEnable cheat dvar. Note: By default, when jumping repeatedly, only the first jump yields the max. height, and subsequent jumps are slowed down.\n\n*libcod note:* libcod renamed `setjump_slowdownenable()` → `setJumpSlowdownEnable()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setjumpslowdownenable.htm)",
+    desc: "Toggles the jump slowdown mechanism for the player. An enable parameter value of -1 will reset it to the default mode, as defined via the jump_slowdownEnable cheat dvar. Note: By default, when jumping repeatedly, only the first jump yields the max. height, and subsequent jumps are slowed down.\n\n*libcod note:* libcod renamed `setjump_slowdownenable()` → `setJumpSlowdownEnable()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setjumpslowdownenable.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setjumpslowdownenable.htm)",
     example: "player setJumpSlowdownEnable(0);",
     callOn: "<player> The player",
     returnType: "",
@@ -21104,7 +21104,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setMeleeHeightScale",
-    desc: "Scales the player's melee height. Base value is the value of the player_meleeHeight dvar. The default scale value is 1.0. Returns the previous scale value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setmeleeheightscale.htm)",
+    desc: "Scales the player's melee height. Base value is the value of the player_meleeHeight dvar. The default scale value is 1.0. Returns the previous scale value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setmeleeheightscale.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setmeleeheightscale.htm)",
     example: "player setMeleeHeightScale(2.0);",
     callOn: "<player> The player",
     returnType: "",
@@ -21133,7 +21133,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setMeleeRangeScale",
-    desc: "Scales the player's melee range. Base value is the value of the player_meleeRange dvar. The default scale value is 1.0. Returns the previous scale value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setmeleerangescale.htm)",
+    desc: "Scales the player's melee range. Base value is the value of the player_meleeRange dvar. The default scale value is 1.0. Returns the previous scale value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setmeleerangescale.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setmeleerangescale.htm)",
     example: "player setMeleeRangeScale(2.0);",
     callOn: "<player> The player",
     returnType: "",
@@ -21162,7 +21162,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setMeleeWidthScale",
-    desc: "Scales the player's melee width. Base value is the value of the player_meleeWidth dvar. The default scale value is 1.0. Returns the previous scale value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setmeleewidthscale.htm)",
+    desc: "Scales the player's melee width. Base value is the value of the player_meleeWidth dvar. The default scale value is 1.0. Returns the previous scale value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setmeleewidthscale.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setmeleewidthscale.htm)",
     example: "player setMeleeWidthScale(2.0);",
     callOn: "<player> The player",
     returnType: "",
@@ -21191,7 +21191,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setNorthYawForPlayer",
-    desc: "Sets the yaw value of north, but only for the specified player.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setnorthyawforplayer.htm)",
+    desc: "Sets the yaw value of north, but only for the specified player.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setnorthyawforplayer.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setnorthyawforplayer.htm)",
     example: "player setNorthYawForPlayer(90.0); // Compass north becomes east wait 1; player setNorthYawForPlayer(0); // Compass north is reset to actual north",
     callOn: "<player> The player",
     returnType: "",
@@ -21220,7 +21220,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setOriginAndAngles",
-    desc: "Sets the player's origin and angles to the specified values, in a smooth way without delay, as opposed to SetOrigin.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setoriginandangles.htm)",
+    desc: "Sets the player's origin and angles to the specified values, in a smooth way without delay, as opposed to SetOrigin.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setoriginandangles.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setoriginandangles.htm)",
     example: "player setOriginAndAngles(self.origin + (0, 0, 64), (0, 90, 0));",
     callOn: "<player> The player",
     returnType: "",
@@ -21257,7 +21257,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setPing",
-    desc: "Sets player's ping. Using undefined as value reenables the player's real ping. When using only one parameter, both values (the one shown on the ingame scoreboard and the other one that is returned within server status messages) are affected.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setping.htm)",
+    desc: "Sets player's ping. Using undefined as value reenables the player's real ping. When using only one parameter, both values (the one shown on the ingame scoreboard and the other one that is returned within server status messages) are affected.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setping.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setping.htm)",
     example: "player setPing(42);",
     callOn: "<player> The player",
     returnType: "",
@@ -21294,7 +21294,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setProneStepSize",
-    desc: "Sets the player's max. step size during prone stance (default: 10.0). Does not affect jump height. Revert this by setting the first argument to undefined. Returns true on success, or undefined on error.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setpronestepsize.htm)",
+    desc: "Sets the player's max. step size during prone stance (default: 10.0). Does not affect jump height. Revert this by setting the first argument to undefined. Returns true on success, or undefined on error.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setpronestepsize.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setpronestepsize.htm)",
     example: "player setProneStepSize(20.0); // Double of default",
     callOn: "<player> The player",
     returnType: "",
@@ -21323,7 +21323,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setRechambering",
-    desc: "Sets the rechambering state for the specified weapon slot. Does not alter the boltAction setting of the affected weapon. The weapon slot parameter is optional, by default the currently used weapon slot is affected. Returns false if the specified weapon slot is \"none\" or if the specified weapon has boltAction disabled.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setrechambering.htm)",
+    desc: "Sets the rechambering state for the specified weapon slot. Does not alter the boltAction setting of the affected weapon. The weapon slot parameter is optional, by default the currently used weapon slot is affected. Returns false if the specified weapon slot is \"none\" or if the specified weapon has boltAction disabled.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setrechambering.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setrechambering.htm)",
     example: "player setRechambering(true, \"primary\");",
     callOn: "<player> The player",
     returnType: "",
@@ -21360,7 +21360,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setSpeed",
-    desc: "Set the player's individual speed.\n\n*libcod note:* libcod renamed `setg_speed()` → `setSpeed()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setspeed.htm)",
+    desc: "Set the player's individual speed.\n\n*libcod note:* libcod renamed `setg_speed()` → `setSpeed()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setspeed.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setspeed.htm)",
     example: "player setSpeed(220);",
     callOn: "<player> The player",
     returnType: "",
@@ -21389,7 +21389,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setStance",
-    desc: "Set the player's stance.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setstance.htm)",
+    desc: "Set the player's stance.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setstance.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setstance.htm)",
     example: "player setStance(\"stand\");",
     callOn: "<player> The player",
     returnType: "",
@@ -21418,7 +21418,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setStepSize",
-    desc: "Sets the player's max. step size during stand and crouch stance (default: 18.0). Does not affect jump height. Revert this by setting the first argument to undefined. Returns true on success, or undefined on error.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setstepsize.htm)",
+    desc: "Sets the player's max. step size during stand and crouch stance (default: 18.0). Does not affect jump height. Revert this by setting the first argument to undefined. Returns true on success, or undefined on error.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setstepsize.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setstepsize.htm)",
     example: "player setStepSize(36.0); // Double of default",
     callOn: "<player> The player",
     returnType: "",
@@ -21447,7 +21447,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setTurretSpreadScale",
-    desc: "Scales the player's bullet spread when firing a turret. Base value is the spread as defined in the weapon file. The default scale value is 1.0. Returns the previous scale value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setturretspreadscale.htm)",
+    desc: "Scales the player's bullet spread when firing a turret. Base value is the spread as defined in the weapon file. The default scale value is 1.0. Returns the previous scale value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setturretspreadscale.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setturretspreadscale.htm)",
     example: "player setTurretSpreadScale(2.0);",
     callOn: "<player> The player",
     returnType: "",
@@ -21476,7 +21476,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setUserinfo",
-    desc: "Sets the key and value in the player's userinfo string.\n\n*libcod note:* libcod renamed `set_userinfo()` → `setUserinfo()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setuserinfo.htm)",
+    desc: "Sets the key and value in the player's userinfo string.\n\n*libcod note:* libcod renamed `set_userinfo()` → `setUserinfo()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setuserinfo.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setuserinfo.htm)",
     example: "player setUserinfo(\"name\", \"KILLTUBE\");",
     callOn: "<player> The player",
     returnType: "",
@@ -21513,7 +21513,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setVelocity",
-    desc: "Set the player's velocity.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setvelocity.htm)",
+    desc: "Set the player's velocity.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setvelocity.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setvelocity.htm)",
     example: "player setVelocity((-400, 0, 100));",
     callOn: "<player> The player",
     returnType: "",
@@ -21542,7 +21542,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setWeaponSpreadScale",
-    desc: "Scales the player's bullet/rocket spread, for all weapons except turrets (see setTurretSpreadScale). Base value is the spread as defined in each weapon file. The default scale value is 1.0. Returns the previous scale value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setweaponspreadscale.htm)",
+    desc: "Scales the player's bullet/rocket spread, for all weapons except turrets (see setTurretSpreadScale). Base value is the spread as defined in each weapon file. The default scale value is 1.0. Returns the previous scale value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/setweaponspreadscale.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/setweaponspreadscale.htm)",
     example: "player setWeaponSpreadScale(2.0);",
     callOn: "<player> The player",
     returnType: "",
@@ -21571,7 +21571,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "smokeButtonPressed",
-    desc: "Returns whether the player presses the smoke grenade button.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/smokebuttonpressed.htm)",
+    desc: "Returns whether the player presses the smoke grenade button.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/smokebuttonpressed.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/smokebuttonpressed.htm)",
     example: "if(player smokeButtonPressed()) ...",
     callOn: "<player> The player",
     returnType: "",
@@ -21592,7 +21592,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "useEntity",
-    desc: "Makes the player use/activate the specified entity (items, triggers, etc.).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/useentity.htm)",
+    desc: "Makes the player use/activate the specified entity (items, triggers, etc.).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/player/useentity.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/player/useentity.htm)",
     example: "player useEntity(ent);",
     callOn: "<player> The player",
     returnType: "",
@@ -21623,7 +21623,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "clientHasClientMuted",
-    desc: "Returns true if the specified player has been muted.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/clienthasclientmuted.htm)",
+    desc: "Returns true if the specified player has been muted.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/clienthasclientmuted.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/sound/clienthasclientmuted.htm)",
     example: "if(self clientHasClientMuted(player)) ...",
     callOn: "<player> The player",
     returnType: "",
@@ -21652,7 +21652,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "disableSilent",
-    desc: "Reenables some sounds that a player emits during gameplay. This restores footstep, landing, jumping, and foliage sounds for the player so that other players can hear them.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/disablesilent.htm)",
+    desc: "Reenables some sounds that a player emits during gameplay. This restores footstep, landing, jumping, and foliage sounds for the player so that other players can hear them.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/disablesilent.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/sound/disablesilent.htm)",
     example: "self disableSilent();",
     callOn: "<player> The player",
     returnType: "",
@@ -21673,7 +21673,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "enableSilent",
-    desc: "Disables some sounds that a player emits during gameplay. Further notes:\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/enablesilent.htm)",
+    desc: "Disables some sounds that a player emits during gameplay. Further notes:\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/enablesilent.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/sound/enablesilent.htm)",
     example: "self enableSilent();",
     callOn: "<player> The player",
     returnType: "",
@@ -21694,7 +21694,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getRemainingSoundFileDuration",
-    desc: "Returns the currently playing sound's (if played via playSoundFile) remaining duration in seconds (float). Returns 0.0 if no such sound is playing.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/getremainingsoundfileduration.htm)",
+    desc: "Returns the currently playing sound's (if played via playSoundFile) remaining duration in seconds (float). Returns 0.0 if no such sound is playing.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/getremainingsoundfileduration.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/sound/getremainingsoundfileduration.htm)",
     example: "playbackTimeLeft = self getRemainingSoundFileDuration();",
     callOn: "<player> The player",
     returnType: "",
@@ -21715,7 +21715,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getSoundAliasesFromFile",
-    desc: "Returns the sound alias names (array of strings) for the given file, as they were parsed on map load. The file name is expected to be provided without path (\"soundaliases/\") and suffix (\".csv\") information. If the file does not exist or does not contain applicable content (see note below), an empty array is returned. Note: Similar to soundExists, sound aliases with a loadspec that does not include the current map are not returned.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/getsoundaliasesfromfile.htm)",
+    desc: "Returns the sound alias names (array of strings) for the given file, as they were parsed on map load. The file name is expected to be provided without path (\"soundaliases/\") and suffix (\".csv\") information. If the file does not exist or does not contain applicable content (see note below), an empty array is returned. Note: Similar to soundExists, sound aliases with a loadspec that does not include the current map are not returned.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/getsoundaliasesfromfile.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/sound/getsoundaliasesfromfile.htm)",
     example: "aliases = getSoundAliasesFromFile(\"iw_sound2\"); if(isDefined(aliases)) logPrintConsole(aliases.size + \" aliases found\\n\"); else logPrintConsole(\"<undefined>\\n\");",
     callOn: "",
     returnType: "",
@@ -21736,7 +21736,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getSoundDuration",
-    desc: "Returns the sound's duration in seconds (float), if the sound alias exists. Note: This function can cause lags if used during gameplay. Therefore, it is recommended to call it right on map load to collect all required information. Note: Similar to soundExists, this function returns undefined if the current map is not defined in the sound alias' loadspec.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/getsoundduration.htm)",
+    desc: "Returns the sound's duration in seconds (float), if the sound alias exists. Note: This function can cause lags if used during gameplay. Therefore, it is recommended to call it right on map load to collect all required information. Note: Similar to soundExists, this function returns undefined if the current map is not defined in the sound alias' loadspec.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/getsoundduration.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/sound/getsoundduration.htm)",
     example: "duration = getSoundDuration(\"ctf_touchown\");",
     callOn: "",
     returnType: "",
@@ -21757,7 +21757,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getSoundFileDuration",
-    desc: "Returns the sound's duration in seconds (float) if played via playSoundFile. The input file path is built relative to the fs_homepath dvar. The input file is expected to be a raw (header-less) WAV file in signed 16-bit PCM mode (Little Endian), with a single channel (mono) and a sampling rate of 8192 Hz. The sound duration is capped to MAX_CUSTOMSOUNDDURATION minutes, unless the override limit parameter is set to true.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/getsoundfileduration.htm)",
+    desc: "Returns the sound's duration in seconds (float) if played via playSoundFile. The input file path is built relative to the fs_homepath dvar. The input file is expected to be a raw (header-less) WAV file in signed 16-bit PCM mode (Little Endian), with a single channel (mono) and a sampling rate of 8192 Hz. The sound duration is capped to MAX_CUSTOMSOUNDDURATION minutes, unless the override limit parameter is set to true.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/getsoundfileduration.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/sound/getsoundfileduration.htm)",
     example: "duration = getSoundFileDuration(\"/tmp/test.wav.raw\", true);",
     callOn: "",
     returnType: "",
@@ -21786,7 +21786,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getSoundInfo",
-    desc: "Returns the sound's title and artist strings from its MP3 ID3 tags, if the sound alias exists and the file is an MP3 file. Note: This function can cause lags if used during gameplay. Therefore, it is recommended to call it right on map load to collect all required information. Note: Similar to soundExists, this function returns undefined if the current map is not defined in the sound alias' loadspec.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/getsoundinfo.htm)",
+    desc: "Returns the sound's title and artist strings from its MP3 ID3 tags, if the sound alias exists and the file is an MP3 file. Note: This function can cause lags if used during gameplay. Therefore, it is recommended to call it right on map load to collect all required information. Note: Similar to soundExists, this function returns undefined if the current map is not defined in the sound alias' loadspec.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/getsoundinfo.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/sound/getsoundinfo.htm)",
     example: "info = getSoundInfo(\"music123\"); title = info[\"title\"]; artist = info[\"artist\"];",
     callOn: "",
     returnType: "",
@@ -21807,7 +21807,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "isPlayingSoundFile",
-    desc: "Returns which sound (slot index) initiated via playSoundFile is being played, or zero if none.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/isplayingsoundfile.htm)",
+    desc: "Returns which sound (slot index) initiated via playSoundFile is being played, or zero if none.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/isplayingsoundfile.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/sound/isplayingsoundfile.htm)",
     example: "playback = self isPlayingSoundFile();",
     callOn: "<player> The player",
     returnType: "",
@@ -21828,7 +21828,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "loadSoundFile",
-    desc: "Loads and encodes a sound file for use with playSoundFile. The input file path is built relative to the fs_homepath dvar. The input file is expected to be a raw (header-less) WAV file in signed 16-bit PCM mode (Little Endian), with a single channel (mono) and a sampling rate of 8192 Hz. On completion of the (threaded) encoding procedure, the callback function is called unless the map has been changed or reloaded (not a fast_restart) in the meantime. The sound duration is capped to MAX_CUSTOMSOUNDDURATION minutes. The number of available sound slots is capped to MAX_CUSTOMSOUNDS. Slots can be reused (to replace sound data) via the sound slot index parameter. playSoundFile can be used already before encoding finishes. Avoid running two encoding jobs on the same sound slot at the same time. Sound data is retained across map switches. Changing the sv_voiceQuality dvar has no effect on already encoded data, so it should be set accordingly before encoding data. The function itself returns the destination sound slot index on success, else undefined. Note: Due to engine limitations, the sound quality is rather low and also depends on the connection quality (packet loss) of the receiving player.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/loadsoundfile.htm)",
+    desc: "Loads and encodes a sound file for use with playSoundFile. The input file path is built relative to the fs_homepath dvar. The input file is expected to be a raw (header-less) WAV file in signed 16-bit PCM mode (Little Endian), with a single channel (mono) and a sampling rate of 8192 Hz. On completion of the (threaded) encoding procedure, the callback function is called unless the map has been changed or reloaded (not a fast_restart) in the meantime. The sound duration is capped to MAX_CUSTOMSOUNDDURATION minutes. The number of available sound slots is capped to MAX_CUSTOMSOUNDS. Slots can be reused (to replace sound data) via the sound slot index parameter. playSoundFile can be used already before encoding finishes. Avoid running two encoding jobs on the same sound slot at the same time. Sound data is retained across map switches. Changing the sv_voiceQuality dvar has no effect on already encoded data, so it should be set accordingly before encoding data. The function itself returns the destination sound slot index on success, else undefined. Note: Due to engine limitations, the sound quality is rather low and also depends on the connection quality (packet loss) of the receiving player.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/loadsoundfile.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/sound/loadsoundfile.htm)",
     example: "loadSound() { index = loadSoundFile(\"/tmp/test.wav.raw\", ::encoderDone); if(!isDefined(index)) iprintLn(\"Error at passing sound to encoder, check console for details\"); } encoderDone(index, result) { switch(result) { case 0: iprintLn(\"Sound with index \" + index + \" finished encoding successfully\"); break; case 1: iprintLn(\"Sound with index \" + index + \" is too long and will end playback at max. sound duration\"); break; case 2: iprintLn(\"Sound with index \" + index + \" ran into a file not found error\"); break; case 3: iprintLn(\"Sound with index \" + index + \" ran into an issue while trying to read from the specified file\"); break; default: break; } }",
     callOn: "",
     returnType: "",
@@ -21873,7 +21873,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "loadSpeexFile",
-    desc: "Loads a speex-encoded sound file into the specified sound slot. The input file path is built relative to the fs_homepath dvar. The input file is expected to contain a sequence of voice packets of type VoicePacket_t, as saved by saveSpeexFile. The number of available sound slots is capped to MAX_CUSTOMSOUNDS. Returns true on success, else false.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/loadspeexfile.htm)",
+    desc: "Loads a speex-encoded sound file into the specified sound slot. The input file path is built relative to the fs_homepath dvar. The input file is expected to contain a sequence of voice packets of type VoicePacket_t, as saved by saveSpeexFile. The number of available sound slots is capped to MAX_CUSTOMSOUNDS. Returns true on success, else false.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/loadspeexfile.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/sound/loadspeexfile.htm)",
     example: "loadSpeex() { if(!loadSpeexFile(\"/tmp/test.spx\", 1)) iprintLn(\"Error at loading sound data, check console for details\"); }",
     callOn: "",
     returnType: "",
@@ -21902,7 +21902,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "muteClient",
-    desc: "Mutes player B for player A.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/muteclient.htm)",
+    desc: "Mutes player B for player A.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/muteclient.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/sound/muteclient.htm)",
     example: "player_a muteClient(player_b getEntityNumber());",
     callOn: "<player> The player",
     returnType: "",
@@ -21931,7 +21931,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "playSoundFile",
-    desc: "Plays a song via voice chat, based on a sound slot index returned from loadSoundFile or loadSpeexFile. Only one sound can be played at a time. Requires sv_fps to be set to 20 (default), otherwise sound may playback distorted. A script notify with string \"sound_file_done\" is emit for the player as soon as the last voice packet has been queued for sending. Real voice chat coming from the source player will temporarily pause the custom audio stream and resumes automatically (you might use getRemainingSoundFileDuration to see if that is or was the case). This function also works with sv_voice set to \"0\". Playback stops if the source player disconnects. Playback does not stop if mutePlayer is issued in the player's console. Playback stops if cl_voice is set to \"0\" on the player or if the source player is muted manually via uiScript. Returns true on success, else false. Note: Due to engine limitations, the sound quality is rather low and also depends on the connection quality (packet loss) of the receiving player.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/playsoundfile.htm)",
+    desc: "Plays a song via voice chat, based on a sound slot index returned from loadSoundFile or loadSpeexFile. Only one sound can be played at a time. Requires sv_fps to be set to 20 (default), otherwise sound may playback distorted. A script notify with string \"sound_file_done\" is emit for the player as soon as the last voice packet has been queued for sending. Real voice chat coming from the source player will temporarily pause the custom audio stream and resumes automatically (you might use getRemainingSoundFileDuration to see if that is or was the case). This function also works with sv_voice set to \"0\". Playback stops if the source player disconnects. Playback does not stop if mutePlayer is issued in the player's console. Playback stops if cl_voice is set to \"0\" on the player or if the source player is muted manually via uiScript. Returns true on success, else false. Note: Due to engine limitations, the sound quality is rather low and also depends on the connection quality (packet loss) of the receiving player.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/playsoundfile.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/sound/playsoundfile.htm)",
     example: "self playSoundFile(index, 0, self getEntityNumber());",
     callOn: "<player> The player",
     returnType: "",
@@ -21976,7 +21976,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "saveSpeexFile",
-    desc: "Saves sound data from the specified sound slot to the specified file on disk. The output file path is built relative to the fs_homepath dvar. Requires sound data to be loaded into the specified slot first. Returns true on success, else false.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/savespeexfile.htm)",
+    desc: "Saves sound data from the specified sound slot to the specified file on disk. The output file path is built relative to the fs_homepath dvar. Requires sound data to be loaded into the specified slot first. Returns true on success, else false.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/savespeexfile.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/sound/savespeexfile.htm)",
     example: "saveSpeex(index) { if(!saveSpeexFile(index, \"/tmp/test.spx\")) iprintLn(\"Error at saving sound data, check console for details\"); }",
     callOn: "",
     returnType: "",
@@ -22005,7 +22005,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "stopSoundFile",
-    desc: "Stops sound playback that was initiated via playSoundFile. Returns whether a sound was playing. A script notify with string \"sound_file_stop\" is emit if a sound was playing.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/stopsoundfile.htm)",
+    desc: "Stops sound playback that was initiated via playSoundFile. Returns whether a sound was playing. A script notify with string \"sound_file_stop\" is emit if a sound was playing.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/stopsoundfile.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/sound/stopsoundfile.htm)",
     example: "self stopSoundFile();",
     callOn: "<player> The player",
     returnType: "",
@@ -22026,7 +22026,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "unmuteClient",
-    desc: "Unmutes player B for player A.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/unmuteclient.htm)",
+    desc: "Unmutes player B for player A.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/sound/unmuteclient.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/sound/unmuteclient.htm)",
     example: "player_a unmuteClient(player_b getEntityNumber());",
     callOn: "<player> The player",
     returnType: "",
@@ -22057,7 +22057,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "chr",
-    desc: "Returns the string representing a character at the given code point (e.g., an \"A\" character for 65 as input).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/chr.htm)",
+    desc: "Returns the string representing a character at the given code point (e.g., an \"A\" character for 65 as input).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/chr.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/chr.htm)",
     example: "c = chr(99);",
     callOn: "",
     returnType: "",
@@ -22078,7 +22078,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "error",
-    desc: "The function will throw a script error. If the server loaded the current map in developer mode or the optional terminal parameter is set to true, the server will halt.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/error.htm)",
+    desc: "The function will throw a script error. If the server loaded the current map in developer mode or the optional terminal parameter is set to true, the server will halt.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/error.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/error.htm)",
     example: "error(\"unexpected value in function x\", false);",
     callOn: "",
     returnType: "",
@@ -22107,7 +22107,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "executeCommand",
-    desc: "Executes a text command on the server like via rcon or console input. Note: The execution of map commands (map, devmap, fast_restart, map_restart, map_rotate) is not supported and can result in a server crash.\n\n*libcod note:* libcod renamed `cmd_executestring()` → `executeCommand()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/executecommand.htm)",
+    desc: "Executes a text command on the server like via rcon or console input. Note: The execution of map commands (map, devmap, fast_restart, map_restart, map_rotate) is not supported and can result in a server crash.\n\n*libcod note:* libcod renamed `cmd_executestring()` → `executeCommand()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/executecommand.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/executecommand.htm)",
     example: "executeCommand(\"say Welcome to our server!\");",
     callOn: "",
     returnType: "",
@@ -22128,7 +22128,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "file_exists",
-    desc: "Checks if a file exists.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/file_exists.htm)",
+    desc: "Checks if a file exists.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/file_exists.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/file_exists.htm)",
     example: "exists = file_exists(\"/home/server/main/server.cfg\");",
     callOn: "",
     returnType: "",
@@ -22149,7 +22149,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "file_link",
-    desc: "Creates a new link to an existing file. Returns 0 on success or -1 as error.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/file_link.htm)",
+    desc: "Creates a new link to an existing file. Returns 0 on success or -1 as error.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/file_link.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/file_link.htm)",
     example: "linked = file_link(\"/home/server/files/mp_map.iwd\", \"/home/server/mod/mp_map.iwd\");",
     callOn: "",
     returnType: "",
@@ -22178,7 +22178,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "file_unlink",
-    desc: "Deletes a file from the file system. Returns 0 on success or -1 as error.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/file_unlink.htm)",
+    desc: "Deletes a file from the file system. Returns 0 on success or -1 as error.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/file_unlink.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/file_unlink.htm)",
     example: "unlinked = file_unlink(\"/home/server/mod/mp_map.iwd\");",
     callOn: "",
     returnType: "",
@@ -22199,7 +22199,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "findConfigStringIndex",
-    desc: "If found, returns the index of a given configstring that is searched within the given index range. Returns true if the configstring could not be found, or at the first empty configstring within the given index range.\n\n*libcod note:* libcod renamed `g_findConfigStringIndex()` → `findConfigStringIndex()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/findConfigStringIndex.htm)",
+    desc: "If found, returns the index of a given configstring that is searched within the given index range. Returns true if the configstring could not be found, or at the first empty configstring within the given index range.\n\n*libcod note:* libcod renamed `g_findConfigStringIndex()` → `findConfigStringIndex()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/findConfigStringIndex.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/findConfigStringIndex.htm)",
     example: "index = findConfigStringIndex(\"Text\", 1310, 1566);",
     callOn: "",
     returnType: "",
@@ -22236,7 +22236,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "findConfigStringIndexOriginal",
-    desc: "If found, returns the index of a given configstring that is searched within the given index range. Raises a script runtime error if the configstring could not be found and the create parameter is set to false. Halts the server if the given configstring should be created, but no configstrings are free in the given index range.\n\n*libcod note:* libcod renamed `g_findConfigStringIndexOriginal()` → `findConfigStringIndexOriginal()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/findConfigStringIndexOriginal.htm)",
+    desc: "If found, returns the index of a given configstring that is searched within the given index range. Raises a script runtime error if the configstring could not be found and the create parameter is set to false. Halts the server if the given configstring should be created, but no configstrings are free in the given index range.\n\n*libcod note:* libcod renamed `g_findConfigStringIndexOriginal()` → `findConfigStringIndexOriginal()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/findConfigStringIndexOriginal.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/findConfigStringIndexOriginal.htm)",
     example: "index = findConfigStringIndexOriginal(\"New Text\", 1310, 1566, false);",
     callOn: "",
     returnType: "",
@@ -22281,7 +22281,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "fromHex",
-    desc: "Returns the signed integer value of a hexadecimal-formatted string (e.g., \"0x1AB2\" or \"1AB2\").\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/fromhex.htm)",
+    desc: "Returns the signed integer value of a hexadecimal-formatted string (e.g., \"0x1AB2\" or \"1AB2\").\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/fromhex.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/fromhex.htm)",
     example: "num = fromHex(\"0xDEADBEEF\");",
     callOn: "",
     returnType: "",
@@ -22302,7 +22302,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getAscii",
-    desc: "Returns the signed ASCII number of the first character. Extended ASCII characters therefore return a negative value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/getascii.htm)",
+    desc: "Returns the signed ASCII number of the first character. Extended ASCII characters therefore return a negative value.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/getascii.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/getascii.htm)",
     example: "ascii = getAscii(\"a\");",
     callOn: "",
     returnType: "",
@@ -22323,7 +22323,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getConfigString",
-    desc: "Returns the configstring at the given index, or undefined if the configstring is empty. The index ranges for the respecive resources are allocated as follows:\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/getconfigstring.htm)",
+    desc: "Returns the configstring at the given index, or undefined if the configstring is empty. The index ranges for the respecive resources are allocated as follows:\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/getconfigstring.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/getconfigstring.htm)",
     example: "s = getConfigString(1310);",
     callOn: "",
     returnType: "",
@@ -22344,7 +22344,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getCvarFlags",
-    desc: "Gets the flags of a cvar (e.g., 0x80 is set for cheat-protected cvars). Returns an error (undefined) if the cvar does not exist.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/getcvarflags.htm)",
+    desc: "Gets the flags of a cvar (e.g., 0x80 is set for cheat-protected cvars). Returns an error (undefined) if the cvar does not exist.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/getcvarflags.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/getcvarflags.htm)",
     example: "// MakeCvarServerInfo check if ( getCvarFlags(\"ui_menutext\") & 0x100 ) ...",
     callOn: "",
     returnType: "",
@@ -22365,7 +22365,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getLastTestClientNumber",
-    desc: "Returns last test client number.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/getlasttestclientnumber.htm)",
+    desc: "Returns last test client number.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/getlasttestclientnumber.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/getlasttestclientnumber.htm)",
     example: "lastTestClientNumber = getLastTestClientNumber();",
     callOn: "",
     returnType: "",
@@ -22378,7 +22378,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getLocalTime",
-    desc: "Returns the local time in the format 'Www Mmm dd hh:mm:ss yyyy'.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/getlocaltime.htm)",
+    desc: "Returns the local time in the format 'Www Mmm dd hh:mm:ss yyyy'.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/getlocaltime.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/getlocaltime.htm)",
     example: "localTime = getLocalTime();",
     callOn: "",
     returnType: "",
@@ -22391,7 +22391,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getMicroseconds",
-    desc: "Returns the server's start time (integer) in microseconds. Always returns a positive number. The value overflows (i.e., starts again from zero) every ~35 minutes of server uptime. Due to this high precision and therefore low interval time, this function may fit well for benchmarking/debugging tasks, but not for monitoring long-running procedures. However, keep in mind that this function will introduce some overhead on its own.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/getmicroseconds.htm)",
+    desc: "Returns the server's start time (integer) in microseconds. Always returns a positive number. The value overflows (i.e., starts again from zero) every ~35 minutes of server uptime. Due to this high precision and therefore low interval time, this function may fit well for benchmarking/debugging tasks, but not for monitoring long-running procedures. However, keep in mind that this function will introduce some overhead on its own.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/getmicroseconds.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/getmicroseconds.htm)",
     example: "time = getMicroseconds(); for(i = 0; i < 1000; i++) bulletTrace((0, 0, 0), (0, 0, 8192), true, undefined); logPrintConsole(\"Delta: \" + (getMicroseconds() - time) + \"us\\n\");",
     callOn: "",
     returnType: "",
@@ -22404,7 +22404,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getMilliseconds",
-    desc: "Returns the server's start time (integer) in milliseconds. Always returns a positive number. The value overflows (i.e., starts again from zero) every ~24 days of server uptime.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/getmilliseconds.htm)",
+    desc: "Returns the server's start time (integer) in milliseconds. Always returns a positive number. The value overflows (i.e., starts again from zero) every ~24 days of server uptime.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/getmilliseconds.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/getmilliseconds.htm)",
     example: "startStartTimeInMs = getMilliseconds();",
     callOn: "",
     returnType: "",
@@ -22417,7 +22417,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getServerStartTime",
-    desc: "Returns server start time in the number of seconds since 00:00 hours, Jan 1, 1970 UTC.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/getserverstarttime.htm)",
+    desc: "Returns server start time in the number of seconds since 00:00 hours, Jan 1, 1970 UTC.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/getserverstarttime.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/getserverstarttime.htm)",
     example: "serverStartTime = getServerStartTime();",
     callOn: "",
     returnType: "",
@@ -22438,7 +22438,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getSurfaceName",
-    desc: "Returns the surface name (string) for a given surface type index.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/getsurfacename.htm)",
+    desc: "Returns the surface name (string) for a given surface type index.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/getsurfacename.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/getsurfacename.htm)",
     example: "surface = getSurfaceName(0); // \"default\"",
     callOn: "",
     returnType: "",
@@ -22459,7 +22459,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getSystemTime",
-    desc: "Returns system time (integer) in number of seconds since 00:00 hours, Jan 1, 1970 UTC.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/getsystemtime.htm)",
+    desc: "Returns system time (integer) in number of seconds since 00:00 hours, Jan 1, 1970 UTC.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/getsystemtime.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/getsystemtime.htm)",
     example: "systemTime = getSystemTime();",
     callOn: "",
     returnType: "",
@@ -22472,7 +22472,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getType",
-    desc: "Returns the type of the parameter. A list of possible types can be found here: [link].\n\n*libcod note:* now correctly resolves object types (e.g., struct, array, entity)\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/gettype.htm)",
+    desc: "Returns the type of the parameter. A list of possible types can be found here: [link].\n\n*libcod note:* now correctly resolves object types (e.g., struct, array, entity)\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/gettype.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/gettype.htm)",
     example: "type = getType(\"parameter\");",
     callOn: "",
     returnType: "",
@@ -22493,7 +22493,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "kick",
-    desc: "Kicks the specified player, optionally with a message that is shown to the client after being disconnected.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/kick.htm)",
+    desc: "Kicks the specified player, optionally with a message that is shown to the client after being disconnected.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/kick.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/kick.htm)",
     example: "kick(self getEntityNumber(), \"Kicked from server\");",
     callOn: "",
     returnType: "",
@@ -22522,7 +22522,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "loadDir",
-    desc: "Loads a file system directory.\n\n*libcod note:* libcod renamed `fs_loaddir()` → `loadDir()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/loaddir.htm)",
+    desc: "Loads a file system directory.\n\n*libcod note:* libcod renamed `fs_loaddir()` → `loadDir()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/loaddir.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/loaddir.htm)",
     example: "loaded = loadDir(\"/home/server/\", \"mod\");",
     callOn: "",
     returnType: "",
@@ -22551,7 +22551,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "logPrintConsole",
-    desc: "Prints to the server log file and console. The newline character is not added by default.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/logprintconsole.htm)",
+    desc: "Prints to the server log file and console. The newline character is not added by default.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/logprintconsole.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/logprintconsole.htm)",
     example: "",
     callOn: "",
     returnType: "",
@@ -22572,7 +22572,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "makeClientLocalizedString",
-    desc: "Converts a regular string to a localized string (for use on the client side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/makeclientlocalizedstring.htm)",
+    desc: "Converts a regular string to a localized string (for use on the client side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/makeclientlocalizedstring.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/makeclientlocalizedstring.htm)",
     example: "// If self is a player: sendCommandToClient(self getEntityNumber(), \"h \\\"(\" + makeClientLocalizedString(\"GAME_DEAD\") + \")^7\" + self.name + \"^7: I just died.\");",
     callOn: "",
     returnType: "",
@@ -22593,7 +22593,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "makeLocalizedString",
-    desc: "Converts a regular string to a localized string (on the server side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/makelocalizedstring.htm)",
+    desc: "Converts a regular string to a localized string (on the server side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/makelocalizedstring.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/makelocalizedstring.htm)",
     example: "// If self is a player, level.hud_text a hud element, and text a valid config string: text = \"Welcome \" + self.name; level.hud_text setText(makeLocalizedString(text));",
     callOn: "",
     returnType: "",
@@ -22614,7 +22614,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "makeString",
-    desc: "Converts a localized string to a regular string (on the server side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/makestring.htm)",
+    desc: "Converts a localized string to a regular string (on the server side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/makestring.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/makestring.htm)",
     example: "// Returns \"QUICKMESSAGE_GRENADE\" text = makeString(&\"QUICKMESSAGE_GRENADE\");",
     callOn: "",
     returnType: "",
@@ -22635,7 +22635,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "ord",
-    desc: "Returns the integer code point value for a given string character (e.g., 65 for an \"A\" character as input).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/ord.htm)",
+    desc: "Returns the integer code point value for a given string character (e.g., 65 for an \"A\" character as input).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/ord.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/ord.htm)",
     example: "i = ord(\"A\");",
     callOn: "",
     returnType: "",
@@ -22656,7 +22656,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "printf",
-    desc: "Prints a message in the server console. Use % to replace it with argument.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/printf.htm)",
+    desc: "Prints a message in the server console. Use % to replace it with argument.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/printf.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/printf.htm)",
     example: "printf(\"server % message\\n\", \"console\");",
     callOn: "",
     returnType: "",
@@ -22685,7 +22685,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "processRemoteCommand",
-    desc: "libcod function processRemoteCommand.\n\n*libcod note:* no longer requires any parameters to be passed in\n\n*libcod note:* libcod renamed `remoteCommand()` → `processRemoteCommand()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/processremotecommand.htm)",
+    desc: "libcod function processRemoteCommand.\n\n*libcod note:* no longer requires any parameters to be passed in\n\n*libcod note:* libcod renamed `remoteCommand()` → `processRemoteCommand()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/processremotecommand.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/processremotecommand.htm)",
     example: "CodeCallback_RemoteCommand(from, args) { processRemoteCommand(); }",
     callOn: "",
     returnType: "",
@@ -22698,7 +22698,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "sendCommandToClient",
-    desc: "Sends a game server command to the client. Example commands and their use:\n\n*libcod note:* libcod renamed `sendGameServerCommand()` → `sendCommandToClient()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/sendcommandtoclient.htm)",
+    desc: "Sends a game server command to the client. Example commands and their use:\n\n*libcod note:* libcod renamed `sendGameServerCommand()` → `sendCommandToClient()`.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/sendcommandtoclient.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/sendcommandtoclient.htm)",
     example: "sendCommandToClient(player getentitynumber(), \"h \\\"console: \" + message + \"\\\"\");",
     callOn: "",
     returnType: "",
@@ -22727,7 +22727,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "sendPacket",
-    desc: "Sends a UDP datagram to the specified address, containing the provided message (prefixed with 0xFFFFFFFF).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/sendpacket.htm)",
+    desc: "Sends a UDP datagram to the specified address, containing the provided message (prefixed with 0xFFFFFFFF).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/sendpacket.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/sendpacket.htm)",
     example: "sendPacket(\"192.168.1.1:28960\", \"rcon test map mp_toujane\\n\");",
     callOn: "",
     returnType: "",
@@ -22756,7 +22756,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setConfigString",
-    desc: "Sets a configstring using the specified index, no matter if the configstring was empty or not. The index ranges for the respecive resources are allocated as follows:\n\n*libcod note:* to `<player> setConfigStringForPlayer(<index>, <string>)` and flipped its parameter positions\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/setconfigstring.htm)",
+    desc: "Sets a configstring using the specified index, no matter if the configstring was empty or not. The index ranges for the respecive resources are allocated as follows:\n\n*libcod note:* to `<player> setConfigStringForPlayer(<index>, <string>)` and flipped its parameter positions\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/setconfigstring.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/setconfigstring.htm)",
     example: "player setConfigString(index, \"New Text\");",
     callOn: "",
     returnType: "",
@@ -22785,7 +22785,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setConsolePrefix",
-    desc: "Sets the prefix of the game console in chat (default: \"console: \"). The setting is persisted across map changes. Returns the new setting of type string.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/setconsoleprefix.htm)",
+    desc: "Sets the prefix of the game console in chat (default: \"console: \"). The setting is persisted across map changes. Returns the new setting of type string.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/setconsoleprefix.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/setconsoleprefix.htm)",
     example: "setConsolePrefix(\"console: \");",
     callOn: "",
     returnType: "",
@@ -22806,7 +22806,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "sprintf",
-    desc: "Returns a composed string with arguments. Use % to replace it with an argument.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/sprintf.htm)",
+    desc: "Returns a composed string with arguments. Use % to replace it with an argument.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/sprintf.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/sprintf.htm)",
     example: "text = sprintf(\"Hello, %!\", \"Killtube\");",
     callOn: "",
     returnType: "",
@@ -22835,7 +22835,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "system",
-    desc: "Executes a shell command and returns the status of the command. In case of an error it will return -1.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/system.htm)",
+    desc: "Executes a shell command and returns the status of the command. In case of an error it will return -1.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/system.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/system.htm)",
     example: "status = system(\"ls\");",
     callOn: "",
     returnType: "",
@@ -22856,7 +22856,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "toHex",
-    desc: "Returns the hexadecimal-formatted string (e.g., \"0x1AB2\") for a given signed integer.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/tohex.htm)",
+    desc: "Returns the hexadecimal-formatted string (e.g., \"0x1AB2\") for a given signed integer.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/tohex.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/tohex.htm)",
     example: "hex = toHex(-559038737);",
     callOn: "",
     returnType: "",
@@ -22877,7 +22877,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "toUpper",
-    desc: "Converts the given string to an uppercase string and returns it.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/toupper.htm)",
+    desc: "Converts the given string to an uppercase string and returns it.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/system/toupper.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/system/toupper.htm)",
     example: "s = toUpper(\"aBcD\");",
     callOn: "",
     returnType: "",
@@ -22900,7 +22900,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "bulletTrace",
-    desc: "Allows script to do a point trace with MASK_SHOT content mask (by default). Returns distance fraction, hit position, hit entity, hit surface normal vector, hit surface type, hit surface flags, hit surface contents, and the hit surface material. Allows to use a custom content mask. If doing so, the hit characters parameter setting is overriden.\n\n*libcod note:* now also returns surface contents and material\n\n*libcod note:* got one more parameter for custom content masks and now also returns surface flags\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/trace/bullettrace.htm)",
+    desc: "Allows script to do a point trace with MASK_SHOT content mask (by default). Returns distance fraction, hit position, hit entity, hit surface normal vector, hit surface type, hit surface flags, hit surface contents, and the hit surface material. Allows to use a custom content mask. If doing so, the hit characters parameter setting is overriden.\n\n*libcod note:* now also returns surface contents and material\n\n*libcod note:* got one more parameter for custom content masks and now also returns surface flags\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/trace/bullettrace.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/trace/bullettrace.htm)",
     example: "trace = bulletTrace(start, end, true, undefined, 41953329 /* 0x2802831 */); /* trace[\"fraction\"] // float between including 0.0 and 1.0, stating how much of the trace distance was passed trace[\"position\"] // hit position; equals to end, if no hit trace[\"entity\"] // hit entity; undefined, if no hit trace[\"normal\"] // normalized bullet direction trace[\"surfacetype\"] // hit surface type; \"none\", if no hit trace[\"flags\"] // hit surface flags; 0, if no hit trace[\"contents\"] // hit surface contents; 0, if no hit trace[\"material\"] // hit surface material; undefined, if no hit or if the surface has no material */",
     callOn: "",
     returnType: "",
@@ -22953,7 +22953,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "bulletTracePassed",
-    desc: "Allows script to do a point trace with MASK_SHOT. Returns true if trace complete, else returns false. Allows to use a custom content mask. If doing so, the hit characters parameter setting is overriden.\n\n*libcod note:* got one more parameter for custom content masks\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/trace/bullettracepassed.htm)",
+    desc: "Allows script to do a point trace with MASK_SHOT. Returns true if trace complete, else returns false. Allows to use a custom content mask. If doing so, the hit characters parameter setting is overriden.\n\n*libcod note:* got one more parameter for custom content masks\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/trace/bullettracepassed.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/trace/bullettracepassed.htm)",
     example: "success = bulletTracePassed( magicBulletOrigin.origin, eyePos, true, undefined, 41953329 /* 0x2802831 */ );",
     callOn: "",
     returnType: "",
@@ -23006,7 +23006,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "sightTracePassed",
-    desc: "Allows script to do a point trace with MASK_OPAQUE_AI (by default). Returns true if trace complete, else returns false. Allows to use a custom content mask. If doing so, the hit characters parameter setting is overriden.\n\n*libcod note:* got one more parameter for custom content masks\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/trace/sighttracepassed.htm)",
+    desc: "Allows script to do a point trace with MASK_OPAQUE_AI (by default). Returns true if trace complete, else returns false. Allows to use a custom content mask. If doing so, the hit characters parameter setting is overriden.\n\n*libcod note:* got one more parameter for custom content masks\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/trace/sighttracepassed.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/trace/sighttracepassed.htm)",
     example: "success = sightTracePassed( magicBulletOrigin.origin, eyePos, true, undefined, 41953329 /* 0x2802831 */ );",
     callOn: "",
     returnType: "",
@@ -23061,7 +23061,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "canUseTurret",
-    desc: "Returns whether the player can use the specified turret. This would not be the case if the turret is already active, or if the player is not located behind the turret, or if the player is holding a grenade, or if the player is not on the ground.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/turret/canuseturret.htm)",
+    desc: "Returns whether the player can use the specified turret. This would not be the case if the turret is already active, or if the player is not located behind the turret, or if the player is holding a grenade, or if the player is not on the ground.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/turret/canuseturret.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/turret/canuseturret.htm)",
     example: "ready = self canUseTurret(turret);",
     callOn: "<player> The player",
     returnType: "",
@@ -23090,7 +23090,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getTurretOwner",
-    desc: "Gets the \"owner\" of this turret\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/turret/getturretowner.htm)",
+    desc: "Gets the \"owner\" of this turret\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/turret/getturretowner.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/turret/getturretowner.htm)",
     example: "player = turret getTurretOwner();",
     callOn: "<entity> An entity",
     returnType: "",
@@ -23111,7 +23111,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "isTurret",
-    desc: "Returns whether the calling entity is a turret.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/turret/isturret.htm)",
+    desc: "Returns whether the calling entity is a turret.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/turret/isturret.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/turret/isturret.htm)",
     example: "test = entity isTurret();",
     callOn: "<entity> An entity",
     returnType: "",
@@ -23132,7 +23132,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "isUsingTurret",
-    desc: "Returns whether the player is currently using a turret.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/turret/isusingturret.htm)",
+    desc: "Returns whether the player is currently using a turret.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/turret/isusingturret.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/turret/isusingturret.htm)",
     example: "use = self isUsingTurret();",
     callOn: "<player> The player",
     returnType: "",
@@ -23153,7 +23153,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "stopUseTurret",
-    desc: "Makes the player leave its current turret. Returns whether the player was in a turret.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/turret/stopuseturret.htm)",
+    desc: "Makes the player leave its current turret. Returns whether the player was in a turret.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/turret/stopuseturret.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/turret/stopuseturret.htm)",
     example: "self stopUseTurret();",
     callOn: "<player> The player",
     returnType: "",
@@ -23174,7 +23174,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "useTurret",
-    desc: "Makes the player use/activate the specified turret, unless canUseTurret returns false or undefined. Returns true on success, otherwise false, or undefined on error.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/turret/useturret.htm)",
+    desc: "Makes the player use/activate the specified turret, unless canUseTurret returns false or undefined. Returns true on success, otherwise false, or undefined on error.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/turret/useturret.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/turret/useturret.htm)",
     example: "self useTurret(turret);",
     callOn: "<player> The player",
     returnType: "",
@@ -23205,7 +23205,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "addGrenadeFuseTime",
-    desc: "Allows modification (positive and negative) of the remaining fuse time of an already spawned grenade entity.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/addgrenadefusetime.htm)",
+    desc: "Allows modification (positive and negative) of the remaining fuse time of an already spawned grenade entity.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/addgrenadefusetime.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/addgrenadefusetime.htm)",
     example: "grenade addGrenadeFuseTime(3);",
     callOn: "<entity> An entity",
     returnType: "",
@@ -23234,7 +23234,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getGrenadeFuseTime",
-    desc: "Returns the remaining fuse time (in seconds) of an already spawned grenade entity.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getgrenadefusetime.htm)",
+    desc: "Returns the remaining fuse time (in seconds) of an already spawned grenade entity.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getgrenadefusetime.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/getgrenadefusetime.htm)",
     example: "time = grenade getGrenadeFuseTime();",
     callOn: "<entity> An entity",
     returnType: "",
@@ -23255,7 +23255,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getLoadedWeapons",
-    desc: "Returns an array of loaded weapon names. The first element is \"none\". Indexes from this array can be used with switchToWeaponId, for example.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getloadedweapons.htm)",
+    desc: "Returns an array of loaded weapon names. The first element is \"none\". Indexes from this array can be used with switchToWeaponId, for example.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getloadedweapons.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/getloadedweapons.htm)",
     example: "loadedweapons = getLoadedWeapons();",
     callOn: "",
     returnType: "",
@@ -23268,7 +23268,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getWeaponClipSize",
-    desc: "Returns the weapon's ammo clip size.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweaponclipsize.htm)",
+    desc: "Returns the weapon's ammo clip size.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweaponclipsize.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/getweaponclipsize.htm)",
     example: "clip = getWeaponClipSize(weaponName);",
     callOn: "",
     returnType: "",
@@ -23289,7 +23289,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getWeaponCookable",
-    desc: "Returns if the weapon is cookable.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweaponcookable.htm)",
+    desc: "Returns if the weapon is cookable.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweaponcookable.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/getweaponcookable.htm)",
     example: "cookable = getWeaponCookable(weaponName);",
     callOn: "",
     returnType: "",
@@ -23310,7 +23310,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getWeaponDamage",
-    desc: "Returns the weapon's damage.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweapondamage.htm)",
+    desc: "Returns the weapon's damage.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweapondamage.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/getweapondamage.htm)",
     example: "dmg = getWeaponDamage(weaponName);",
     callOn: "",
     returnType: "",
@@ -23331,7 +23331,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getWeaponMeleeDamage",
-    desc: "Returns the weapon's melee damage.\n\n*Note:* the libcod doc page labels this `getWeaponDamageMelee`, but the engine registers it as `getWeaponMeleeDamage` — this is the name to call.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweapondamagemelee.htm)",
+    desc: "Returns the weapon's melee damage.\n\n*Note:* the libcod doc page labels this `getWeaponDamageMelee`, but the engine registers it as `getWeaponMeleeDamage` — this is the name to call.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweapondamagemelee.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/getweapondamagemelee.htm)",
     example: "dmg = getWeaponMeleeDamage(weaponName);",
     callOn: "",
     returnType: "",
@@ -23352,7 +23352,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getWeaponDisplayName",
-    desc: "Returns the weapon's display name as a localized string.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweapondisplayname.htm)",
+    desc: "Returns the weapon's display name as a localized string.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweapondisplayname.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/getweapondisplayname.htm)",
     example: "name = getWeaponDisplayName(weaponName);",
     callOn: "",
     returnType: "",
@@ -23373,7 +23373,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getWeaponFireTime",
-    desc: "Returns the weapon's fire time in ms.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweaponfiretime.htm)",
+    desc: "Returns the weapon's fire time in ms.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweaponfiretime.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/getweaponfiretime.htm)",
     example: "firetime = getWeaponFireTime(weaponName);",
     callOn: "",
     returnType: "",
@@ -23394,7 +23394,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getWeaponFuseTime",
-    desc: "Returns the weapon's fuse time in ms.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweaponfusetime.htm)",
+    desc: "Returns the weapon's fuse time in ms.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweaponfusetime.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/getweaponfusetime.htm)",
     example: "fusetime = getWeaponFuseTime(weaponName);",
     callOn: "",
     returnType: "",
@@ -23415,7 +23415,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getWeaponHitLocMultiplier",
-    desc: "Returns the weapon's multiplier for the specified hit location.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweaponhitlocmultiplier.htm)",
+    desc: "Returns the weapon's multiplier for the specified hit location.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweaponhitlocmultiplier.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/getweaponhitlocmultiplier.htm)",
     example: "hitloc = \"torso_upper\" dmg = getWeaponHitLocMultiplier(weaponName, hitloc);",
     callOn: "",
     returnType: "",
@@ -23444,7 +23444,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getWeaponItemAmmo",
-    desc: "Returns the ammo count of a weapon entity.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweaponitemammo.htm)",
+    desc: "Returns the ammo count of a weapon entity.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweaponitemammo.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/getweaponitemammo.htm)",
     example: "ent = spawn(\"weapon_kar98k_mp\", origin); ammo = ent getWeaponItemAmmo();",
     callOn: "<entity> An entity",
     returnType: "",
@@ -23465,7 +23465,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getWeaponItemClipAmmo",
-    desc: "Returns the clip ammo count of a weapon entity.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweaponitemclipammo.htm)",
+    desc: "Returns the clip ammo count of a weapon entity.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweaponitemclipammo.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/getweaponitemclipammo.htm)",
     example: "ent = spawn(\"weapon_kar98k_mp\", origin); clip = ent getWeaponItemClipAmmo();",
     callOn: "<entity> An entity",
     returnType: "",
@@ -23486,7 +23486,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getWeaponMaxAmmo",
-    desc: "Returns the weapon's max. ammo count.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweaponmaxammo.htm)",
+    desc: "Returns the weapon's max. ammo count.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweaponmaxammo.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/getweaponmaxammo.htm)",
     example: "max = getWeaponMaxAmmo(weaponName);",
     callOn: "",
     returnType: "",
@@ -23507,7 +23507,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getWeaponMeleeTime",
-    desc: "Returns the weapon's melee time in ms.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweaponmeleetime.htm)",
+    desc: "Returns the weapon's melee time in ms.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweaponmeleetime.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/getweaponmeleetime.htm)",
     example: "meleeTime = getWeaponMeleeTime(weaponName);",
     callOn: "",
     returnType: "",
@@ -23528,7 +23528,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getWeaponRaiseTime",
-    desc: "Returns the weapon's raise time in ms.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweaponraisetime.htm)",
+    desc: "Returns the weapon's raise time in ms.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweaponraisetime.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/getweaponraisetime.htm)",
     example: "raiseTime = getWeaponRaiseTime(weaponName);",
     callOn: "",
     returnType: "",
@@ -23549,7 +23549,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getWeaponReloadEmptyTime",
-    desc: "Returns the weapon's reload empty time in ms.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweaponreloademptytime.htm)",
+    desc: "Returns the weapon's reload empty time in ms.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweaponreloademptytime.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/getweaponreloademptytime.htm)",
     example: "reloadEmptyTime = getWeaponDamage(weaponName);",
     callOn: "",
     returnType: "",
@@ -23570,7 +23570,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "getWeaponReloadTime",
-    desc: "Returns the weapon's reload time in ms.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweaponreloadtime.htm)",
+    desc: "Returns the weapon's reload time in ms.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/getweaponreloadtime.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/getweaponreloadtime.htm)",
     example: "reloadTime = getWeaponReloadTime(weaponName);",
     callOn: "",
     returnType: "",
@@ -23591,7 +23591,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "ignoreWeapon",
-    desc: "Adds the specified weapon to the weapon ignore list so that it will not be loaded. Instead, defaultweapon_mp is loaded, unless overriden by setDefaultweapon. At most MAX_WEAPON_IGNORE_SIZE weapons can be added to the ignore list. The ignore list can be cleared with resetIgnoredWeapons. The list remains in memory until cleared or until the server is shut down. Returns true on success, otherwise undefined.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/ignoreweapon.htm)",
+    desc: "Adds the specified weapon to the weapon ignore list so that it will not be loaded. Instead, defaultweapon_mp is loaded, unless overriden by setDefaultweapon. At most MAX_WEAPON_IGNORE_SIZE weapons can be added to the ignore list. The ignore list can be cleared with resetIgnoredWeapons. The list remains in memory until cleared or until the server is shut down. Returns true on success, otherwise undefined.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/ignoreweapon.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/ignoreweapon.htm)",
     example: "success = ignoreWeapon(weaponName);",
     callOn: "",
     returnType: "",
@@ -23612,7 +23612,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "isSemiAutoWeapon",
-    desc: "Returns whether the weapon is a semi-automatic weapon.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/issemiautoweapon.htm)",
+    desc: "Returns whether the weapon is a semi-automatic weapon.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/issemiautoweapon.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/issemiautoweapon.htm)",
     example: "semi = isSemiAutoWeapon(weaponName);",
     callOn: "",
     returnType: "",
@@ -23633,7 +23633,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "resetIgnoredWeapons",
-    desc: "Clears the weapon ignore list populated by ignoreWeapon. Always returns undefined.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/resetignoredweapons.htm)",
+    desc: "Clears the weapon ignore list populated by ignoreWeapon. Always returns undefined.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/resetignoredweapons.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/resetignoredweapons.htm)",
     example: "resetIgnoredWeapons();",
     callOn: "",
     returnType: "",
@@ -23646,7 +23646,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setDefaultweapon",
-    desc: "Replaces defaultweapon_mp (the first weapon loaded after \"none\") with the specified weapon. This has two effects: First, the newly set weapon can be used without allocating an otherwise free weapon slot, it does not need to be precached separately. Second, weapons defined in the ignore list (see ignoreWeapon) will be replaced by the weapon specified here. However, it does not fully replace defaultweapon_mp as a fallback weapon in case a weapon is missing (e.g., a weapon item defined in a map file although the weapon's files are missing), as that weapon name is hard-coded on the client side. The new setting takes effect after a map change or restart, but not after only a fast restart. The new setting, unless overwritten by calling this function again, remains in memory until the server is shut down. Returns 1 on success, 2 if the requested weapon is already set, otherwise undefined.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setdefaultweapon.htm)",
+    desc: "Replaces defaultweapon_mp (the first weapon loaded after \"none\") with the specified weapon. This has two effects: First, the newly set weapon can be used without allocating an otherwise free weapon slot, it does not need to be precached separately. Second, weapons defined in the ignore list (see ignoreWeapon) will be replaced by the weapon specified here. However, it does not fully replace defaultweapon_mp as a fallback weapon in case a weapon is missing (e.g., a weapon item defined in a map file although the weapon's files are missing), as that weapon name is hard-coded on the client side. The new setting takes effect after a map change or restart, but not after only a fast restart. The new setting, unless overwritten by calling this function again, remains in memory until the server is shut down. Returns 1 on success, 2 if the requested weapon is already set, otherwise undefined.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setdefaultweapon.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/setdefaultweapon.htm)",
     example: "setDefaultweapon(\"shotgun_mp\");",
     callOn: "",
     returnType: "",
@@ -23667,7 +23667,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setWeaponClipSize",
-    desc: "Set new clip size for the given weapon (on the server side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweaponclipsize.htm)",
+    desc: "Set new clip size for the given weapon (on the server side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweaponclipsize.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/setweaponclipsize.htm)",
     example: "clipSize = 20; setWeaponClipSize(weaponName, clipSize);",
     callOn: "",
     returnType: "",
@@ -23696,7 +23696,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setWeaponCookable",
-    desc: "Set new cookable state for the given weapon (on the server side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweaponcookable.htm)",
+    desc: "Set new cookable state for the given weapon (on the server side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweaponcookable.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/setweaponcookable.htm)",
     example: "setWeaponCookable(weaponName, cookable);",
     callOn: "",
     returnType: "",
@@ -23725,7 +23725,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setWeaponDamage",
-    desc: "Set new damage for the given weapon (on the server side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweapondamage.htm)",
+    desc: "Set new damage for the given weapon (on the server side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweapondamage.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/setweapondamage.htm)",
     example: "setWeaponDamage(weaponName, dmg);",
     callOn: "",
     returnType: "",
@@ -23754,7 +23754,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setWeaponMeleeDamage",
-    desc: "Set new melee damage for the given weapon (on the server side).\n\n*Note:* the libcod doc page labels this `setWeaponDamageMelee`, but the engine registers it as `setWeaponMeleeDamage` — this is the name to call.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweapondamagemelee.htm)",
+    desc: "Set new melee damage for the given weapon (on the server side).\n\n*Note:* the libcod doc page labels this `setWeaponDamageMelee`, but the engine registers it as `setWeaponMeleeDamage` — this is the name to call.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweapondamagemelee.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/setweapondamagemelee.htm)",
     example: "setWeaponMeleeDamage(weaponName, dmg);",
     callOn: "",
     returnType: "",
@@ -23783,7 +23783,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setWeaponFireTime",
-    desc: "Set new fire time for the given weapon (on the server side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweaponfiretime.htm)",
+    desc: "Set new fire time for the given weapon (on the server side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweaponfiretime.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/setweaponfiretime.htm)",
     example: "fireTime = 100; setWeaponFireTime(weaponName, fireTime);",
     callOn: "",
     returnType: "",
@@ -23812,7 +23812,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setWeaponFuseTime",
-    desc: "Set new fuse time for the given weapon (on the server side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweaponfusetime.htm)",
+    desc: "Set new fuse time for the given weapon (on the server side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweaponfusetime.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/setweaponfusetime.htm)",
     example: "fuseTime = 100; setWeaponFuseTime(weaponName, fuseTime);",
     callOn: "",
     returnType: "",
@@ -23841,7 +23841,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setWeaponHitLocMultiplier",
-    desc: "Set new multiplier for the specified hit location for the given weapon (on the server side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweaponhitlocmultiplier.htm)",
+    desc: "Set new multiplier for the specified hit location for the given weapon (on the server side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweaponhitlocmultiplier.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/setweaponhitlocmultiplier.htm)",
     example: "multiplier = 3; hitloc = \"head\"; setWeaponHitLocMultiplier(weaponName, hitloc, multiplier);",
     callOn: "",
     returnType: "",
@@ -23878,7 +23878,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setWeaponItemAmmo",
-    desc: "Sets the ammo count for a weapon entity.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweaponitemammo.htm)",
+    desc: "Sets the ammo count for a weapon entity.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweaponitemammo.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/setweaponitemammo.htm)",
     example: "ammo = 10; ent = spawn(\"weapon_kar98k_mp\", origin); // Precached weapon ent setWeaponItemAmmo(ammo);",
     callOn: "<entity> An entity",
     returnType: "",
@@ -23907,7 +23907,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setWeaponItemClipAmmo",
-    desc: "Sets the clip ammo count for a weapon entity.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweaponitemclipammo.htm)",
+    desc: "Sets the clip ammo count for a weapon entity.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweaponitemclipammo.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/setweaponitemclipammo.htm)",
     example: "clip = 5; ent = spawn(\"weapon_kar98k_mp\", origin); // Precached weapon ent setWeaponItemClipAmmo(clip);",
     callOn: "<entity> An entity",
     returnType: "",
@@ -23936,7 +23936,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setWeaponMaxAmmo",
-    desc: "Set new maximum ammo for the given weapon (on the server side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweaponmaxammo.htm)",
+    desc: "Set new maximum ammo for the given weapon (on the server side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweaponmaxammo.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/setweaponmaxammo.htm)",
     example: "maxammo = 999; setWeaponMaxAmmo(weaponName, maxammo);",
     callOn: "",
     returnType: "",
@@ -23965,7 +23965,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setWeaponMeleeTime",
-    desc: "Set new melee time for the given weapon (on the server side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweaponmeleetime.htm)",
+    desc: "Set new melee time for the given weapon (on the server side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweaponmeleetime.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/setweaponmeleetime.htm)",
     example: "meleeTime = 100; setWeaponMeleeTime(weaponName, meleeTime);",
     callOn: "",
     returnType: "",
@@ -23994,7 +23994,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setWeaponRaiseTime",
-    desc: "Set new raise time for the given weapon (on the server side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweaponraisetime.htm)",
+    desc: "Set new raise time for the given weapon (on the server side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweaponraisetime.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/setweaponraisetime.htm)",
     example: "raiseTime = 100; setWeaponRaiseTime(weaponName, raiseTime);",
     callOn: "",
     returnType: "",
@@ -24023,7 +24023,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setWeaponReloadEmptyTime",
-    desc: "Set empty reload time for the given weapon (on the server side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweaponreloademptytime.htm)",
+    desc: "Set empty reload time for the given weapon (on the server side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweaponreloademptytime.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/setweaponreloademptytime.htm)",
     example: "emptyReloadTime = 50; setWeaponReloadEmptyTime(weaponName, emptyReloadTime);",
     callOn: "",
     returnType: "",
@@ -24052,7 +24052,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "setWeaponReloadTime",
-    desc: "Set new reload time for the given weapon (on the server side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweaponreloadtime.htm)",
+    desc: "Set new reload time for the given weapon (on the server side).\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/setweaponreloadtime.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/setweaponreloadtime.htm)",
     example: "reloadTime = 100; setWeaponReloadTime(weaponName, reloadTime);",
     callOn: "",
     returnType: "",
@@ -24081,7 +24081,7 @@ defs.push(new CodFunction({
 
 defs.push(new CodFunction({
     name: "spawnGrenade",
-    desc: "Spawns a new grenade and returns a reference to the grenade.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/spawngrenade.htm)",
+    desc: "Spawns a new grenade and returns a reference to the grenade.\n\n[📖 libcod doc](https://github.com/ibuddieat/zk_libcod/blob/master/doc/script_reference/libcod/weapons/spawngrenade.htm) · [🌐 ibuddie.at](https://www.ibuddie.at/libcod/libcod/weapons/spawngrenade.htm)",
     example: "//attacker = spawn(\"script_origin\", (0, 0, 0)); // world as attacker attacker = self; origin = self getTagOrigin(\"tag_weapon_right\"); dir = anglesToForward(self getPlayerAngles()); velocity = maps\\mp\\_utility::vectorScale(dir, 512); fuseTime = 3; grenade = attacker spawnGrenade(\"frag_grenade_german_mp\", origin, dir, velocity, fuseTime);",
     callOn: "<entity> An entity",
     returnType: "",
