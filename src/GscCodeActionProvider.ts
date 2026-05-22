@@ -172,7 +172,7 @@ export class GscCodeActionProvider implements vscode.CodeActionProvider {
                     fileParentFolder = parts[0];
                 }
 
-                const action0 = new vscode.CodeAction('Choose folder for file references...', vscode.CodeActionKind.QuickFix);
+                const action0 = new vscode.CodeAction('Add folder for file references...', vscode.CodeActionKind.QuickFix);
                 action0.command = {
                     title: action0.title,
                     command: 'gsc.addFolderForReferences',

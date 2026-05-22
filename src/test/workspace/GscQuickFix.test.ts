@@ -26,7 +26,7 @@ suite('GscQuickFix', () => {
 
             const fixes1 = await tests.getQuickFixesForDiagnostic(gsc.diagnostics, 0, gsc.uri);
             tests.checkQuickFix(fixes1, 0, "Add workspace folder \"GscQuickFix.4\" for file references (workspace settings)");
-            tests.checkQuickFix(fixes1, 1, "Choose folder for file references...");
+            tests.checkQuickFix(fixes1, 1, "Add folder for file references...");
             tests.checkQuickFix(fixes1, 2, "Ignore file \"quickFix\\quickFixFile1\" (workspace settings)");
             tests.checkQuickFix(fixes1, 3, "Ignore folder \"quickFix\" (workspace settings)");
             tests.checkQuickFix(fixes1, 4, "Ignore all missing files (workspace settings)");
@@ -36,7 +36,7 @@ suite('GscQuickFix', () => {
             const fixes2 = await tests.getQuickFixesForDiagnostic(gsc.diagnostics, 1, gsc.uri);
             tests.checkQuickFix(fixes2, 0, 'Add workspace folder "GscQuickFix.4" for file references and change game root folder to "quickfix" (workspace settings)');
             tests.checkQuickFix(fixes2, 1, 'Add workspace folder "GscQuickFix.4" for file references and change game root folder to "subfolder/quickfix" (workspace settings)');
-            tests.checkQuickFix(fixes2, 2, "Choose folder for file references...");
+            tests.checkQuickFix(fixes2, 2, "Add folder for file references...");
             tests.checkQuickFix(fixes2, 3, 'Ignore file "quickFixFile2" (workspace settings)');
             tests.checkQuickFix(fixes2, 4, 'Ignore all missing files (workspace settings)');
             tests.checkQuickFix(fixes2, 5, 'Disable all error diagnostics for workspace folder "GscQuickFix" (workspace settings)');
@@ -45,7 +45,7 @@ suite('GscQuickFix', () => {
             const fixes3 = await tests.getQuickFixesForDiagnostic(gsc.diagnostics, 2, gsc.uri);
             tests.checkQuickFix(fixes3, 0, 'Add workspace folder "GscQuickFix.4" for file references (workspace settings)');
             tests.checkQuickFix(fixes3, 1, 'Add workspace folder "GscQuickFix.4" for file references and change game root folder to "subfolder" (workspace settings)');
-            tests.checkQuickFix(fixes2, 2, "Choose folder for file references...");
+            tests.checkQuickFix(fixes3, 2, "Add folder for file references...");
             tests.checkQuickFix(fixes3, 3, 'Ignore file "quickFix\\quickFixFile2" (workspace settings)');
             tests.checkQuickFix(fixes3, 4, 'Ignore folder "quickFix" (workspace settings)');
             tests.checkQuickFix(fixes3, 5, 'Ignore all missing files (workspace settings)');
@@ -72,7 +72,7 @@ suite('GscQuickFix', () => {
             const fixes1_2 = await tests.getQuickFixesForDiagnostic(gsc2.diagnostics, 0, gsc2.uri);
             tests.checkQuickFix(fixes1_2, 0, 'Change game root folder to "quickfix" for workspace folder "GscQuickFix.4" (workspace settings)');
             tests.checkQuickFix(fixes1_2, 1, 'Change game root folder to "subfolder/quickfix" for workspace folder "GscQuickFix.4" (workspace settings)');
-            tests.checkQuickFix(fixes1_2, 2, "Choose folder for file references...");
+            tests.checkQuickFix(fixes1_2, 2, "Add folder for file references...");
             tests.checkQuickFix(fixes1_2, 3, 'Ignore file "quickFixFile2" (workspace settings)');
             tests.checkQuickFix(fixes1_2, 4, 'Ignore all missing files (workspace settings)');
             tests.checkQuickFix(fixes1_2, 5, 'Disable all error diagnostics for workspace folder "GscQuickFix" (workspace settings)');
