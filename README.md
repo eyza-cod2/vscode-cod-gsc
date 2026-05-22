@@ -2,9 +2,6 @@
 
 This extension adds language support for the GSC scripts used in Call of Duty games.
 
-⚠️ This extension is still under development and is not fully finished. Check the list of the available features in [List of features](#list-of-features).
-
-
 
 ## Supported games
 
@@ -14,28 +11,43 @@ This extension adds language support for the GSC scripts used in Call of Duty ga
         <td width="50px">Code</td>
         <td width="150px">Modification</td>
         <td width="150px">Status</td>
-        <td>Not working yet</td>
     </tr>
     <tr>
         <td>CoD1</td>
         <td>IW1</td>
         <td>original</td>
         <td>✅ Supported</td>
-        <td></td>
     </tr>
     <tr>
         <td>CoD2</td>
         <td>IW2</td>
-        <td>original</td>
+        <td>original, zk_libcod, CoD2x</td>
         <td>✅ Supported</td>
-        <td></td>
     </tr>
     <tr>
         <td>CoD4</td>
         <td>IW3</td>
         <td>original</td>
         <td>✅ Supported</td>
-        <td></td>
+    </tr>
+    <tr>
+        <td rowspan="2">CoD5</td>
+        <td rowspan="2">T4</td>
+        <td>original</td>
+        <td>✅ Supported</td>
+    </tr>
+</table>
+
+
+# Other games
+
+<table>
+    <tr>
+        <td width="100px">Game</td>
+        <td width="50px">Code</td>
+        <td width="150px">Modification</td>
+        <td width="150px">Status</td>
+        <td>Not working yet</td>
     </tr>
     <tr>
         <td rowspan="2">CoD5</td>
@@ -382,20 +394,6 @@ In future version it will allow to change settings more interactively.
 
 
 
-
-
-
-## CoD2 MP + zk_libcod
-
-A separate game variant — `CoD2 MP + zk_libcod` — that includes all stock CoD2 MP functions plus 326 functions added by [zk_libcod](https://github.com/ibuddieat/zk_libcod). Select it as the game in settings to get:
-
-- Autocomplete, hover docs, and parameter validation for all libcod functions
-- libcod-modified stock functions with extra optional parameters (e.g. `bulletTrace` with custom content mask) take priority over the stock signature when this variant is active
-- Stock CoD2 MP functions remain available unchanged
-- Each function description links to its source `.htm` doc in the zk_libcod repository
-
-Tracks zk_libcod up to commit [`58b8b07`](https://github.com/ibuddieat/zk_libcod/commit/58b8b073e54f6b39be8aaac2a856d26125113281) (2026-05-03).
-
 <br><br>
 
 ## List of features
@@ -417,6 +415,10 @@ Tracks zk_libcod up to commit [`58b8b07`](https://github.com/ibuddieat/zk_libcod
     - Keywords 
     - File path
     - Function definitions
+      - CoD2 SP
+      - CoD2 MP
+      - CoD2 MP + zk_libcod (up to commit 58b8b07 from 2026-05-03)
+      - CoD2 MP + CoD2x (up to commit d8c5469 from 2026-04-07)
 - Diagnostics (errors and warnings)
   - Syntax error
     - Unexpected tokens
@@ -442,17 +444,15 @@ Tracks zk_libcod up to commit [`58b8b07`](https://github.com/ibuddieat/zk_libcod
 
 <br><br>
 
-## TODO list
-### Priority
+## Features that might be implemented in the future
+
 - Add custom global include list of GSC function
 - Support for default function parameter value - supported in newer COD games
 - Support for 'chilthread' and 'call' keywords - supported in newer COD games
 - Improve auto-suggestion for files
 - When renaming GSC file, ask for reference update in other GSC files
-### Non priority
 - Code action - implement unknown function
 - Add .csc files (client side scripts)
-- Parser for .menu files
 - Integrate list of built-in functions for CoD4
 - Improve detection of variable types - now it's detected only by explicitly assigned constant value
 - Show available string constants for `notify` `waittill` `waittillmatch` `endon` in completion item provider

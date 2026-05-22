@@ -6,10 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
-- Added new game variant `CoD2 MP + zk_libcod` for projects targeting servers running [zk_libcod](https://github.com/ibuddieat/zk_libcod). The variant inherits all stock CoD2 MP functions and adds 326 libcod-specific functions across 19 modules (Animation, Bots, Damage, Debug, Effects, Entity, Exec, HUD, Level, Math, Memory, MySQL, Objective, Player, Sound, System, Trace, Turret, Weapons). Tracks zk_libcod up to commit `58b8b07` (2026-05-03).
+## [1.0.0] - 2026-05-22
+- Added new game variant `CoD2 MP + zk_libcod` for projects targeting servers running [zk_libcod](https://github.com/ibuddieat/zk_libcod). The variant inherits all stock CoD2 MP functions and adds 326 libcod-specific functions across 19 modules (Animation, Bots, Damage, Debug, Effects, Entity, Exec, HUD, Level, Math, Memory, MySQL, Objective, Player, Sound, System, Trace, Turret, Weapons). Tracks zk_libcod up to commit `58b8b07` (2026-05-03). (by [@nawaftahir](https://github.com/nawaftahir))
 - Each libcod function entry includes a summary, parameter descriptions, an example, and a clickable link back to its upstream `.htm` documentation in the zk_libcod repository.
 - libcod-modified stock functions (e.g. `bulletTrace`, `obituary`, `playFxForPlayer`, `setHintString`, `finishPlayerDamage`) are kept as separate entries tagged for the libcod variant — the function lookup prefers the libcod signature (with the extra optional parameters) over the stock CoD2 MP one when this variant is active, while CoD2 MP / CoD2 SP behaviour is unchanged.
 - libcod-renamed stock functions (e.g. `playScriptAnimation` ← `runScriptAnimation`, `setAnimation` ← `play_anim`, `setAim` ← `adsAim`, `throwGrenade` ← `throwNade`) are documented with a `libcod note:` line in the description.
+- Added new game variant `CoD2 MP + CoD2x` with 22 CoD2x-specific functions, each annotated with the version they were introduced. (by [@nawaftahir](https://github.com/nawaftahir))
+- Added `gsc.excludePaths` setting — an array of glob patterns for file paths that should be completely excluded from parsing. Useful for large workspaces with asset folders (e.g. `**/raw/animtrees/**`). (by [@nawaftahir](https://github.com/nawaftahir))
+- Added file recognition and syntax highlighting for CoD2 weapon files (identified by a `WEAPONFILE` header) and menu files (`.menu` extension).
+- Renamed UI action "Choose folder for file references..." to "Add folder for file references..." for clarity.
+- Fixed descriptions for several stock CoD2 functions.
 
 ## [0.3.0] - 2024-11-08
 - Added definition provider and hover provider for GSC paths

@@ -82,13 +82,63 @@
     </div>
 
     <div class="warning">
-        ⚠️ This extension is still in development. If you encounter any issues, please report them
+        If you encounter any issues, please report them
         <ul>
             <li><a href="${GITHUB_URL}" target="_blank">GitHub Issues</a></li>
             <li><a href="${DISCORD_URL}" target="_blank">Discord Server</a></li>
             <li><a href="${EMAIL}">Email</a></li>
         </ul>
     </div>
+
+    <div ${VERSION_1.0.0}>
+        <h2>Version [1.0.0] - 2026-05-22</h2>
+
+        <p>This update adds new game variants, file type support, and workspace improvements.</p>
+        <br>
+
+        <h3>New game variant: CoD2 MP + zk_libcod <small>by <a href="https://github.com/nawaftahir" target="_blank">@nawaftahir</a></small></h3>
+        <p>
+            A new game variant for projects targeting servers running <a href="https://github.com/ibuddieat/zk_libcod" target="_blank">zk_libcod</a>.<br>
+            Inherits all stock CoD2 MP functions and adds 326 libcod-specific functions across 19 modules.<br>
+            Each function entry includes a summary, parameter descriptions, an example, and a link to the upstream documentation.<br>
+            Tracks zk_libcod up to commit <code>58b8b07</code> (2026-05-03).
+        </p>
+
+        <h3>New game variant: CoD2 MP + CoD2x <small>by <a href="https://github.com/nawaftahir" target="_blank">@nawaftahir</a></small></h3>
+        <p>
+            A new game variant for projects targeting <a href="https://cod2x.me" target="_blank">CoD2x</a> servers.<br>
+            Adds 22 CoD2x-specific functions, each annotated with the version they were introduced.
+        </p>
+        <img src="../images/vscode-games.png">
+
+        <h3>Weapon file and menu file support</h3>
+        <p>
+            Files identified by a <code>WEAPONFILE</code> header are now recognized as weapon files with syntax highlighting.
+        </p>
+        <img src="../images/vscode-weaponfile.png">
+        <p>
+            Files with the <code>.menu</code> extension are now recognized as menu files with syntax highlighting.
+        </p>
+        <img src="../images/vscode-menufile.png">
+
+        <h3>Exclude paths setting <small>by <a href="https://github.com/nawaftahir" target="_blank">@nawaftahir</a></small></h3>
+        <p>
+            New setting <code>gsc.excludePaths</code> — an array of glob patterns for file paths that should be completely excluded from parsing.<br>
+            Useful for large workspaces with asset-only folders (e.g. <code>**/raw/animtrees/**</code>).
+        </p>
+
+        <h3>All changes:</h3>
+        <p class="lines">
+            - Added new game variant CoD2 MP + zk_libcod with 326 libcod-specific functions (by <a href="https://github.com/nawaftahir" target="_blank">@nawaftahir</a>)
+            - Added new game variant CoD2 MP + CoD2x with 22 CoD2x-specific functions (by <a href="https://github.com/nawaftahir" target="_blank">@nawaftahir</a>)
+            - Added gsc.excludePaths setting for glob-based file exclusion from parsing (by <a href="https://github.com/nawaftahir" target="_blank">@nawaftahir</a>)
+            - Added file recognition and syntax highlighting for weapon files (WEAPONFILE header) and menu files (.menu)
+            - Renamed UI action "Choose folder for file references..." to "Add folder for file references..."
+            - Fixed descriptions for several stock CoD2 functions
+        </p>
+    </div>
+
+
 
     <div ${VERSION_0.3.0}>
         <h2>Version [0.3.0] - 2024-11-08</h2>
