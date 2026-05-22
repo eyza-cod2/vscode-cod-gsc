@@ -1332,7 +1332,7 @@ defs.push(new CodFunction({
     games: ['CoD2 SP'],
     parameters: [
         {
-            name: "",
+            name: "player",
             desc: "An actor",
             type: "",
             isOptional: false,
@@ -3923,8 +3923,8 @@ defs.push(new CodFunction({
     games: ['CoD2 SP', 'CoD2 MP'],
     parameters: [
         {
-            name: "",
-            desc: "Entity",
+            name: "player",
+            desc: "",
             type: "",
             isOptional: false,
             isVariableLength: false,
@@ -3944,8 +3944,8 @@ defs.push(new CodFunction({
     games: ['CoD2 SP', 'CoD2 MP'],
     parameters: [
         {
-            name: "",
-            desc: "Entity",
+            name: "player",
+            desc: "",
             type: "",
             isOptional: false,
             isVariableLength: false,
@@ -3965,8 +3965,8 @@ defs.push(new CodFunction({
     games: ['CoD2 SP', 'CoD2 MP'],
     parameters: [
         {
-            name: "",
-            desc: "Entity",
+            name: "player",
+            desc: "",
             type: "",
             isOptional: false,
             isVariableLength: false,
@@ -3986,8 +3986,8 @@ defs.push(new CodFunction({
     games: ['CoD2 SP', 'CoD2 MP'],
     parameters: [
         {
-            name: "",
-            desc: "Entity",
+            name: "player",
+            desc: "",
             type: "",
             isOptional: false,
             isVariableLength: false,
@@ -4007,8 +4007,8 @@ defs.push(new CodFunction({
     games: ['CoD2 SP', 'CoD2 MP'],
     parameters: [
         {
-            name: "",
-            desc: "Entity",
+            name: "player",
+            desc: "",
             type: "",
             isOptional: false,
             isVariableLength: false,
@@ -4098,7 +4098,7 @@ defs.push(new CodFunction({
     games: ['CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "player",
             desc: "A Player",
             type: "",
             isOptional: false,
@@ -4235,7 +4235,7 @@ defs.push(new CodFunction({
     games: ['CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "player",
             desc: "A Client",
             type: "",
             isOptional: false,
@@ -4264,7 +4264,7 @@ defs.push(new CodFunction({
     games: ['CoD2 SP', 'CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "player",
             desc: "A Player",
             type: "",
             isOptional: false,
@@ -4285,7 +4285,7 @@ defs.push(new CodFunction({
     games: ['CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "player",
             desc: "A Player",
             type: "",
             isOptional: false,
@@ -4314,7 +4314,7 @@ defs.push(new CodFunction({
     games: ['CoD2 SP', 'CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "player",
             desc: "A Player",
             type: "",
             isOptional: false,
@@ -4335,7 +4335,7 @@ defs.push(new CodFunction({
     games: ['CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "player",
             desc: "A Player",
             type: "",
             isOptional: false,
@@ -4451,7 +4451,7 @@ defs.push(new CodFunction({
     games: ['CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "player",
             desc: "A player",
             type: "",
             isOptional: false,
@@ -4522,7 +4522,7 @@ defs.push(new CodFunction({
     games: ['CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "player",
             desc: "A Player",
             type: "",
             isOptional: false,
@@ -4551,7 +4551,7 @@ defs.push(new CodFunction({
     games: ['CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "player",
             desc: "A Player",
             type: "",
             isOptional: false,
@@ -4580,7 +4580,7 @@ defs.push(new CodFunction({
     games: ['CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "player",
             desc: "A player",
             type: "",
             isOptional: false,
@@ -4609,7 +4609,7 @@ defs.push(new CodFunction({
     games: ['CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "entity",
             desc: "A trigger",
             type: "",
             isOptional: false,
@@ -4638,7 +4638,7 @@ defs.push(new CodFunction({
     games: ['CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "player",
             desc: "A Player",
             type: "",
             isOptional: false,
@@ -4696,7 +4696,7 @@ defs.push(new CodFunction({
     games: ['CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "player",
             desc: "A player",
             type: "",
             isOptional: false,
@@ -4717,7 +4717,7 @@ defs.push(new CodFunction({
     games: ['CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "player",
             desc: "A player",
             type: "",
             isOptional: false,
@@ -4780,7 +4780,7 @@ defs.push(new CodFunction({
     games: ['CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "player",
             desc: "A client",
             type: "",
             isOptional: false,
@@ -5980,7 +5980,7 @@ defs.push(new CodFunction({
     games: ['CoD2 SP', 'CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "entity",
             desc: "An entity with a brushmodel",
             type: "",
             isOptional: false,
@@ -6059,7 +6059,7 @@ defs.push(new CodFunction({
     games: ['CoD2 SP', 'CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "entity",
             desc: "An entity with a brushmodel",
             type: "",
             isOptional: false,
@@ -7439,7 +7439,7 @@ defs.push(new CodFunction({
     games: ['CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "hud",
             desc: "A Hud Element",
             type: "",
             isOptional: false,
@@ -7468,7 +7468,7 @@ defs.push(new CodFunction({
     games: ['CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "hud",
             desc: "A HUD element",
             type: "",
             isOptional: false,
@@ -7497,7 +7497,7 @@ defs.push(new CodFunction({
     games: ['CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "hud",
             desc: "A HUD element",
             type: "",
             isOptional: false,
@@ -7774,7 +7774,7 @@ defs.push(new CodFunction({
     games: ['CoD2 SP', 'CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "hud",
             desc: "A HUD element",
             type: "",
             isOptional: false,
@@ -8778,7 +8778,7 @@ defs.push(new CodFunction({
     games: ['CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "player",
             desc: "A Client",
             type: "",
             isOptional: false,
@@ -9880,7 +9880,7 @@ defs.push(new CodFunction({
     games: ['CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "player",
             desc: "A player",
             type: "",
             isOptional: false,
@@ -10067,7 +10067,7 @@ defs.push(new CodFunction({
     games: ['CoD2 SP'],
     parameters: [
         {
-            name: "",
+            name: "player",
             desc: "The player (it will only check the host player's buttons though)",
             type: "",
             isOptional: false,
@@ -11917,8 +11917,8 @@ defs.push(new CodFunction({
     games: ['CoD2 SP', 'CoD2 MP'],
     parameters: [
         {
-            name: "",
-            desc: "Entity",
+            name: "player",
+            desc: "Player",
             type: "",
             isOptional: false,
             isVariableLength: false,
@@ -11975,8 +11975,8 @@ defs.push(new CodFunction({
     games: ['CoD2 SP', 'CoD2 MP'],
     parameters: [
         {
-            name: "",
-            desc: "Entity",
+            name: "entity",
+            desc: "",
             type: "",
             isOptional: false,
             isVariableLength: false,
@@ -12045,7 +12045,7 @@ defs.push(new CodFunction({
     games: ['CoD2 SP', 'CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "player",
             desc: "A player",
             type: "",
             isOptional: false,
@@ -12771,7 +12771,7 @@ defs.push(new CodFunction({
     games: ['CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "entity",
             desc: "A spawn point",
             type: "",
             isOptional: false,
@@ -13431,7 +13431,7 @@ defs.push(new CodFunction({
     games: ['CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "player",
             desc: "A Client",
             type: "",
             isOptional: false,
@@ -13460,7 +13460,7 @@ defs.push(new CodFunction({
     games: ['CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "player",
             desc: "A Client",
             type: "",
             isOptional: false,
@@ -13489,7 +13489,7 @@ defs.push(new CodFunction({
     games: ['CoD2 MP'],
     parameters: [
         {
-            name: "",
+            name: "entity",
             desc: "A Trigger",
             type: "",
             isOptional: false,
@@ -15369,7 +15369,7 @@ defs.push(new CodFunction({
     games: ['CoD2 SP'],
     parameters: [
         {
-            name: "",
+            name: "player",
             desc: "Player",
             type: "",
             isOptional: false,
@@ -15414,7 +15414,7 @@ defs.push(new CodFunction({
     games: ['CoD2 SP'],
     parameters: [
         {
-            name: "",
+            name: "player",
             desc: "Player",
             type: "",
             isOptional: false,
