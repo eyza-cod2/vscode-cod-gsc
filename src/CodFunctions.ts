@@ -7,7 +7,7 @@ export class CodFunctions {
 
     /**
      * Check if a function definition matches the given game.
-     * CoD2 MP + zk_libcod inherits all CoD2 MP functions.
+     * CoD2 MP + zk_libcod and CoD2 MP + CoD2x both inherit all CoD2 MP functions.
      */
     private static matchesGame(funcGames: string[], game: GscGame): boolean {
         if (funcGames.includes(game)) {
@@ -15,6 +15,10 @@ export class CodFunctions {
         }
         // CoD2 MP + zk_libcod includes all CoD2 MP functions
         if (game === GscGame.CoD2MPZkLibcod && funcGames.includes(GscGame.CoD2MP)) {
+            return true;
+        }
+        // CoD2 MP + CoD2x includes all CoD2 MP functions
+        if (game === GscGame.CoD2MPCod2x && funcGames.includes(GscGame.CoD2MP)) {
             return true;
         }
         return false;
@@ -49,12 +53,20 @@ export class CodFunctions {
 			return true;
 		};
 
-		// For CoD2 MP + zk_libcod, prefer exact game match over inherited CoD2 MP match.
-		// This ensures libcod-modified functions (with extra optional params) take priority.
+		// For extended variants, prefer exact game match over inherited CoD2 MP match.
+		// This ensures variant-specific overrides (e.g. extra optional params) take priority.
 		if (game === GscGame.CoD2MPZkLibcod) {
 			const exactMatch = defs.find(f =>
 				f.name.toLowerCase() === funcName &&
 				f.games.includes(GscGame.CoD2MPZkLibcod) &&
+				matchesCallOn(f)
+			);
+			if (exactMatch) { return exactMatch; }
+		}
+		if (game === GscGame.CoD2MPCod2x) {
+			const exactMatch = defs.find(f =>
+				f.name.toLowerCase() === funcName &&
+				f.games.includes(GscGame.CoD2MPCod2x) &&
 				matchesCallOn(f)
 			);
 			if (exactMatch) { return exactMatch; }

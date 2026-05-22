@@ -24139,3 +24139,593 @@ defs.push(new CodFunction({
         }
     ]
 }));
+
+
+
+// =============================================================================
+// CoD2 MP + CoD2x functions
+// Source: https://github.com/callofduty2x/CoD2x (v1.4.6.8, 2026-04-07)
+// Docs:   https://cod2x.me/scripting/
+// =============================================================================
+
+// ---- Player methods (callOn = yes) ----
+
+defs.push(new CodFunction({
+    name: "getIp",
+    desc: "Returns the player's IP address as a dotted-decimal string (e.g. \"192.168.1.1\"). Useful for logging, banning, or streaming-overlay integrations.\n\n[📖 cod2x doc](https://cod2x.me/scripting/#getIp)",
+    example: "ip = self getIp();\nlogPrint(self.name + \" connected from \" + ip);",
+    callOn: "<player> A player entity",
+    returnType: "string",
+    module: "Player",
+    supportedAt: "",
+    games: ['CoD2 MP + CoD2x'],
+    parameters: [
+        {
+            name: "player",
+            desc: "A player entity",
+            type: "",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: true
+        }
+    ]
+}));
+
+defs.push(new CodFunction({
+    name: "getHWID",
+    desc: "Returns the 32-character HWID2 hardware identifier of the player. Used for persistent player identification (e.g. ban systems, streaming overlays). Returns an empty string for bots.\n\n[📖 cod2x doc](https://cod2x.me/scripting/#getHWID)",
+    example: "hwid = self getHWID();\nif (isInBanList(hwid)) { kick(self.clientid); }",
+    callOn: "<player> A player entity",
+    returnType: "string",
+    module: "Player",
+    supportedAt: "",
+    games: ['CoD2 MP + CoD2x'],
+    parameters: [
+        {
+            name: "player",
+            desc: "A player entity",
+            type: "",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: true
+        }
+    ]
+}));
+
+defs.push(new CodFunction({
+    name: "getCDKeyHash",
+    desc: "Returns the MD5 hash of the player's CD key as sent during connection. This is a client-supplied value and can be spoofed — always use getAuthorizationStatus() to verify whether the key is actually valid. Use as a fallback identifier when HWID is unavailable.\n\n[📖 cod2x doc](https://cod2x.me/scripting/#getCDKeyHash)",
+    example: "userId = self getCDKeyHash();",
+    callOn: "<player> A player entity",
+    returnType: "string",
+    module: "Player",
+    supportedAt: "",
+    games: ['CoD2 MP + CoD2x'],
+    parameters: [
+        {
+            name: "player",
+            desc: "A player entity",
+            type: "",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: true
+        }
+    ]
+}));
+
+defs.push(new CodFunction({
+    name: "getAuthorizationStatus",
+    desc: "Returns the CD key authorization status string reported by the auth server during connection.\n\nPossible return values:\n- `\"KEY_IS_GOOD\"` — CD key is valid\n- `\"INVALID_CDKEY\"` — key is invalid or already in use by another player\n- `\"CLIENT_UNKNOWN_TO_AUTH\"` — client could not reach the auth server\n- `\"BANNED_CDKEY\"` — CD key is banned\n- `\"\"` (empty) — LAN, listen server, or sv_cracked 1\n\n[📖 cod2x doc](https://cod2x.me/scripting/#getAuthorizationStatus)",
+    example: "if (self getAuthorizationStatus() != \"KEY_IS_GOOD\") {\n    kick(self.clientid);\n}",
+    callOn: "<player> A player entity",
+    returnType: "string",
+    module: "Player",
+    supportedAt: "",
+    games: ['CoD2 MP + CoD2x'],
+    parameters: [
+        {
+            name: "player",
+            desc: "A player entity",
+            type: "",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: true
+        }
+    ]
+}));
+
+defs.push(new CodFunction({
+    name: "getViewOrigin",
+    desc: "Returns the player's eye/view position as a 3D vector. Unlike getOrigin(), this accounts for stance height and lean offsets — use it for line-of-sight checks, distance-to-point calculations, and anything that needs the actual camera position.\n\n[📖 cod2x doc](https://cod2x.me/scripting/#getViewOrigin)",
+    example: "dist = distance(attacker getViewOrigin(), target.origin);",
+    callOn: "<player> A player entity",
+    returnType: "vector",
+    module: "Player",
+    supportedAt: "",
+    games: ['CoD2 MP + CoD2x'],
+    parameters: [
+        {
+            name: "player",
+            desc: "A player entity",
+            type: "",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: true
+        }
+    ]
+}));
+
+defs.push(new CodFunction({
+    name: "getStance",
+    desc: "Returns the player's current stance as a string. Possible values: `\"stand\"`, `\"crouch\"`, `\"prone\"`.\n\n[📖 cod2x doc](https://cod2x.me/scripting/#getStance)",
+    example: "stance = self getStance();\nif (stance == \"prone\") { ... }",
+    callOn: "<player> A player entity",
+    returnType: "string",
+    module: "Player",
+    supportedAt: "",
+    games: ['CoD2 MP + CoD2x'],
+    parameters: [
+        {
+            name: "player",
+            desc: "A player entity",
+            type: "",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: true
+        }
+    ]
+}));
+
+defs.push(new CodFunction({
+    name: "isUsingTurret",
+    desc: "Returns true if the player is currently operating a mounted MG turret, false otherwise. Useful to differentiate turret kills from regular bullet kills and to handle turret-related gameplay rules.\n\n[📖 cod2x doc](https://cod2x.me/scripting/#isUsingTurret)",
+    example: "if (self isUsingTurret()) {\n    // player is on a turret\n}",
+    callOn: "<player> A player entity",
+    returnType: "bool",
+    module: "Player",
+    supportedAt: "",
+    games: ['CoD2 MP + CoD2x'],
+    parameters: [
+        {
+            name: "player",
+            desc: "A player entity",
+            type: "",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: true
+        }
+    ]
+}));
+
+defs.push(new CodFunction({
+    name: "matchPlayerGetData",
+    desc: "Returns a value from the match system's per-player data store for this player. Returns an empty string if the key does not exist.\n\nBuilt-in keys automatically populated by the match system: `\"key\"`, `\"uuid\"`, `\"name\"`, `\"team\"` (e.g. `\"team1\"`), `\"team_name\"`, `\"first_time\"` (ISO 8601 timestamp of first data save). Custom keys can be set via matchPlayerSetData().\n\n[📖 cod2x doc](https://cod2x.me/scripting/#matchPlayerGetData)",
+    example: "uuid = self matchPlayerGetData(\"uuid\");\nteamName = self matchPlayerGetData(\"team_name\");",
+    callOn: "<player> A player entity",
+    returnType: "string",
+    module: "Player",
+    supportedAt: "",
+    games: ['CoD2 MP + CoD2x'],
+    parameters: [
+        {
+            name: "player",
+            desc: "A player entity",
+            type: "",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: true
+        },
+        {
+            name: "key",
+            desc: "The data key to retrieve",
+            type: "string",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: false
+        }
+    ]
+}));
+
+defs.push(new CodFunction({
+    name: "matchPlayerSetData",
+    desc: "Stores key-value pairs in the match system's per-player data store for this player. Pass an even number of alternating key, value string arguments (minimum 2). Values can be retrieved with matchPlayerGetData().\n\n[📖 cod2x doc](https://cod2x.me/scripting/#matchPlayerSetData)",
+    example: "self matchPlayerSetData(\"kills\", \"\" + self.kills, \"deaths\", \"\" + self.deaths);",
+    callOn: "<player> A player entity",
+    returnType: "bool",
+    module: "Player",
+    supportedAt: "",
+    games: ['CoD2 MP + CoD2x'],
+    parameters: [
+        {
+            name: "player",
+            desc: "A player entity",
+            type: "",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: true
+        },
+        {
+            name: "key",
+            desc: "First key string",
+            type: "string",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: false
+        },
+        {
+            name: "value",
+            desc: "Value for the first key, followed by additional key-value pairs (must be an even total count)",
+            type: "string",
+            isOptional: false,
+            isVariableLength: true,
+            isCallOn: false
+        }
+    ]
+}));
+
+defs.push(new CodFunction({
+    name: "matchPlayerIsAllowed",
+    desc: "Returns true if the player has logged in with a valid match UUID (`/match login <uuid>`) that appears in the match's player whitelist, false otherwise. Returns false if the match system is not activated.\n\n[📖 cod2x doc](https://cod2x.me/scripting/#matchPlayerIsAllowed)",
+    example: "if (matchIsActivated() && !self matchPlayerIsAllowed()) {\n    kick(self.clientid);\n}",
+    callOn: "<player> A player entity",
+    returnType: "bool",
+    module: "Player",
+    supportedAt: "",
+    games: ['CoD2 MP + CoD2x'],
+    parameters: [
+        {
+            name: "player",
+            desc: "A player entity",
+            type: "",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: true
+        }
+    ]
+}));
+
+// ---- Level / global functions (callOn = none) ----
+
+defs.push(new CodFunction({
+    name: "http_fetch",
+    desc: "Sends an asynchronous HTTP request. The game continues running while the request is in progress. On success, onDoneCallback is called with `(status:int, body:string, headers:array)`; on failure, onErrorCallback is called with `(error:string)`.\n\nHeaders string uses `\\r\\n` as separator (e.g. `\"Content-Type: application/json\\r\\nAccept: application/json\"`).\n\n[📖 cod2x doc](https://cod2x.me/scripting/#http_fetch)",
+    example: "http_fetch(\"https://api.example.com/score\", \"POST\", \"{\\\"kills\\\":5}\", \"Content-Type: application/json\", 5000, ::onDone, ::onError);\nonDone(status, body, headers) { if (status == 200) { ... } }\nonError(err) { logPrint(\"HTTP error: \" + err); }",
+    callOn: "",
+    returnType: "",
+    module: "Level",
+    supportedAt: "",
+    games: ['CoD2 MP + CoD2x'],
+    parameters: [
+        {
+            name: "url",
+            desc: "The URL to request",
+            type: "string",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: false
+        },
+        {
+            name: "method",
+            desc: "HTTP method: \"GET\", \"POST\", \"PUT\", \"DELETE\", etc.",
+            type: "string",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: false
+        },
+        {
+            name: "data",
+            desc: "Request body (use empty string \"\" for GET requests)",
+            type: "string",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: false
+        },
+        {
+            name: "headers",
+            desc: "Additional HTTP headers separated by \\r\\n (use empty string \"\" for none)",
+            type: "string",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: false
+        },
+        {
+            name: "timeout",
+            desc: "Request timeout in milliseconds",
+            type: "int",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: false
+        },
+        {
+            name: "onDoneCallback",
+            desc: "Function called on success with (status:int, body:string, headers:array)",
+            type: "function",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: false
+        },
+        {
+            name: "onErrorCallback",
+            desc: "Function called on failure with (error:string)",
+            type: "function",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: false
+        }
+    ]
+}));
+
+defs.push(new CodFunction({
+    name: "websocket_connect",
+    desc: "Opens a WebSocket connection to the given URL. Returns a connection index (0–15) on success, or -1 if all slots are in use or an error occurs. Up to 16 simultaneous connections are supported.\n\nCallback signatures:\n- `onConnectCallback()` — called when the connection is established\n- `onMessageCallback(message:string)` — called for each incoming text frame\n- `onCloseCallback(isClosedByRemote:bool, isFullyDisconnected:bool)` — called when the connection closes\n- `onErrorCallback(error:string)` — called on connection errors\n\nConnections are automatically closed on map change. The connection index must be stored to use websocket_sendText() and websocket_close().\n\n[📖 cod2x doc](https://cod2x.me/scripting/#websocket_connect)",
+    example: "id = websocket_connect(\"wss://api.example.com/ws\", \"\", ::onConnect, ::onMsg, ::onClose, ::onError);\nonMsg(msg) { logPrint(\"WS received: \" + msg); }",
+    callOn: "",
+    returnType: "int",
+    module: "Level",
+    supportedAt: "",
+    games: ['CoD2 MP + CoD2x'],
+    parameters: [
+        {
+            name: "url",
+            desc: "WebSocket URL to connect to (ws:// or wss://)",
+            type: "string",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: false
+        },
+        {
+            name: "headers",
+            desc: "Optional extra HTTP headers for the handshake, separated by \\r\\n (use empty string \"\" for none)",
+            type: "string",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: false
+        },
+        {
+            name: "onConnectCallback",
+            desc: "Called when connection opens (no parameters)",
+            type: "function",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: false
+        },
+        {
+            name: "onMessageCallback",
+            desc: "Called when a text message is received (message:string)",
+            type: "function",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: false
+        },
+        {
+            name: "onCloseCallback",
+            desc: "Called when connection closes (isClosedByRemote:bool, isFullyDisconnected:bool)",
+            type: "function",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: false
+        },
+        {
+            name: "onErrorCallback",
+            desc: "Called on error (error:string)",
+            type: "function",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: false
+        },
+        {
+            name: "reconnectDelayMs",
+            desc: "Milliseconds to wait before reconnecting after a disconnect (default: 2000)",
+            type: "int",
+            isOptional: true,
+            isVariableLength: false,
+            isCallOn: false
+        },
+        {
+            name: "pingIntervalMs",
+            desc: "Milliseconds between keep-alive pings (default: 15000; set to 0 to disable)",
+            type: "int",
+            isOptional: true,
+            isVariableLength: false,
+            isCallOn: false
+        }
+    ]
+}));
+
+defs.push(new CodFunction({
+    name: "websocket_sendText",
+    desc: "Sends a UTF-8 text frame over the WebSocket connection identified by connectionId. Returns true if the message was queued for sending, false if the connection slot is invalid or not connected.\n\n[📖 cod2x doc](https://cod2x.me/scripting/#websocket_sendText)",
+    example: "if (!websocket_sendText(id, \"ping\")) {\n    logPrint(\"WS send failed\");\n}",
+    callOn: "",
+    returnType: "bool",
+    module: "Level",
+    supportedAt: "",
+    games: ['CoD2 MP + CoD2x'],
+    parameters: [
+        {
+            name: "connectionId",
+            desc: "Connection index returned by websocket_connect",
+            type: "int",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: false
+        },
+        {
+            name: "message",
+            desc: "UTF-8 text message to send",
+            type: "string",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: false
+        }
+    ]
+}));
+
+defs.push(new CodFunction({
+    name: "websocket_close",
+    desc: "Requests a graceful close of the WebSocket connection at the given index. Returns true if the close was requested successfully, false if the index is invalid or the connection is already gone.\n\n[📖 cod2x doc](https://cod2x.me/scripting/#websocket_close)",
+    example: "websocket_close(id);",
+    callOn: "",
+    returnType: "bool",
+    module: "Level",
+    supportedAt: "",
+    games: ['CoD2 MP + CoD2x'],
+    parameters: [
+        {
+            name: "connectionId",
+            desc: "Connection index returned by websocket_connect",
+            type: "int",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: false
+        }
+    ]
+}));
+
+defs.push(new CodFunction({
+    name: "matchUploadData",
+    desc: "Uploads the current match progress data (global + per-player) to the match server. Returns true if the upload request was sent, false if the match system is not activated.\n\nThe optional callbacks are invoked asynchronously: onDoneCallback is called with no arguments on success; onErrorCallback is called with (error:string) on failure.\n\n[📖 cod2x doc](https://cod2x.me/scripting/#matchUploadData)",
+    example: "matchUploadData(::onUploadDone, ::onUploadError);\nonUploadDone() { logPrint(\"Match data uploaded.\"); }\nonUploadError(err) { logPrint(\"Upload failed: \" + err); }",
+    callOn: "",
+    returnType: "bool",
+    module: "Level",
+    supportedAt: "",
+    games: ['CoD2 MP + CoD2x'],
+    parameters: [
+        {
+            name: "onDoneCallback",
+            desc: "Optional function called with no parameters on success",
+            type: "function",
+            isOptional: true,
+            isVariableLength: false,
+            isCallOn: false
+        },
+        {
+            name: "onErrorCallback",
+            desc: "Optional function called with (error:string) on failure",
+            type: "function",
+            isOptional: true,
+            isVariableLength: false,
+            isCallOn: false
+        }
+    ]
+}));
+
+defs.push(new CodFunction({
+    name: "matchSetData",
+    desc: "Stores key-value pairs in the match system's global data store. Pass an even number of alternating key, value string arguments (minimum 2). Values can be retrieved with matchGetData().\n\nNote: built-in keys such as `\"match_id\"`, `\"team1_id\"`, `\"team2_id\"`, `\"team1_name\"`, `\"team2_name\"` are auto-populated from the match data and will be overwritten on the next read cycle.\n\n[📖 cod2x doc](https://cod2x.me/scripting/#matchSetData)",
+    example: "matchSetData(\"team1_score\", \"\" + level.team1Score, \"team2_score\", \"\" + level.team2Score);",
+    callOn: "",
+    returnType: "bool",
+    module: "Level",
+    supportedAt: "",
+    games: ['CoD2 MP + CoD2x'],
+    parameters: [
+        {
+            name: "key",
+            desc: "First key string",
+            type: "string",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: false
+        },
+        {
+            name: "value",
+            desc: "Value for the first key, followed by additional key-value pairs (must be an even total count)",
+            type: "string",
+            isOptional: false,
+            isVariableLength: true,
+            isCallOn: false
+        }
+    ]
+}));
+
+defs.push(new CodFunction({
+    name: "matchGetData",
+    desc: "Returns the global match data value for the given key. Returns an empty string if the key does not exist.\n\nBuilt-in keys auto-populated from match configuration: `\"match_id\"`, `\"team1_id\"`, `\"team2_id\"`, `\"team1_name\"`, `\"team2_name\"`.\n\nDynamic array keys (return arrays): `\"team1_player_uuids\"`, `\"team2_player_uuids\"`, `\"team1_player_names\"`, `\"team2_player_names\"`, `\"maps\"`.\n\n[📖 cod2x doc](https://cod2x.me/scripting/#matchGetData)",
+    example: "format = matchGetData(\"format\");\nmaps = matchGetData(\"maps\");\nteam1UUIDs = matchGetData(\"team1_player_uuids\");",
+    callOn: "",
+    returnType: "string",
+    module: "Level",
+    supportedAt: "",
+    games: ['CoD2 MP + CoD2x'],
+    parameters: [
+        {
+            name: "key",
+            desc: "The data key to retrieve",
+            type: "string",
+            isOptional: false,
+            isVariableLength: false,
+            isCallOn: false
+        }
+    ]
+}));
+
+defs.push(new CodFunction({
+    name: "matchRedownloadData",
+    desc: "Triggers a fresh download of match configuration data from the match server, updating all match fields (teams, players, maps, etc.). Returns true if the request was sent successfully, false on failure.\n\n[📖 cod2x doc](https://cod2x.me/scripting/#matchRedownloadData)",
+    example: "matchRedownloadData();",
+    callOn: "",
+    returnType: "bool",
+    module: "Level",
+    supportedAt: "",
+    games: ['CoD2 MP + CoD2x'],
+    parameters: []
+}));
+
+defs.push(new CodFunction({
+    name: "matchClearData",
+    desc: "Clears all data in both the global match data store and all per-player data stores. Always returns true. Call at the start of a new round to reset tracked statistics.\n\n[📖 cod2x doc](https://cod2x.me/scripting/#matchClearData)",
+    example: "matchClearData();",
+    callOn: "",
+    returnType: "bool",
+    module: "Level",
+    supportedAt: "",
+    games: ['CoD2 MP + CoD2x'],
+    parameters: []
+}));
+
+defs.push(new CodFunction({
+    name: "matchIsActivated",
+    desc: "Returns true if the CoD2x match system is currently active (i.e. a match has been configured and loaded from the match server), false otherwise. Use this to guard all match-system calls so they don't run on regular public servers.\n\n[📖 cod2x doc](https://cod2x.me/scripting/#matchIsActivated)",
+    example: "if (matchIsActivated()) {\n    teamName = self matchPlayerGetData(\"team_name\");\n}",
+    callOn: "",
+    returnType: "bool",
+    module: "Level",
+    supportedAt: "",
+    games: ['CoD2 MP + CoD2x'],
+    parameters: []
+}));
+
+defs.push(new CodFunction({
+    name: "matchCancel",
+    desc: "Cancels the ongoing match and triggers a fast_restart. If a reason string is provided it is sent to the match server as an error message. Returns true if the match system is activated and the cancel was processed, false otherwise.\n\n[📖 cod2x doc](https://cod2x.me/scripting/#matchCancel)",
+    example: "maps = matchGetData(\"maps\");\nif (!maps.size) {\n    matchCancel(\"No maps configured for this match.\");\n}",
+    callOn: "",
+    returnType: "bool",
+    module: "Level",
+    supportedAt: "",
+    games: ['CoD2 MP + CoD2x'],
+    parameters: [
+        {
+            name: "reason",
+            desc: "Optional cancellation reason sent to the match server as an error message",
+            type: "string",
+            isOptional: true,
+            isVariableLength: false,
+            isCallOn: false
+        }
+    ]
+}));
+
+defs.push(new CodFunction({
+    name: "matchFinish",
+    desc: "Ends the match cleanly: kicks all players, cancels the match on the match server, then performs a fast_restart. Returns true if the match system is activated, false otherwise.\n\n[📖 cod2x doc](https://cod2x.me/scripting/#matchFinish)",
+    example: "if (level.winnerTeam != \"\") {\n    matchFinish();\n}",
+    callOn: "",
+    returnType: "bool",
+    module: "Level",
+    supportedAt: "",
+    games: ['CoD2 MP + CoD2x'],
+    parameters: []
+}));
