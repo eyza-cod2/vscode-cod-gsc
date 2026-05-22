@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as os from 'os';
+import { minimatch } from 'minimatch';
 import { GscFile } from './GscFile';
 import { GscFiles } from './GscFiles';
 import { ConfigErrorDiagnostics, GscConfig, GscGame, GscGameConfig, GscGameRootFolder } from './GscConfig';
@@ -21,6 +22,8 @@ export type GscFilesConfig = {
     ignoredFunctionNames: string[];
     /** Ignored file paths */
     ignoredFilePaths: string[];
+    /** Glob patterns for paths to completely exclude from parsing */
+    excludePaths: string[];
     /** Currently selected game */
     currentGame: GscGame;
     /** Mode of diagnostics collection */
@@ -211,7 +214,24 @@ export class GscWorkspaceFileData {
     }
 
     updateConfiguration() {
+        const oldExcludePaths = this.config.excludePaths;
         this.config = GscWorkspaceFileData.loadConfig(this.workspaceFolder);
+
+        // Evict files that are now excluded by the updated config
+        const newExcludePaths = this.config.excludePaths;
+        if (JSON.stringify(oldExcludePaths) !== JSON.stringify(newExcludePaths) && newExcludePaths.length > 0) {
+            const filesToRemove: vscode.Uri[] = [];
+            for (const file of this.parsedFiles.values()) {
+                const relativePath = vscode.workspace.asRelativePath(file.uri, false);
+                if (GscWorkspaceFileData.isFileExcluded(relativePath, newExcludePaths)) {
+                    filesToRemove.push(file.uri);
+                }
+            }
+            for (const uri of filesToRemove) {
+                LoggerOutput.log("[GscFileCache] Evicting now-excluded file from cache", vscode.workspace.asRelativePath(uri));
+                this.removeParsedFile(uri);
+            }
+        }
 
         // Loop all GscFile and update their configuration
         for (const file of this.parsedFiles.values()) {
@@ -219,6 +239,29 @@ export class GscWorkspaceFileData {
 
             file.gamePath = GscFiles.getGamePathFromGscFile(file);
         }
+    }
+
+    /**
+     * Check if a file path matches any of the exclude glob patterns.
+     * @param relativePath The workspace-relative path of the file (forward slashes).
+     * @param excludePaths Array of glob patterns to check against.
+     */
+    public static isFileExcluded(relativePath: string, excludePaths: string[]): boolean {
+        if (excludePaths.length === 0) {
+            return false;
+        }
+        // Normalize to forward slashes for consistent matching
+        const normalized = relativePath.replace(/\\/g, '/');
+        for (const pattern of excludePaths) {
+            try {
+                if (minimatch(normalized, pattern, { dot: true, nocase: true })) {
+                    return true;
+                }
+            } catch {
+                // Malformed glob pattern - skip it silently
+            }
+        }
+        return false;
     }
 
 
@@ -235,8 +278,9 @@ export class GscWorkspaceFileData {
             rootFolder: GscConfig.getGameRootFolder(workspaceFolder.uri), 
             currentGame: currentGame, 
             ignoredFunctionNames: GscConfig.getIgnoredFunctionNames(workspaceFolder.uri), 
-            ignoredFilePaths: GscConfig.getIgnoredFilePaths(workspaceFolder.uri), 
-            errorDiagnostics: GscConfig.getErrorDiagnostics(workspaceFolder.uri), 
+            ignoredFilePaths: GscConfig.getIgnoredFilePaths(workspaceFolder.uri),
+            excludePaths: GscConfig.getExcludePaths(workspaceFolder.uri),
+            errorDiagnostics: GscConfig.getErrorDiagnostics(workspaceFolder.uri),
             gameConfig: GscConfig.gamesConfigs.get(currentGame)!
         };
     }

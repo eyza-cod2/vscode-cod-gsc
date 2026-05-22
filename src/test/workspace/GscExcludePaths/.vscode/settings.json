@@ -1,0 +1,7 @@
+{
+    "gsc.game": "CoD2 MP",
+    "gsc.excludePaths": [
+        "**/excluded_folder/**",
+        "**/animtrees/**"
+    ]
+}

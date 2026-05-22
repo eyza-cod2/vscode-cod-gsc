@@ -71,6 +71,10 @@
 		{
 			"name": "GscRename.3",
 			"path": "GscRename.3"
+		},
+		{
+			"name": "GscExcludePaths",
+			"path": "GscExcludePaths"
 		}
 	]
 }

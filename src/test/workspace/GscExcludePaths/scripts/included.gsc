@@ -1,0 +1,3 @@
+includedFunc() {
+    error_included
+}
