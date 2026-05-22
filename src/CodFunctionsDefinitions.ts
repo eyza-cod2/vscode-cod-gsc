@@ -24157,7 +24157,7 @@ defs.push(new CodFunction({
     callOn: "<player> A player entity",
     returnType: "string",
     module: "Player",
-    supportedAt: "",
+    supportedAt: "CoD2x >= 1.4.5.1",
     games: ['CoD2 MP + CoD2x'],
     parameters: [
         {
@@ -24178,7 +24178,7 @@ defs.push(new CodFunction({
     callOn: "<player> A player entity",
     returnType: "string",
     module: "Player",
-    supportedAt: "",
+    supportedAt: "CoD2x >= 1.4.5.1",
     games: ['CoD2 MP + CoD2x'],
     parameters: [
         {
@@ -24199,7 +24199,7 @@ defs.push(new CodFunction({
     callOn: "<player> A player entity",
     returnType: "string",
     module: "Player",
-    supportedAt: "",
+    supportedAt: "CoD2x >= 1.4.5.1",
     games: ['CoD2 MP + CoD2x'],
     parameters: [
         {
@@ -24220,7 +24220,7 @@ defs.push(new CodFunction({
     callOn: "<player> A player entity",
     returnType: "string",
     module: "Player",
-    supportedAt: "",
+    supportedAt: "CoD2x >= 1.4.5.1",
     games: ['CoD2 MP + CoD2x'],
     parameters: [
         {
@@ -24241,7 +24241,7 @@ defs.push(new CodFunction({
     callOn: "<player> A player entity",
     returnType: "vector",
     module: "Player",
-    supportedAt: "",
+    supportedAt: "CoD2x >= 1.4.5.1",
     games: ['CoD2 MP + CoD2x'],
     parameters: [
         {
@@ -24262,7 +24262,7 @@ defs.push(new CodFunction({
     callOn: "<player> A player entity",
     returnType: "string",
     module: "Player",
-    supportedAt: "",
+    supportedAt: "CoD2x >= 1.4.5.1",
     games: ['CoD2 MP + CoD2x'],
     parameters: [
         {
@@ -24283,7 +24283,7 @@ defs.push(new CodFunction({
     callOn: "<player> A player entity",
     returnType: "bool",
     module: "Player",
-    supportedAt: "",
+    supportedAt: "CoD2x >= 1.4.6.5",
     games: ['CoD2 MP + CoD2x'],
     parameters: [
         {
@@ -24304,7 +24304,7 @@ defs.push(new CodFunction({
     callOn: "<player> A player entity",
     returnType: "string",
     module: "Player",
-    supportedAt: "",
+    supportedAt: "CoD2x >= 1.4.5.1",
     games: ['CoD2 MP + CoD2x'],
     parameters: [
         {
@@ -24333,7 +24333,7 @@ defs.push(new CodFunction({
     callOn: "<player> A player entity",
     returnType: "bool",
     module: "Player",
-    supportedAt: "",
+    supportedAt: "CoD2x >= 1.4.5.1",
     games: ['CoD2 MP + CoD2x'],
     parameters: [
         {
@@ -24370,7 +24370,7 @@ defs.push(new CodFunction({
     callOn: "<player> A player entity",
     returnType: "bool",
     module: "Player",
-    supportedAt: "",
+    supportedAt: "CoD2x >= 1.4.5.1",
     games: ['CoD2 MP + CoD2x'],
     parameters: [
         {
@@ -24393,7 +24393,7 @@ defs.push(new CodFunction({
     callOn: "",
     returnType: "",
     module: "Level",
-    supportedAt: "",
+    supportedAt: "CoD2x >= 1.4.5.1",
     games: ['CoD2 MP + CoD2x'],
     parameters: [
         {
@@ -24462,7 +24462,7 @@ defs.push(new CodFunction({
     callOn: "",
     returnType: "int",
     module: "Level",
-    supportedAt: "",
+    supportedAt: "CoD2x >= 1.4.5.1",
     games: ['CoD2 MP + CoD2x'],
     parameters: [
         {
@@ -24539,7 +24539,7 @@ defs.push(new CodFunction({
     callOn: "",
     returnType: "bool",
     module: "Level",
-    supportedAt: "",
+    supportedAt: "CoD2x >= 1.4.5.1",
     games: ['CoD2 MP + CoD2x'],
     parameters: [
         {
@@ -24568,7 +24568,7 @@ defs.push(new CodFunction({
     callOn: "",
     returnType: "bool",
     module: "Level",
-    supportedAt: "",
+    supportedAt: "CoD2x >= 1.4.5.1",
     games: ['CoD2 MP + CoD2x'],
     parameters: [
         {
@@ -24589,7 +24589,7 @@ defs.push(new CodFunction({
     callOn: "",
     returnType: "bool",
     module: "Level",
-    supportedAt: "",
+    supportedAt: "CoD2x >= 1.4.5.1",
     games: ['CoD2 MP + CoD2x'],
     parameters: [
         {
@@ -24618,7 +24618,7 @@ defs.push(new CodFunction({
     callOn: "",
     returnType: "bool",
     module: "Level",
-    supportedAt: "",
+    supportedAt: "CoD2x >= 1.4.5.1",
     games: ['CoD2 MP + CoD2x'],
     parameters: [
         {
@@ -24647,7 +24647,7 @@ defs.push(new CodFunction({
     callOn: "",
     returnType: "string",
     module: "Level",
-    supportedAt: "",
+    supportedAt: "CoD2x >= 1.4.5.1",
     games: ['CoD2 MP + CoD2x'],
     parameters: [
         {
@@ -24668,7 +24668,7 @@ defs.push(new CodFunction({
     callOn: "",
     returnType: "bool",
     module: "Level",
-    supportedAt: "",
+    supportedAt: "CoD2x >= 1.4.5.1",
     games: ['CoD2 MP + CoD2x'],
     parameters: []
 }));
@@ -24680,7 +24680,7 @@ defs.push(new CodFunction({
     callOn: "",
     returnType: "bool",
     module: "Level",
-    supportedAt: "",
+    supportedAt: "CoD2x >= 1.4.5.1",
     games: ['CoD2 MP + CoD2x'],
     parameters: []
 }));
@@ -24692,7 +24692,7 @@ defs.push(new CodFunction({
     callOn: "",
     returnType: "bool",
     module: "Level",
-    supportedAt: "",
+    supportedAt: "CoD2x >= 1.4.5.1",
     games: ['CoD2 MP + CoD2x'],
     parameters: []
 }));
@@ -24704,7 +24704,7 @@ defs.push(new CodFunction({
     callOn: "",
     returnType: "bool",
     module: "Level",
-    supportedAt: "",
+    supportedAt: "CoD2x >= 1.4.5.1",
     games: ['CoD2 MP + CoD2x'],
     parameters: [
         {
@@ -24725,7 +24725,7 @@ defs.push(new CodFunction({
     callOn: "",
     returnType: "bool",
     module: "Level",
-    supportedAt: "",
+    supportedAt: "CoD2x >= 1.4.5.1",
     games: ['CoD2 MP + CoD2x'],
     parameters: []
 }));
