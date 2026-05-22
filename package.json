@@ -127,7 +127,8 @@
           "enum": [
             "Universal game",
             "CoD2 MP",
-            "CoD2 SP"
+            "CoD2 SP",
+            "CoD2 MP + zk_libcod"
           ],
           "description": "The game for which the GSC files are intended. Each game has different syntax rules and list of predefined function.",
           "scope": "resource"

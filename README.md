@@ -385,6 +385,19 @@ In future version it will allow to change settings more interactively.
 
 
 
+## CoD2 MP + zk_libcod
+
+A separate game variant — `CoD2 MP + zk_libcod` — that includes all stock CoD2 MP functions plus 326 functions added by [zk_libcod](https://github.com/ibuddieat/zk_libcod). Select it as the game in settings to get:
+
+- Autocomplete, hover docs, and parameter validation for all libcod functions
+- libcod-modified stock functions with extra optional parameters (e.g. `bulletTrace` with custom content mask) take priority over the stock signature when this variant is active
+- Stock CoD2 MP functions remain available unchanged
+- Each function description links to its source `.htm` doc in the zk_libcod repository
+
+Tracks zk_libcod up to commit [`58b8b07`](https://github.com/ibuddieat/zk_libcod/commit/58b8b073e54f6b39be8aaac2a856d26125113281) (2026-05-03).
+
+<br><br>
+
 ## List of features
 - GSC file parser
   - Syntax parser
