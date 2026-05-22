@@ -36,13 +36,48 @@
           ".gsc"
         ],
         "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "menufile",
+        "aliases": [
+          "Menu File",
+          "menufile"
+        ],
+        "extensions": [
+          ".menu"
+        ],
+        "configuration": "./menufile-language-configuration.json"
+      },
+      {
+        "id": "weaponfile",
+        "aliases": [
+          "Weapon File",
+          "weaponfile"
+        ],
+        "firstLine": "^WEAPONFILE",
+        "configuration": "./weaponfile-language-configuration.json"
       }
     ],
+    "configurationDefaults": {
+      "[weaponfile]": {
+        "editor.wordWrap": "on"
+      }
+    },
     "grammars": [
       {
         "language": "gsc",
         "scopeName": "source.gsc",
         "path": "./syntaxes/gsc.tmLanguage.json"
+      },
+      {
+        "language": "menufile",
+        "scopeName": "source.menufile",
+        "path": "./syntaxes/menufile.tmLanguage.json"
+      },
+      {
+        "language": "weaponfile",
+        "scopeName": "source.weaponfile",
+        "path": "./syntaxes/weaponfile.tmLanguage.json"
       }
     ],
     "viewsContainers": {

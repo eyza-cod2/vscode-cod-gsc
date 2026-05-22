@@ -1,0 +1,27 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Weapon File",
+	"scopeName": "source.weaponfile",
+	"patterns": [
+		{ "include": "#header" },
+		{ "include": "#pair" }
+	],
+	"repository": {
+
+		"header": {
+			"comment": "WEAPONFILE marker at the start of the file",
+			"match": "^WEAPONFILE",
+			"name": "keyword.other.header.weaponfile"
+		},
+
+		"pair": {
+			"comment": "Matches \\key\\value — key gets entity scope, value gets string scope. Empty values (\\\\) are handled because the value capture allows zero characters.",
+			"match": "\\\\([^\\\\]*)\\\\([^\\\\]*)",
+			"captures": {
+				"1": { "name": "entity.name.tag.key.weaponfile" },
+				"2": { "name": "string.unquoted.value.weaponfile" }
+			}
+		}
+
+	}
+}

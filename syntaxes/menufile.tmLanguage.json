@@ -1,0 +1,85 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Menu File",
+	"scopeName": "source.menufile",
+	"patterns": [
+		{ "include": "#comments" },
+		{ "include": "#preprocessor" },
+		{ "include": "#strings" },
+		{ "include": "#constants" },
+		{ "include": "#numbers" },
+		{ "include": "#block-keywords" },
+		{ "include": "#event-keywords" },
+		{ "include": "#action-commands" },
+		{ "include": "#keywords" }
+	],
+	"repository": {
+
+		"comments": {
+			"patterns": [
+				{
+					"begin": "/\\*",
+					"end": "\\*/",
+					"name": "comment.block.menufile"
+				},
+				{
+					"begin": "//",
+					"end": "\\n",
+					"name": "comment.line.double-slash.menufile"
+				}
+			]
+		},
+
+		"preprocessor": {
+			"comment": "Example: #include \"ui_mp/menudef.h\", #define ORIGIN_X 32 224",
+			"match": "^\\s*(#\\w+)\\b",
+			"captures": {
+				"1": { "name": "keyword.control.directive.menufile" }
+			}
+		},
+
+		"strings": {
+			"begin": "\"",
+			"end": "\"",
+			"name": "string.quoted.double.menufile"
+		},
+
+		"constants": {
+			"comment": "ALL_CAPS identifiers used as named constants (e.g. MENU_FALSE, WINDOW_STYLE_FILLED)",
+			"match": "\\b[A-Z][A-Z0-9_]{2,}\\b",
+			"name": "constant.language.menufile"
+		},
+
+		"numbers": {
+			"comment": "Integers, decimals and leading-dot floats, optionally negative (e.g. 32, 0.75, .125, -1)",
+			"match": "-?(?:\\b\\d+\\.?\\d*|\\.\\d+)\\b",
+			"name": "constant.numeric.menufile"
+		},
+
+		"block-keywords": {
+			"comment": "Block type identifiers that open a { } body",
+			"match": "(?i)\\b(menuDef|itemDef|floatingDef|focusDef)\\b",
+			"name": "keyword.other.block.menufile"
+		},
+
+		"event-keywords": {
+			"comment": "Event handlers that open a { } action body",
+			"match": "(?i)\\b(onOpen|onClose|onESC|onFocus|leaveFocus|mouseEnter|mouseExit|accept|special)\\b",
+			"name": "keyword.control.event.menufile"
+		},
+
+		"action-commands": {
+			"comment": "Commands used inside event action blocks",
+			"match": "(?i)\\b(uiScript|setDvar|exec|execNow|open|close|fadein|fadeout|show|hide|setcolor|setitemcolor|setfocus|setmenufocus|clearfocus|scriptMenuResponse)\\b",
+			"name": "support.function.action.menufile"
+		},
+
+		"keywords": {
+			"comment": "Property keywords inside blocks (case-insensitive variants included)",
+			"match": "(?i)\\b(name|rect|fullScreen|visible|backcolor|forecolor|style|background|focusColor|blurWorld|disablecolor|decoration|origin|text|textfont|textscale|textstyle|textalign|textalignx|textaligny|dvartest|hidedvar|showdvar|enabledvar|disabledvar|type|border|bordercolor|ownerdraw|ownerdrawFlag|align|action|execKey|execKeyInt|cvarFloat|cvarStrList|cvarFloatList|cvarTest|notselectable|noscrollbar|scrollbarcolor|popup|outOfBoundsClick|exp|cinematic|aspectDefault|aspectFixed|aspectFull|autowrapped|horizontalscroll|liveupdate|dvar|localvar|doubleClick|noScrollbars)\\b",
+			"name": "support.type.property.menufile"
+		}
+
+	}
+}
+
