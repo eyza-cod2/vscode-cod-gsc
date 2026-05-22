@@ -93,16 +93,19 @@
       "gsc-sidebar": [
         {
           "id": "gsc-view-workspace-info",
-          "name": "Workspace info"
+          "name": "Workspace info",
+          "icon": "images/gsc-sidebar.svg"
         },
         {
           "id": "gsc-view-file-info",
-          "name": "File info"
+          "name": "File info",
+          "icon": "images/gsc-sidebar.svg"
         },
         {
           "id": "gsc-view-other",
           "name": "Other",
-          "type": "webview"
+          "type": "webview",
+          "icon": "images/gsc-sidebar.svg"
         }
       ]
     },
@@ -233,7 +236,7 @@
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1",
     "eslint": "^9.14.0",
-    "typescript": "^5.6.3"
+    "typescript": "~5.6.3"
   },
   "dependencies": {
     "minimatch": "^10.2.4",

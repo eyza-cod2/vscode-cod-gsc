@@ -1,5 +1,9 @@
 import typescriptEslint from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default [
     {
@@ -14,7 +18,7 @@ export default [
             sourceType: "module",
             parserOptions: {
                 project: './tsconfig.json',  // Only apply to TypeScript files
-                tsconfigRootDir: './',
+                tsconfigRootDir: __dirname,
             },
         },
         rules: {

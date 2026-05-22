@@ -16,7 +16,7 @@ import { LoggerOutput } from '../LoggerOutput';
 import { Events } from '../Events';
 import { GscMarkdownGenerator } from '../GscMarkdownGenerator';
 
-export const testWorkspaceDir = path.join(os.tmpdir(), 'vscode-test-workspace');
+export const testWorkspaceDir = process.env.VSCODE_TEST_WORKSPACE_DIR || path.join(os.tmpdir(), 'vscode-test-workspace');
 
 
 

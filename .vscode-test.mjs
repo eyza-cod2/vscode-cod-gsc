@@ -10,26 +10,31 @@ const extensionPath = path.dirname(fileURLToPath(import.meta.url));
 // Define the path to the source test workspace folder 
 const sourceWorkspaceFolder = path.resolve(extensionPath, 'src/test/workspace');
 
-// Define the path to the temp test workspace folder
-const tempWorkspaceFolder = path.join(os.tmpdir(), 'vscode-test-workspace');
-const tempWorkspaceFolderFile = path.join(tempWorkspaceFolder, 'vscode-cod-gsc-tests.code-workspace');
-
-// Attempt to delete the temp test workspace directory from previous runs
-if (fs.existsSync(tempWorkspaceFolder)) {
-	fs.rmSync(tempWorkspaceFolder, { recursive: true, force: true });
-}
-
-// Create a new temp workspace directory by copying the source test workspace directory
-fs.cpSync(sourceWorkspaceFolder, tempWorkspaceFolder, { recursive: true });
-
-
-export default defineConfig({
+const sharedConfig = {
 	files: 'out/test/**/*.test.js',
 	mocha: {
 		timeout: 1000*60*60,
 	},
-	workspaceFolder: tempWorkspaceFolderFile,
-    launchArgs: [
-        '--disable-extensions', // Disable other extensions to avoid conflicts
-    ],
-});
+	launchArgs: [
+		'--disable-extensions', // Disable other extensions to avoid conflicts
+	],
+};
+
+// Helper to create a fresh temp workspace for a specific version label
+function createTempWorkspace(label) {
+	const tempFolder = path.join(os.tmpdir(), `vscode-test-workspace-${label}`);
+	const tempFile = path.join(tempFolder, 'vscode-cod-gsc-tests.code-workspace');
+	if (fs.existsSync(tempFolder)) {
+		fs.rmSync(tempFolder, { recursive: true, force: true });
+	}
+	fs.cpSync(sourceWorkspaceFolder, tempFolder, { recursive: true });
+	return { tempFolder, tempFile };
+}
+
+const workspaceMin = createTempWorkspace('min');
+const workspaceStable = createTempWorkspace('stable');
+
+export default defineConfig([
+	{ ...sharedConfig, version: '1.92.0', label: 'min',    workspaceFolder: workspaceMin.tempFile,    env: { VSCODE_TEST_WORKSPACE_DIR: workspaceMin.tempFolder } },
+	{ ...sharedConfig, version: 'stable', label: 'stable', workspaceFolder: workspaceStable.tempFile, env: { VSCODE_TEST_WORKSPACE_DIR: workspaceStable.tempFolder } },
+]);
