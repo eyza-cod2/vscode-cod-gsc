@@ -213,6 +213,22 @@
           },
           "description": "An array of workspace folder names (in multi-root workspace) that will be included for GSC file references. Useful when your mod contains only part of the files and other files are in different folder (most common folder would be a 'raw' folder that contains the original game files). You have to add these folders into your workspace setup to be able to include the folders. If empty, each workspace folder is isolated from each other.",
           "scope": "resource"
+        },
+        "gsc.formatting.braceStyle": {
+          "type": "string",
+          "enum": [
+            "Allman",
+            "K&R",
+            "Preserve"
+          ],
+          "enumDescriptions": [
+            "Opening brace on its own line (Infinity Ward / Call of Duty convention).",
+            "Opening brace on the same line as the statement (compact, C/JS style).",
+            "Leave your brace placement untouched; only fix indentation and spacing."
+          ],
+          "default": "Allman",
+          "description": "Brace style enforced by the GSC document formatter (Format Document / Shift+Alt+F).",
+          "scope": "resource"
         }
       }
     }
