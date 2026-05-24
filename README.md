@@ -322,6 +322,28 @@ This extension adds language support for the GSC scripts used in Call of Duty ga
 
 <br><br>
 
+### Document formatting
+
+Run **Format Document** (`Shift+Alt+F`) on a `.gsc` file to clean it up: consistent
+indentation (tabs or spaces, following your editor settings), spaces around operators
+(`if(x==1)` → `if (x == 1)`), `if (`/`for (`/`while (` keyword spacing, no space before
+a call's `(`, and one space after commas. You can also select a block and run
+**Format Selection** (`Ctrl+K Ctrl+F`) to format just that part.
+
+The formatter only ever changes whitespace — it never rewrites your code. Comments
+(including stacked `//` lines and commented-out code), string contents, localized
+strings (`&"..."`), and intentional column alignment are all preserved.
+
+The brace style is configurable via `gsc.formatting.braceStyle` (resource-scoped):
+
+| Value | Behaviour |
+| --- | --- |
+| `Allman` (default) | Opening brace on its own line (Infinity Ward / CoD convention) |
+| `K&R` | Opening brace on the same line as the statement |
+| `Preserve` | Leave your brace placement untouched; only fix indentation and spacing |
+
+<br><br>
+
 ### Workspace folders
 VSCode multi-root workspace can be used to "join" your mod folders as they get loaded into the game.
 

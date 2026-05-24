@@ -5,6 +5,7 @@ All notable changes to the "gsc" extension will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
+- Added a document formatter for GSC files — **Format Document** (`Shift+Alt+F`) and **Format Selection** (`Ctrl+K Ctrl+F`): fixes indentation (incl. braceless bodies, switch/case, multi-line continuations and developer blocks), normalizes spacing around operators, keywords and commas, and removes blank lines at block edges. Brace style is configurable via `gsc.formatting.braceStyle` (`Allman` default / `K&R` / `Preserve`). Only whitespace is ever changed — comments (including stacked `//` and commented-out code), string contents, localized strings (`&"..."`) and manual column alignment are preserved.
 
 ## [1.0.0] - 2026-05-22
 - Added new game variant `CoD2 MP + zk_libcod` for projects targeting servers running [zk_libcod](https://github.com/ibuddieat/zk_libcod). The variant inherits all stock CoD2 MP functions and adds 326 libcod-specific functions across 19 modules (Animation, Bots, Damage, Debug, Effects, Entity, Exec, HUD, Level, Math, Memory, MySQL, Objective, Player, Sound, System, Trace, Turret, Weapons). Tracks zk_libcod up to commit `58b8b07` (2026-05-03). (by [@nawaftahir](https://github.com/nawaftahir))

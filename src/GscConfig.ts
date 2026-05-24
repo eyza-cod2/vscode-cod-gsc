@@ -21,6 +21,16 @@ export enum ConfigErrorDiagnostics {
 	Disable = "Disable"
 }
 
+// These must match with package.json settings
+export enum ConfigFormattingBraceStyle {
+	/** Opening brace on its own line (Infinity Ward / CoD convention). */
+	Allman = "Allman",
+	/** Opening brace on the same line as the statement. */
+	KnR = "K&R",
+	/** Leave the user's brace placement untouched. */
+	Preserve = "Preserve"
+}
+
 
 export type GscGameRootFolder = {
 	uri: vscode.Uri;
@@ -273,10 +283,19 @@ export class GscConfig {
         const config = vscode.workspace.getConfiguration('gsc', uri);
 		await config.update("errorDiagnostics", value, vscode.ConfigurationTarget.WorkspaceFolder);
 	}
-	public static errorDiagnosticsStringToEnum(game: string, def: ConfigErrorDiagnostics = ConfigErrorDiagnostics.Enable): ConfigErrorDiagnostics {	
+	public static errorDiagnosticsStringToEnum(game: string, def: ConfigErrorDiagnostics = ConfigErrorDiagnostics.Enable): ConfigErrorDiagnostics {
 		return (Object.values(ConfigErrorDiagnostics) as Array<string>).includes(game)
         ? (game as ConfigErrorDiagnostics)
         : def;
+	}
+
+	/** Brace style used by the document formatter (resource-scoped). */
+	public static getFormattingBraceStyle(uri: vscode.Uri): ConfigFormattingBraceStyle {
+		const config = vscode.workspace.getConfiguration('gsc', uri);
+		const selected = config.get<string>('formatting.braceStyle', ConfigFormattingBraceStyle.Allman);
+		return (Object.values(ConfigFormattingBraceStyle) as Array<string>).includes(selected)
+			? (selected as ConfigFormattingBraceStyle)
+			: ConfigFormattingBraceStyle.Allman;
 	}
 
 
